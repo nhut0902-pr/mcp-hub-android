@@ -1,0 +1,191 @@
+name: Build Android APK and release
+
+
+
+on:
+
+  push:
+  
+    tags:
+    
+      - "v*"
+      
+  workflow_dispatch:
+  
+    inputs:
+    
+      tag:
+      
+        description: "Release tag, ví dụ v1.0.0"
+        
+        required: true
+        
+        default: "v1.0.0"
+        
+        type: string
+        
+
+
+permissions:
+
+  contents: write
+  
+
+
+jobs:
+
+  build-apk:
+  
+    runs-on: ubuntu-latest
+    
+    timeout-minutes: 45
+    
+    steps:
+    
+      - name: Checkout source
+      
+        uses: actions/checkout@v4
+        
+
+
+      - name: Setup Node
+      
+        uses: actions/setup-node@v4
+        
+        with:
+        
+          node-version: 22
+          
+          cache: pnpm
+          
+
+
+      - name: Setup pnpm
+      
+        uses: pnpm/action-setup@v4
+        
+        with:
+        
+          version: 9
+          
+
+
+      - name: Setup Java
+      
+        uses: actions/setup-java@v4
+        
+        with:
+        
+          distribution: temurin
+          
+          java-version: "17"
+          
+
+
+      - name: Install dependencies
+      
+        run: pnpm install --frozen-lockfile
+        
+
+
+      - name: Generate native Android project
+      
+        run: npx expo prebuild --platform android --no-install --clean
+        
+
+
+      - name: Build installable debug APK
+      
+        working-directory: android
+        
+        run: ./gradlew app:assembleDebug --no-daemon
+        
+
+
+      - name: Prepare release artifact
+      
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk "MCP-Hub-${{ github.ref_name || inputs.tag }}.apk"
+        
+
+
+      - name: Upload workflow artifact
+      
+        uses: actions/upload-artifact@v4
+        
+        with:
+        
+          name: MCP-Hub-APK
+          
+          path: MCP-Hub-*.apk
+          
+          if-no-files-found: error
+          
+
+
+      - name: Publish GitHub Release
+      
+        uses: softprops/action-gh-release@v2
+        
+        with:
+        
+          tag_name: ${{ github.ref_name || inputs.tag }}
+          
+          name: MCP Hub ${{ github.ref_name || inputs.tag }}
+          
+          generate_release_notes: true
+          
+          files: MCP-Hub-*.apk
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
