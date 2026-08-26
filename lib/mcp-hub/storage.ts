@@ -35,7 +35,12 @@ function normalizeProvider(provider: ProviderConfig): ProviderConfig {
 
 function ensureManagedProviders(providers: ProviderConfig[]): ProviderConfig[] {
   const managed = createInitialState().providers.filter((provider) => provider.managedByApp);
-  return [...providers, ...managed.filter((provider) => !providers.some((existing) => existing.id === provider.id))];
+  return [
+    ...providers.map((provider) => provider.id === "ai-cloud"
+      ? { ...provider, enabled: true, preferredModelId: "gemini-1.5-flash", pinnedModelIds: ["gemini-1.5-flash"] }
+      : provider),
+    ...managed.filter((provider) => !providers.some((existing) => existing.id === provider.id)),
+  ];
 }
 
 function parseState(value: string | null): AppState {
@@ -45,10 +50,16 @@ function parseState(value: string | null): AppState {
     if (!Array.isArray(parsed.providers) || !Array.isArray(parsed.models) || !Array.isArray(parsed.mcpServers)) return createInitialState();
     return {
       providers: ensureManagedProviders((parsed.providers as ProviderConfig[]).map(normalizeProvider)),
-      models: (parsed.models as AppState["models"]).map((model) => ({ ...model, supportsThinking: model.supportsThinking ?? false, supportsWebSearch: model.supportsWebSearch ?? false })),
+      models: ensureAiCloudModel((parsed.models as AppState["models"]).map((model) => ({ ...model, supportsThinking: model.supportsThinking ?? false, supportsWebSearch: model.supportsWebSearch ?? false }))),
       mcpServers: (parsed.mcpServers as McpServerConfig[]).map(normalizeMcpServer),
     };
   } catch { return createInitialState(); }
+}
+
+function ensureAiCloudModel(models: AppState["models"]): AppState["models"] {
+  const defaults = createInitialState().models.filter((model) => model.providerId === "ai-cloud");
+  const nonCloudModels = models.filter((model) => model.providerId !== "ai-cloud");
+  return [...nonCloudModels, ...defaults];
 }
 
 export async function loadAppState(): Promise<AppState> {

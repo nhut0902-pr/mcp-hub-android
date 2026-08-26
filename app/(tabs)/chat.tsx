@@ -27,6 +27,7 @@ import { getSendState } from "@/lib/mcp-hub/send-state";
 import { getProviderApiKey } from "@/lib/mcp-hub/storage";
 import { loadArchivedChats, saveArchivedChat } from "@/lib/mcp-hub/chat-archive";
 import { loadWebSearchSettings } from "@/lib/mcp-hub/feature-settings";
+import { sendAiCloudChatFromProxy } from "@/lib/mcp-hub/ai-cloud-client";
 import { trpc } from "@/lib/trpc";
 
 type DeviceTool = "location" | "map" | "camera" | "image" | "file";
@@ -37,7 +38,6 @@ export default function ChatScreen() {
   const router = useRouter();
   const { archiveId } = useLocalSearchParams<{ archiveId?: string }>();
   const sendMutation = trpc.chat.send.useMutation();
-  const aiCloudSendMutation = trpc.aiCloud.send.useMutation();
   const [providerId, setProviderId] = useState<string | null>(null);
   const [modelId, setModelId] = useState<string | null>(null);
   const [drawerVisible, setDrawerVisible] = useState(false);
@@ -129,7 +129,7 @@ export default function ChatScreen() {
     if (!provider || !model) { Alert.alert("Chưa có model", "Hãy chọn một model đã ghim trước khi gửi tin nhắn."); return; }
     const user: ChatMessage = { id: `user-${Date.now()}`, role: "user", content: draft.trim(), attachments, mcpProfiles: state.mcpServers.filter((server) => server.enabled).map((server) => ({ id: server.id, name: server.name, transport: server.transport, endpoint: server.endpoint })) };
     const history = [...messages, user]; setMessages(history); setDraft(""); setSending(true);
-    try { const payload = buildChatPayload(provider, model, history, { thinking, webSearch, temperature: tuning.temperature, maxTokens: tuning.maxTokens, topP: tuning.topP, instruction: tuning.instruction }); const response = provider.managedByApp ? await aiCloudSendMutation.mutateAsync({ payload }) : await (async () => { const apiKey = await getProviderApiKey(provider.id); if (!apiKey) throw new Error(`Chưa có API key cho ${provider.name}. Vào Provider để lưu key lại.`); return sendMutation.mutateAsync({ apiBaseUrl: provider.apiBaseUrl, apiKey, payload }); })(); setMessages((current) => [...current, parseChatCompletion(response)]); setAttachments([]); }
+    try { const payload = buildChatPayload(provider, model, history, { thinking, webSearch, temperature: tuning.temperature, maxTokens: tuning.maxTokens, topP: tuning.topP, instruction: tuning.instruction }); const response = provider.managedByApp ? await sendAiCloudChatFromProxy(payload) : await (async () => { const apiKey = await getProviderApiKey(provider.id); if (!apiKey) throw new Error(`Chưa có API key cho ${provider.name}. Vào Provider để lưu key lại.`); return sendMutation.mutateAsync({ apiBaseUrl: provider.apiBaseUrl, apiKey, payload }); })(); setMessages((current) => [...current, parseChatCompletion(response)]); setAttachments([]); }
     catch (error) { const issue = classifyProviderError(error); setMessages((current) => [...current, { id: `failure-${Date.now()}`, role: "assistant", content: "", failure: { title: issue.title, detail: issue.detail, action: issue.action, providerName: provider.name, modelId: model.modelId, retryText: user.content } }]); setDraft(user.content); } finally { setSending(false); }
   };
   return <ScreenContainer edges={["top", "bottom", "left", "right"]}><View style={styles.screen} testID="chat-screen">

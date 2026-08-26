@@ -114,3 +114,10 @@
 - [x] Kết nối repository GitHub và triển khai thư mục website trên Vercel
 - [x] Tái thiết kế website MCP Hub với phong cách tự nhiên hơn và bảng màu mới
 - [x] Điều tra, sửa lỗi app Android khởi động chậm hoặc không vào được
+- [x] Xác minh workflow tạo APK release V1.0.1 có JavaScript bundle nhúng và GitHub Release thành công
+- [x] Xác minh trực quan website Vercel sau khi tái thiết kế
+
+- [x] Thêm kiểm tra phiên bản và luồng tải/cài APK cập nhật trực tiếp trong app Android
+- [x] Điều tra và sửa lỗi AI Cloud không hoạt động, gồm proxy, endpoint và thông báo lỗi
+- [ ] Tạo project Vercel riêng làm AI Cloud proxy bảo mật và cấu hình biến API key
+- [ ] Gắn URL AI Cloud Vercel vào app, xác thực chat và phát hành V1.0.2

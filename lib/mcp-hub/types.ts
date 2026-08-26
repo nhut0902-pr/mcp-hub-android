@@ -74,9 +74,9 @@ export function createInitialState(): AppState {
       createProvider("nvidia-nim", "nvidia", "NVIDIA NIM", "https://integrate.api.nvidia.com/v1", "https://integrate.api.nvidia.com/v1/models"),
       createProvider("groq", "groq", "Groq", "https://api.groq.com/openai/v1", "https://api.groq.com/openai/v1/models"),
       createProvider("openrouter", "openrouter", "OpenRouter", "https://openrouter.ai/api/v1", "https://openrouter.ai/api/v1/models"),
-      { ...createProvider("ai-cloud", "custom", "AI Cloud", "https://chatgpt-api.chocode.com.vn/v1", "https://chatgpt-api.chocode.com.vn/v1/models"), managedByApp: true, enabled: true },
+      { ...createProvider("ai-cloud", "custom", "AI Cloud", "https://chatgpt-api.chocode.com.vn/v1", "https://chatgpt-api.chocode.com.vn/v1/models"), managedByApp: true, enabled: true, preferredModelId: "gemini-1.5-flash", pinnedModelIds: ["gemini-1.5-flash"], modelCount: 1 },
     ],
-    models: [],
+    models: [{ id: "ai-cloud:gemini-1.5-flash", providerId: "ai-cloud", modelId: "gemini-1.5-flash", displayName: "Gemini 1.5 Flash", imageUrl: null, contextLength: null, supportsThinking: false, supportsWebSearch: false, updatedAt: new Date().toISOString() }],
     mcpServers: [],
   };
 }
