@@ -110,4 +110,7 @@
 - [x] Tạo website giới thiệu MCP Hub trong thư mục tách riêng cho Vercel
 - [x] Cấu hình Vercel chỉ build thư mục website tách riêng
 - [x] Thêm GitHub Actions build APK v1.0.0 và đính kèm APK vào GitHub Release
-- [ ] Push source lên GitHub và kích hoạt quy trình phát hành
+- [x] Push source lên GitHub và kích hoạt quy trình phát hành
+- [x] Kết nối repository GitHub và triển khai thư mục website trên Vercel
+- [x] Tái thiết kế website MCP Hub với phong cách tự nhiên hơn và bảng màu mới
+- [x] Điều tra, sửa lỗi app Android khởi động chậm hoặc không vào được

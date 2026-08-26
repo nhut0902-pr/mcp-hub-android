@@ -5,6 +5,7 @@ import { Platform } from "react-native";
 import type { AppState, McpServerConfig, ProviderConfig } from "./types";
 import { createInitialState } from "./types";
 import { normalizePinnedModelIds } from "./pinned-models";
+import { withStartupTimeout } from "./startup";
 
 const STATE_KEY = "mcp-hub.state.v1";
 const keyForProvider = (providerId: string) => `mcp-hub.key.${providerId}`;
@@ -50,7 +51,10 @@ function parseState(value: string | null): AppState {
   } catch { return createInitialState(); }
 }
 
-export async function loadAppState(): Promise<AppState> { return parseState(await AsyncStorage.getItem(STATE_KEY)); }
+export async function loadAppState(): Promise<AppState> {
+  const storedState = await withStartupTimeout(AsyncStorage.getItem(STATE_KEY), null);
+  return parseState(storedState);
+}
 export async function saveAppState(state: AppState): Promise<void> { await AsyncStorage.setItem(STATE_KEY, JSON.stringify(state)); }
 export async function getProviderApiKey(providerId: string): Promise<string | null> { return readSecret(keyForProvider(providerId)); }
 export async function saveProviderApiKey(providerId: string, apiKey: string): Promise<void> { await writeSecret(keyForProvider(providerId), apiKey); }

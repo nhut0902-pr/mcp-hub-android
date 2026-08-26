@@ -27,7 +27,33 @@ export function HubProvider({ children }: PropsWithChildren) {
   const [state, setState] = useState<AppState>(createInitialState);
   const [isLoading, setIsLoading] = useState(true);
   const [syncingProviderId, setSyncingProviderId] = useState<string | null>(null);
-  useEffect(() => { void loadAppState().then(async (loaded) => { const hydrated = await refreshSecretStatus(loaded); setState(hydrated); await saveAppState(hydrated); setIsLoading(false); }); }, []);
+  useEffect(() => {
+    let active = true;
+    let secretRefreshTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const hydrate = async () => {
+      const loaded = await loadAppState();
+      if (!active) return;
+
+      // Render saved data immediately. SecureStore verification is useful, but must never block entering Chat.
+      setState(loaded);
+      setIsLoading(false);
+
+      secretRefreshTimer = setTimeout(() => {
+        void refreshSecretStatus(loaded)
+          .then((hydrated) => {
+            if (active) setState(hydrated);
+          })
+          .catch((error) => console.warn("[MCP Hub] Không thể làm mới trạng thái khoá bảo mật:", error));
+      }, 350);
+    };
+
+    void hydrate();
+    return () => {
+      active = false;
+      if (secretRefreshTimer) clearTimeout(secretRefreshTimer);
+    };
+  }, []);
   const persist = useCallback(async (nextState: AppState) => { setState(nextState); await saveAppState(nextState); }, []);
 
   const saveProvider = useCallback(async (provider: ProviderConfig, apiKey?: string) => {

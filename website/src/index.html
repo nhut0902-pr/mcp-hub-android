@@ -3,56 +3,82 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0a1018" />
-    <meta name="description" content="MCP Hub — Chat AI, provider và MCP servers trong một ứng dụng Android." />
-    <title>MCP Hub — AI orchestration on Android</title>
+    <meta name="theme-color" content="#f3f0e8" />
+    <meta name="description" content="MCP Hub — nơi cấu hình provider, MCP server và trò chuyện AI trên Android." />
+    <title>MCP Hub — Không gian làm việc AI trên Android</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <div class="noise" aria-hidden="true"></div>
     <header class="nav wrap">
-      <a class="brand" href="#top" aria-label="MCP Hub home"><span class="brand-mark"><i></i><i></i><i></i><i></i></span><span>MCP <b>Hub</b></span></a>
-      <nav><a href="#features">Tính năng</a><a href="#architecture">Kiến trúc</a><a href="#release">Phát hành</a></nav>
-      <a class="nav-cta" href="https://github.com/nhut0902-pr/mcp-hub-android" target="_blank" rel="noreferrer">GitHub <span>↗</span></a>
+      <a class="brand" href="#top" aria-label="MCP Hub home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>MCP <b>Hub</b></span></a>
+      <nav aria-label="Điều hướng chính"><a href="#workflows">Cách dùng</a><a href="#system">Kiến trúc</a><a href="#release">Phát hành</a></nav>
+      <a class="nav-link" href="https://github.com/nhut0902-pr/mcp-hub-android" target="_blank" rel="noreferrer">Mã nguồn <span>↗</span></a>
     </header>
+
     <main id="top">
       <section class="hero wrap">
-        <div class="hero-copy reveal">
-          <p class="eyebrow"><span class="pulse"></span> ANDROID AI WORKSPACE · V1.0.0</p>
-          <h1>Điều phối AI,<br /><em>không giới hạn</em><br />ngữ cảnh.</h1>
-          <p class="intro">MCP Hub gom Chat AI, provider, model, công cụ thiết bị và MCP servers vào một không gian tối giản cho Android.</p>
-          <div class="hero-actions"><a class="button primary" href="https://github.com/nhut0902-pr/mcp-hub-android/releases">Tải bản phát hành <span>↓</span></a><a class="button ghost" href="#features">Khám phá tính năng <span>↓</span></a></div>
-          <div class="proof"><div><strong>AI Cloud</strong><span>Gemini chat proxy</span></div><div><strong>MCP native</strong><span>Tools & context</span></div><div><strong>Secure by design</strong><span>Key trong Keystore</span></div></div>
+        <div class="hero-copy">
+          <p class="eyebrow">MCP HUB / ANDROID WORKSPACE</p>
+          <h1>Để AI làm việc<br />với <em>đúng ngữ cảnh.</em></h1>
+          <p class="intro">Một nơi gọn gàng để cài provider, ghim model, kết nối MCP và giữ cuộc trò chuyện của bạn không bị ngắt quãng.</p>
+          <div class="hero-actions"><a class="button primary" href="https://github.com/nhut0902-pr/mcp-hub-android/releases">Tải APK mới nhất <span>↓</span></a><a class="button plain" href="#workflows">Xem cách hoạt động <span>→</span></a></div>
+          <div class="hero-note"><span class="note-dot"></span> Dành cho Android · API key được lưu trong vùng bảo mật thiết bị</div>
         </div>
-        <div class="hero-visual reveal">
-          <div class="orb orb-a"></div><div class="orb orb-b"></div>
-          <div class="phone" aria-label="MCP Hub chat preview">
-            <div class="phone-top"><span>9:41</span><div class="island"></div><span>● ●</span></div>
-            <div class="app-bar"><span class="hamburger">☰</span><strong>Untitled</strong><span class="dots">•••</span></div>
-            <div class="chat-area"><div class="ai-badge">✦</div><h3>What can I help you with today?</h3><p>Chọn model hoặc bắt đầu một cuộc trò chuyện mới.</p><div class="mini-prompt">You can use AI Cloud, web search and MCP tools.</div><div class="user-message">Tạo kế hoạch tích hợp MCP cho app Android.</div><div class="assistant-message"><span class="spark">✦</span><div><b>Được rồi.</b><br />Tôi sẽ tạo cấu trúc provider, tool và luồng context.</div></div></div>
-            <div class="composer"><span>Type your question here…</span><b>↑</b><div class="composer-bottom"><i>⊕</i><i>⌕</i><i>✦</i><small>AI Cloud</small></div></div>
+
+        <div class="hero-stage" aria-label="Giao diện chat MCP Hub">
+          <div class="stage-label label-one">Android companion</div>
+          <div class="stage-label label-two">MCP · provider · tools</div>
+          <div class="phone">
+            <div class="phone-status"><span>9:41</span><span>● ● ●</span></div>
+            <div class="phone-head"><span class="menu">☰</span><strong>Cuộc trò chuyện mới</strong><span>•••</span></div>
+            <div class="phone-body">
+              <div class="bot-symbol">M</div>
+              <h2>Bạn muốn bắt đầu từ đâu?</h2>
+              <p>Chọn model đã ghim hoặc thêm công cụ vào ngữ cảnh.</p>
+              <div class="soft-chip">AI Cloud · Gemini</div>
+              <div class="chat-user">Phác thảo flow MCP cho ứng dụng Android.</div>
+              <div class="chat-bot"><span>→</span><p><b>Được.</b> Tôi sẽ bắt đầu bằng provider, tool và context.</p></div>
+            </div>
+            <div class="composer"><span>Nhập câu hỏi của bạn...</span><b>↑</b><div><i>＋</i><i>⌕</i><i>◌</i><small>Chọn model</small></div></div>
           </div>
-          <div class="floating-card card-one"><span class="tiny-dot"></span><b>Thinking enabled</b><small>Gemini · 1.5 Flash</small></div>
-          <div class="floating-card card-two"><span>⌘</span><b>3 MCP tools online</b></div>
         </div>
       </section>
-      <section class="ticker" aria-label="Tính năng MCP Hub"><div class="ticker-track"><span>AI CLOUD</span><i>✦</i><span>MODEL PROVIDERS</span><i>✦</i><span>MCP SERVERS</span><i>✦</i><span>WEB SEARCH</span><i>✦</i><span>ON-DEVICE TOOLS</span><i>✦</i><span>AI CLOUD</span><i>✦</i><span>MODEL PROVIDERS</span><i>✦</i></div></section>
-      <section class="features wrap" id="features">
-        <div class="section-head"><p class="eyebrow">01 / CAPABILITIES</p><h2>Một hub cho mọi<br /><em>AI workflow.</em></h2><p>Không cần đổi ứng dụng giữa chat, provider, model và công cụ. MCP Hub tạo một surface thống nhất, nhỏ gọn nhưng đủ sâu.</p></div>
-        <div class="feature-grid">
-          <article class="feature large"><div class="feature-icon cyan">✦</div><p class="feature-no">01</p><h3>AI Cloud an toàn</h3><p>Chat Gemini qua proxy phía máy chủ. API key không bao giờ đi vào ứng dụng.</p><div class="model-lines"><span>gemini-1.5-flash</span><span>thinking · web ready</span><span>server managed</span></div></article>
-          <article class="feature"><div class="feature-icon orange">⌘</div><p class="feature-no">02</p><h3>MCP servers</h3><p>Cấu hình Streamable HTTP, SSE hoặc stdio cùng API key/OAuth ngay trên thiết bị.</p></article>
-          <article class="feature"><div class="feature-icon purple">◌</div><p class="feature-no">03</p><h3>Tools thực tế</h3><p>Vị trí, bản đồ, camera, ảnh và tài liệu được đưa vào context khi bạn cần.</p></article>
-          <article class="feature wide"><div><p class="feature-no">04</p><h3>Model control<br />đúng ngữ cảnh.</h3></div><div class="pill-row"><span>Pin nhiều model</span><span>Advanced / Basic</span><span>Web search</span><span>Temperature / Top P</span></div></article>
+
+      <section class="facts wrap" aria-label="Điểm nổi bật">
+        <div><span>01</span><p><b>Chat theo model bạn chọn</b>Thinking, web search và tham số chat luôn ở đúng chỗ.</p></div>
+        <div><span>02</span><p><b>Provider không bị khóa</b>Nvidia NIM, Groq, OpenRouter hoặc endpoint riêng của bạn.</p></div>
+        <div><span>03</span><p><b>Context dùng được ngay</b>MCP, vị trí, bản đồ, camera, ảnh và tệp cùng trong một khung chat.</p></div>
+      </section>
+
+      <section class="workflows wrap" id="workflows">
+        <div class="section-intro"><p class="eyebrow">01 / CÁCH DÙNG</p><h2>Ít chuyển màn hình.<br /><em>Nhiều việc được giải quyết.</em></h2></div>
+        <div class="workflow-list">
+          <article class="workflow-row"><span class="number">01</span><div><h3>Bắt đầu với AI Cloud</h3><p>Chọn model quản lý sẵn, mở một chat mới và gửi yêu cầu mà không cần dán key vào ứng dụng.</p></div><span class="row-tag brick">Sẵn sàng</span></article>
+          <article class="workflow-row"><span class="number">02</span><div><h3>Thêm provider theo cách của bạn</h3><p>Lưu API key an toàn, tải model từ endpoint và ghim những model thực sự dùng hàng ngày.</p></div><span class="row-tag blue">Linh hoạt</span></article>
+          <article class="workflow-row"><span class="number">03</span><div><h3>Gắn công cụ vào câu hỏi</h3><p>Khi cần, đưa MCP server, ảnh, tệp, vị trí hay bản đồ vào đúng cuộc trò chuyện đang làm việc.</p></div><span class="row-tag green">Có ngữ cảnh</span></article>
         </div>
       </section>
-      <section class="architecture wrap" id="architecture"><div class="arch-panel"><div class="arch-copy"><p class="eyebrow">02 / SYSTEM</p><h2>Tất cả kết nối,<br /><em>một luồng chat.</em></h2><p>Chọn model đã ghim, bật thinking hoặc web search, kết nối MCP tools và gửi. MCP Hub tạo payload phù hợp trong một thao tác.</p><a class="text-link" href="https://github.com/nhut0902-pr/mcp-hub-android" target="_blank" rel="noreferrer">Xem source code <span>→</span></a></div><div class="diagram"><div class="node user">You</div><div class="connector c1"></div><div class="node core"><span>✦</span>MCP Hub</div><div class="connector c2"></div><div class="nodes-right"><div class="node small">AI Cloud</div><div class="node small">Providers</div><div class="node small">MCP Tools</div></div></div></div></section>
-      <section class="release wrap" id="release"><div><p class="eyebrow">03 / RELEASE</p><h2>V1.0.0<br /><em>is ready.</em></h2></div><div class="release-copy"><p>APK được build tự động từ GitHub Actions và đính kèm vào GitHub Release sau khi workflow hoàn tất.</p><a class="button primary" href="https://github.com/nhut0902-pr/mcp-hub-android/releases">Mở GitHub Release <span>↗</span></a></div></section>
+
+      <section class="system" id="system">
+        <div class="wrap system-grid">
+          <div class="system-copy"><p class="eyebrow light">02 / KẾT NỐI</p><h2>Một luồng chat,<br /><em>nhiều khả năng.</em></h2><p>MCP Hub không thay thế các dịch vụ bạn đã dùng. Nó giữ provider, model và công cụ ở một nơi để bạn tập trung vào tác vụ trước mắt.</p><a class="text-link" href="https://github.com/nhut0902-pr/mcp-hub-android" target="_blank" rel="noreferrer">Xem mã nguồn trên GitHub <span>↗</span></a></div>
+          <div class="system-map" aria-label="Sơ đồ kết nối MCP Hub">
+            <div class="map-user">Bạn</div><div class="map-line line-a"></div><div class="map-core"><span>M</span><b>MCP Hub</b><small>Android</small></div><div class="map-line line-b"></div>
+            <div class="map-targets"><div>AI Cloud</div><div>Providers</div><div>MCP tools</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="release wrap" id="release">
+        <div><p class="eyebrow">03 / PHÁT HÀNH</p><h2>Bản Android<br /><em>sẵn để cài đặt.</em></h2></div>
+        <div class="release-action"><p>APK được build bằng GitHub Actions và đính kèm trực tiếp trong mỗi GitHub Release. Bạn luôn có thể tải bản mới nhất từ trang phát hành.</p><a class="button dark" href="https://github.com/nhut0902-pr/mcp-hub-android/releases">Mở trang phát hành <span>↗</span></a></div>
+      </section>
     </main>
-    <footer class="wrap"><div class="brand"><span class="brand-mark"><i></i><i></i><i></i><i></i></span><span>MCP <b>Hub</b></span></div><p>Powered By <b>Nhutcoder Team</b></p><p>© 2026 · V1.0.0</p></footer>
+
+    <footer class="wrap"><div class="brand"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>MCP <b>Hub</b></span></div><p>Powered by <b>Nhutcoder Team</b></p><p>© 2026</p></footer>
     <script src="./app.js"></script>
   </body>
 </html>
