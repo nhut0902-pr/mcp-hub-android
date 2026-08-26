@@ -1,0 +1,14 @@
+appId: com.app.mcpproviderconfigurator
+---
+# Luồng smoke test cho binary Android/Expo development build.
+# Không phụ thuộc provider hay API key nên có thể chạy ngay trên emulator sạch.
+- launchApp:
+    clearState: true
+- assertVisible:
+    id: chat-screen
+- assertVisible:
+    id: chat-input
+- assertVisible:
+    id: chat-send
+- assertVisible: "Chọn model để bắt đầu"
+

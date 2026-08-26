@@ -1,0 +1,6 @@
+import { Tabs } from "expo-router";
+import { HubProvider } from "@/lib/mcp-hub/context";
+
+export default function TabLayout() {
+  return <HubProvider><Tabs screenOptions={{ headerShown: false, tabBarStyle: { display: "none" } }}><Tabs.Screen name="index" options={{ title: "Chat" }} /><Tabs.Screen name="providers" options={{ title: "Provider" }} /><Tabs.Screen name="models" options={{ title: "Model" }} /><Tabs.Screen name="chat" options={{ title: "Chat" }} /><Tabs.Screen name="mcp" options={{ title: "MCP" }} /><Tabs.Screen name="settings" options={{ title: "Cài đặt" }} /><Tabs.Screen name="chat-settings" options={{ href: null }} /><Tabs.Screen name="general-settings" options={{ href: null }} /><Tabs.Screen name="about" options={{ href: null }} /><Tabs.Screen name="copilots" options={{ href: null }} /><Tabs.Screen name="ai-cloud" options={{ href: null }} /><Tabs.Screen name="web-search" options={{ href: null }} /><Tabs.Screen name="document-parser" options={{ href: null }} /><Tabs.Screen name="archived-chats" options={{ href: null }} /></Tabs></HubProvider>;
+}

@@ -1,0 +1,113 @@
+# Project TODO
+
+- [x] Xác định cấu trúc dữ liệu cục bộ cho provider, model và MCP server
+- [x] Cài đặt lưu API key bằng SecureStore và dữ liệu không nhạy cảm bằng AsyncStorage
+- [x] Tạo giao diện tab Tổng quan, Provider, Model, MCP và Cài đặt
+- [x] Cài đặt provider mặc định Nvidia NIM, Groq và OpenRouter
+- [x] Tạo biểu mẫu thêm/sửa provider tuỳ chỉnh cùng kiểm tra URL
+- [x] Đồng bộ và chuẩn hoá danh sách model từ URL của provider
+- [x] Tạo biểu mẫu quản lý cấu hình MCP server cục bộ
+- [x] Thêm tìm kiếm model, bộ lọc provider và sao chép model ID
+- [x] Tạo nhận diện, cập nhật app config và icon Android
+- [x] Viết kiểm thử cho lớp chuẩn hoá model
+- [x] Chạy kiểm tra kiểu dữ liệu, kiểm thử và lint cho ứng dụng
+- [x] Khắc phục lỗi khởi động Metro khi đọc cấu hình Expo
+- [x] Khởi động lại máy chủ phát triển theo yêu cầu của người dùng
+- [x] Thêm nút tải và kiểm tra model ngay sau khi cấu hình API key provider
+- [x] Hiển thị kết quả tải model rõ ràng trước khi người dùng rời biểu mẫu provider
+- [x] Thêm lựa chọn xác thực API key hoặc OAuth cho MCP qua URL
+- [x] Lưu thông tin xác thực MCP nhạy cảm trong kho bảo mật thiết bị
+- [x] Kiểm thử luồng tải model và xác thực MCP mới
+- [x] Xác thực tham số thinking và web search theo tài liệu provider
+- [x] Thêm metadata năng lực thinking/web search khi đồng bộ model
+- [x] Thêm cấu hình model ưu tiên trong từng provider
+- [x] Tạo khung chat sử dụng provider và model ưu tiên
+- [x] Hiển thị và kích hoạt thinking/web search chỉ khi model hỗ trợ
+- [x] Kiểm thử logic chuẩn bị yêu cầu chat và năng lực model
+- [x] Hiển thị nút ghim model ưu tiên rõ ràng trong Provider
+- [x] Thêm tìm kiếm model trực tiếp trong biểu mẫu Provider
+- [x] Kiểm thử thao tác ghim và lọc model trong Provider
+- [x] Thay model ưu tiên đơn lẻ bằng danh sách nhiều model đã ghim theo provider
+- [x] Bảo đảm mọi provider đã đồng bộ model đều có thể ghim nhiều model
+- [x] Giới hạn bộ chọn Chat vào các model đã ghim và tự chọn model hợp lệ
+- [x] Kiểm thử lưu trữ, ghim đa model và chuẩn bị chat theo model đã chọn
+- [x] Chẩn đoán điều kiện chặn gửi và endpoint chat của provider
+- [x] Sửa luồng gửi chat, bao gồm API base URL và trạng thái cấu hình
+- [x] Hiển thị lỗi gửi tin nhắn kèm hành động khắc phục rõ ràng
+- [x] Kiểm thử gửi chat với phản hồi provider mô phỏng
+- [x] Chẩn đoán điều kiện vô hiệu hoá nút Gửi trong Chat
+- [x] Sửa nút Gửi và phản hồi thao tác khi nhập nội dung
+- [x] Kiểm thử trạng thái bật/tắt nút Gửi
+- [x] Chẩn đoán lý do API key không còn sau khi khởi động lại ứng dụng
+- [x] Bảo đảm API key lưu bền vững trên Android và hiển thị trạng thái chính xác
+- [x] Thêm điều khiển temperature và max tokens cho Chat
+- [x] Nâng cấp giao diện Chat hiện đại và tập trung vào thao tác một tay
+- [x] Kiểm thử lưu trữ API key và payload tham số Chat
+- [x] Phân loại lỗi API key thiếu, không hợp lệ và không có quyền
+- [x] Hiển thị trạng thái API key và hướng dẫn xử lý trong Provider
+- [x] Hiển thị lỗi API key có thể xử lý trong Chat
+- [x] Kiểm thử thông báo lỗi xác thực provider
+- [x] Thêm bảng Tools trong Chat và bật/tắt profile MCP đang cấu hình
+- [x] Thêm yêu cầu quyền vị trí và đính kèm vị trí hiện tại vào chat
+- [x] Thêm mở bản đồ với vị trí sau khi được cấp quyền
+- [x] Thêm quyền camera và chụp ảnh đính kèm chat
+- [x] Thêm chọn ảnh từ thiết bị và đính kèm vào chat
+- [x] Kiểm thử luồng quyền thiết bị và trạng thái công cụ Chat
+- [x] Hoàn thiện Tools MCP và trạng thái công cụ thiết bị trong điều kiện không cài được mô-đun native
+- [x] Chẩn đoán và khắc phục quyền vị trí/camera/ảnh trên Android và web
+- [x] Cấu hình API key AI Cloud trong vùng bí mật phía máy chủ
+- [x] Thêm provider AI Cloud quản lý sẵn không lộ API key trên thiết bị
+- [x] Đồng bộ model và gửi chat qua AI Cloud bằng proxy bảo mật
+- [x] Kiểm thử phân quyền thiết bị và đảm bảo API key không xuất hiện trong client
+- [x] Hiển thị thẻ lỗi model/provider trực tiếp trong luồng hội thoại
+- [x] Thêm nút thử lại và thông tin model/provider gây lỗi
+- [x] Hiển thị phản hồi quyền vị trí/bản đồ cùng nút mở cài đặt khi bị từ chối
+- [x] Kiểm thử trạng thái lỗi chat và quyền thiết bị
+- [x] Áp dụng hệ màu tối, typography và surface theo phong cách Chatbox
+- [x] Tái thiết kế khung Chat với header, composer và thanh công cụ tương đương tham chiếu
+- [x] Thêm ngăn cuộc trò chuyện (drawer) và thao tác New Chat
+- [x] Tái thiết kế model picker dạng bottom sheet với tìm kiếm và ghim model
+- [x] Tái thiết kế Conversation Settings với system prompt và tham số model
+- [x] Tái thiết kế Settings/Provider thành danh sách dòng điều hướng tối
+- [x] Kiểm thử giao diện và luồng chính sau khi tái thiết kế
+- [x] Chuẩn hoá lại tỷ lệ chữ, khoảng cách và icon theo ảnh tham chiếu mới
+- [x] Bổ sung mũi tên quay lại xuyên suốt các màn hình cấu hình
+- [x] Làm rõ nút Lưu API trong biểu mẫu Provider và phản hồi sau khi lưu
+- [x] Hiệu chỉnh drawer, header và thanh điều hướng theo bố cục Chatbox tham chiếu
+- [x] Đọc logo/icon model từ metadata provider và hiển thị có fallback
+- [x] Kiểm thử điều hướng, lưu API và hiển thị logo model
+- [x] Phân tích và tích hợp hiệu ứng AI Generate từ JSON đính kèm
+- [x] Phân tích và tích hợp hiệu ứng AI Thinking từ JSON đính kèm
+- [x] Hiệu chỉnh lại icon, typography và tỷ lệ màn hình bám sát ảnh tham chiếu
+- [x] Tìm và thiết lập phương án kiểm thử tự động phù hợp cho Expo
+- [ ] Chạy Maestro/Agent Device E2E native khi Android emulator hoặc thiết bị được kết nối
+- [x] Xác minh asset Generate/Thinking, fallback web và khung giao diện chính
+- [ ] Xác minh hiệu ứng Generate/Thinking khi gửi chat trên Android emulator hoặc thiết bị thực
+- [x] Sửa nút mũi tên quay lại không phản hồi trên các màn hình cấu hình
+- [x] Căn thanh điều hướng/drawer về bên trái theo bố cục yêu cầu
+- [x] Thu gọn thêm typography Chat để đúng tỷ lệ điện thoại tham chiếu
+- [x] Thêm mũi tên quay lại cho màn MCP
+- [x] Sửa hành vi mũi tên Provider luôn mở Chat
+- [x] Đổi animation drawer sang trượt ngang từ bên trái
+- [x] Rà soát mọi màn hình, sheet và modal để bổ sung mũi tên quay lại nhất quán
+- [x] Phân tích video tham chiếu và tái tối ưu toàn bộ UI, thao tác và chuyển động theo video
+- [x] Chat: bổ sung system prompt, reasoning thu gọn và tác vụ từng tin nhắn
+- [x] Chat: bổ sung menu hội thoại gồm lịch sử, xuất chat và xoá hội thoại
+- [x] Chat: tổ chức model picker theo nhóm Advanced/Basic như video
+- [x] Chat: bổ sung cài đặt Name, Instruction và Top P cho cuộc hội thoại
+- [x] Chat: bổ sung lựa chọn Attach Image và Select File theo video, giữ Tools MCP Hub
+- [x] Settings: hoàn thiện các màn Chat Settings, General Settings, About và My Copilots
+- [x] Tinh chỉnh palette, spacing và animation để bám sát video tham chiếu
+- [x] Đổi Chatbox AI thành AI Cloud và loại AI Cloud khỏi Model Provider
+- [x] Triển khai màn AI Cloud với trạng thái model và hành động đồng bộ/chọn model
+- [x] Triển khai màn Web Search với bật/tắt và cấu hình phạm vi tìm kiếm
+- [x] Triển khai Document Parser với chọn tệp và trạng thái xử lý rõ ràng
+- [x] Triển khai Archived Chats với lưu trữ/khôi phục/xoá hội thoại
+- [x] Lưu General Settings thay vì chỉ thay đổi tạm thời trên giao diện
+- [x] Chỉ đổi endpoint gửi chat AI Cloud sang Gemini, giữ nguyên endpoint danh sách model hiện tại
+- [x] Sửa danh sách lịch sử Chat cuộn ổn định khi có nhiều hội thoại
+- [x] Hiển thị Link Git, V1.0.0 và Powered By Nhutcoder Team trong thông tin app
+- [x] Tạo website giới thiệu MCP Hub trong thư mục tách riêng cho Vercel
+- [x] Cấu hình Vercel chỉ build thư mục website tách riêng
+- [x] Thêm GitHub Actions build APK v1.0.0 và đính kèm APK vào GitHub Release
+- [ ] Push source lên GitHub và kích hoạt quy trình phát hành
