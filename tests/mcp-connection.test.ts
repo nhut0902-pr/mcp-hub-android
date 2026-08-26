@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { testMcpConnection } from "../lib/mcp-hub/mcp-connection";
+import { buildMcpAuthHeaders } from "../lib/mcp-hub/mcp-auth";
 import { mcpCatalog } from "../lib/mcp-hub/mcp-catalog";
 import type { McpServerConfig } from "../lib/mcp-hub/types";
 
@@ -9,6 +10,10 @@ const server: McpServerConfig = { id: "test", name: "Test MCP", transport: "stre
 afterEach(() => vi.unstubAllGlobals());
 
 describe("MCP connection test", () => {
+  it("gửi Composio API key qua x-api-key", () => {
+    expect(buildMcpAuthHeaders("api-key", "composio-key", "x-api-key")).toEqual({ "x-api-key": "composio-key" });
+  });
+
   it("sends initialize with bearer credential and reads server info", async () => {
     const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({ jsonrpc: "2.0", id: "mcp-hub-initialize", result: { serverInfo: { name: "Example MCP", version: "1.2.0" } } }), { status: 200 }));
     vi.stubGlobal("fetch", fetchMock);
@@ -26,7 +31,7 @@ describe("MCP connection test", () => {
   });
 
   it("has only valid HTTPS remote presets with an explicit auth selection", () => {
-    expect(mcpCatalog.length).toBeGreaterThanOrEqual(7);
+    expect(mcpCatalog.length).toBeGreaterThanOrEqual(8);
     expect(mcpCatalog.every((entry) => entry.endpoint.startsWith("https://") && entry.authMode !== "none")).toBe(true);
   });
 });

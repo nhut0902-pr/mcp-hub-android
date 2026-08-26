@@ -1,4 +1,4 @@
-import type { McpAuthMode, McpTransport } from "./types";
+import type { McpApiKeyHeader, McpAuthMode, McpTransport } from "./types";
 
 export type McpCatalogEntry = {
   id: string;
@@ -6,12 +6,14 @@ export type McpCatalogEntry = {
   endpoint: string;
   transport: McpTransport;
   authMode: McpAuthMode;
+  apiKeyHeader?: McpApiKeyHeader;
   detail: string;
   docsUrl: string;
   readOnlyHint?: string;
 };
 
 export const mcpCatalog: McpCatalogEntry[] = [
+  { id: "composio", name: "Composio", endpoint: "https://backend.composio.dev/v3/mcp/YOUR_SERVER_ID?user_id=YOUR_USER_ID", transport: "streamable-http", authMode: "api-key", apiKeyHeader: "x-api-key", detail: "MCP theo user cho 1.000+ toolkit. Tạo session/server trên Composio, thay SERVER_ID và USER_ID, rồi dán Composio API key.", docsUrl: "https://docs.composio.dev/docs/single-toolkit-mcp" },
   { id: "notion", name: "Notion", endpoint: "https://mcp.notion.com/mcp", transport: "streamable-http", authMode: "oauth", detail: "Workspace docs và pages qua OAuth.", docsUrl: "https://developers.notion.com/guides/mcp/get-started-with-mcp" },
   { id: "github", name: "GitHub", endpoint: "https://api.githubcopilot.com/mcp/", transport: "streamable-http", authMode: "oauth", detail: "GitHub OAuth hoặc PAT Bearer.", docsUrl: "https://docs.github.com/en/copilot/how-tos/provide-context/use-mcp-in-your-ide/set-up-the-github-mcp-server" },
   { id: "linear", name: "Linear", endpoint: "https://mcp.linear.app/mcp", transport: "streamable-http", authMode: "oauth", detail: "OAuth, Bearer token hoặc Linear API key.", docsUrl: "https://linear.app/docs/mcp", readOnlyHint: "Dùng https://mcp.linear.app/mcp/readonly khi chỉ cần đọc." },

@@ -1,6 +1,7 @@
 export type ProviderKind = "nvidia" | "groq" | "openrouter" | "custom";
 export type McpTransport = "streamable-http" | "sse" | "stdio";
 export type McpAuthMode = "none" | "api-key" | "oauth";
+export type McpApiKeyHeader = "authorization" | "x-api-key";
 export type McpConnectionStatus = "idle" | "checking" | "connected" | "auth-required" | "failed" | "unsupported";
 
 export interface McpConnectionResult {
@@ -47,6 +48,7 @@ export interface McpServerConfig {
   command: string;
   args: string;
   authMode: McpAuthMode;
+  apiKeyHeader?: McpApiKeyHeader;
   apiKeyStored: boolean;
   oauthTokenStored: boolean;
   oauthIssuer: string;
@@ -97,3 +99,4 @@ export function createInitialState(): AppState {
 export const providerKindLabel: Record<ProviderKind, string> = { nvidia: "NVIDIA NIM", groq: "Groq", openrouter: "OpenRouter", custom: "Tuỳ chỉnh" };
 export const mcpTransportLabel: Record<McpTransport, string> = { "streamable-http": "Streamable HTTP", sse: "Server-Sent Events", stdio: "stdio (cục bộ)" };
 export const mcpAuthLabel: Record<McpAuthMode, string> = { none: "Không xác thực", "api-key": "API key", oauth: "OAuth" };
+export const mcpApiKeyHeaderLabel: Record<McpApiKeyHeader, string> = { authorization: "Authorization: Bearer", "x-api-key": "x-api-key" };

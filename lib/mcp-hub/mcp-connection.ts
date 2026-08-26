@@ -54,7 +54,7 @@ export async function testMcpConnection(server: McpServerConfig, credential: str
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
   const headers = {
     Accept: "application/json, text/event-stream",
-    ...buildMcpAuthHeaders(server.authMode, credential),
+    ...buildMcpAuthHeaders(server.authMode, credential, server.apiKeyHeader),
   };
 
   try {
@@ -68,7 +68,7 @@ export async function testMcpConnection(server: McpServerConfig, credential: str
       method: "POST",
       headers: { ...headers, "Content-Type": "application/json", "MCP-Protocol-Version": MCP_PROTOCOL_VERSION },
       signal: controller.signal,
-      body: JSON.stringify({ jsonrpc: "2.0", id: "mcp-hub-initialize", method: "initialize", params: { protocolVersion: MCP_PROTOCOL_VERSION, capabilities: {}, clientInfo: { name: "MCP Hub", version: "1.0.3" } } }),
+      body: JSON.stringify({ jsonrpc: "2.0", id: "mcp-hub-initialize", method: "initialize", params: { protocolVersion: MCP_PROTOCOL_VERSION, capabilities: {}, clientInfo: { name: "MCP Hub", version: "1.0.4" } } }),
     });
     const body = await response.text();
     if (!response.ok) return { status: response.status === 401 ? "auth-required" : "failed", title: response.status === 401 ? "Cần xác thực MCP" : "Không thể kết nối MCP", detail: responseDetail(response.status, body), httpStatus: response.status };

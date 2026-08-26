@@ -20,6 +20,7 @@ function normalizeMcpServer(server: McpServerConfig): McpServerConfig {
   return {
     ...server,
     authMode: server.authMode ?? "none",
+    apiKeyHeader: server.apiKeyHeader ?? "authorization",
     apiKeyStored: server.apiKeyStored ?? false,
     oauthTokenStored: server.oauthTokenStored ?? false,
     oauthIssuer: server.oauthIssuer ?? "",

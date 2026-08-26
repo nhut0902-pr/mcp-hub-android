@@ -119,5 +119,13 @@
 
 - [x] Thêm kiểm tra phiên bản và luồng tải/cài APK cập nhật trực tiếp trong app Android
 - [x] Điều tra và sửa lỗi AI Cloud không hoạt động, gồm proxy, endpoint và thông báo lỗi
-- [ ] Tạo project Vercel riêng làm AI Cloud proxy bảo mật và cấu hình biến API key
-- [ ] Gắn URL AI Cloud Vercel vào app, xác thực chat và phát hành V1.0.2
+- [x] Tạo project Vercel riêng làm AI Cloud proxy bảo mật và cấu hình biến API key
+- [x] Gắn URL AI Cloud Vercel vào app, xác thực chat và phát hành V1.0.2
+- [x] Chụp và bàn giao 6 ảnh màn hình đại diện cho website Vercel
+- [x] Đưa bộ 6 ảnh website vào README GitHub
+- [x] Sửa kiểm tra kết nối MCP và thông báo sau khi nhập URL, API key hoặc OAuth
+- [x] Thêm danh mục MCP công khai hỗ trợ API key hoặc OAuth để cấu hình nhanh
+- [ ] Đồng bộ số phiên bản hiển thị và metadata tự cập nhật V1.0.4
+- [x] Ẩn tên hạ tầng trong mô tả AI Cloud, chỉ hiển thị trạng thái bảo mật
+- [x] Nghiên cứu và thêm preset Composio MCP vào danh mục gợi ý
+- [x] Tích hợp AI Math vẽ đồ thị miền nghiệm từ biểu thức hoặc bất phương trình
