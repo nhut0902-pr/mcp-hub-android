@@ -20,7 +20,9 @@ function curvePath(inequality: ParsedInequality) {
   return points.join(" ");
 }
 
-export function AiMathGraph({ inequality }: { inequality: ParsedInequality }) {
+const boundaryColors = ["#FFB35C", "#8CD4FF", "#DBA5FF", "#A6E3A1", "#FF93B0", "#FFE58A"];
+
+export function AiMathGraph({ inequalities }: { inequalities: ParsedInequality[] }) {
   const cells = useMemo(() => {
     const cellWorld = (MAX - MIN) / CELLS;
     return Array.from({ length: CELLS * CELLS }, (_, index) => {
@@ -28,11 +30,10 @@ export function AiMathGraph({ inequality }: { inequality: ParsedInequality }) {
       const row = Math.floor(index / CELLS);
       const x = MIN + (column + 0.5) * cellWorld;
       const y = MAX - (row + 0.5) * cellWorld;
-      return { id: `${column}-${row}`, x: (column * SIZE) / CELLS, y: (row * SIZE) / CELLS, active: satisfies(inequality, x, y) };
+      return { id: `${column}-${row}`, x: (column * SIZE) / CELLS, y: (row * SIZE) / CELLS, active: inequalities.every((inequality) => satisfies(inequality, x, y)) };
     });
-  }, [inequality]);
+  }, [inequalities]);
   const grid = Array.from({ length: 11 }, (_, index) => index * (SIZE / 10));
-  const dashed = inequality.comparator === "<" || inequality.comparator === ">";
 
   return <View style={styles.wrap}><Svg width="100%" height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`}>
     <Rect width={SIZE} height={SIZE} fill="#171A1E" rx={16} />
@@ -41,12 +42,15 @@ export function AiMathGraph({ inequality }: { inequality: ParsedInequality }) {
     {grid.map((point) => <Line key={`h-${point}`} y1={point} y2={point} x1={0} x2={SIZE} stroke="#303741" strokeWidth={0.7} />)}
     <Line x1={0} x2={SIZE} y1={toY(0)} y2={toY(0)} stroke="#87929E" strokeWidth={1.2} />
     <Line x1={toX(0)} x2={toX(0)} y1={0} y2={SIZE} stroke="#87929E" strokeWidth={1.2} />
-    {inequality.kind === "linear" ? (Math.abs(inequality.b) > 1e-10
-      ? <Line x1={toX(MIN)} y1={toY((-inequality.a * MIN - inequality.c) / inequality.b)} x2={toX(MAX)} y2={toY((-inequality.a * MAX - inequality.c) / inequality.b)} stroke="#FFB35C" strokeWidth={2.3} strokeDasharray={dashed ? "6 5" : undefined} />
-      : <Line x1={toX(-inequality.c / inequality.a)} y1={0} x2={toX(-inequality.c / inequality.a)} y2={SIZE} stroke="#FFB35C" strokeWidth={2.3} strokeDasharray={dashed ? "6 5" : undefined} />)
-      : null}
-    {(inequality.kind === "quadratic" || inequality.kind === "absolute") ? <Path d={curvePath(inequality)} fill="none" stroke="#FFB35C" strokeWidth={2.3} strokeDasharray={dashed ? "6 5" : undefined} /> : null}
-    {inequality.kind === "circle" ? <Circle cx={toX(0)} cy={toY(0)} r={(Math.sqrt(inequality.radiusSquared) / (MAX - MIN)) * SIZE} fill="none" stroke="#FFB35C" strokeWidth={2.3} strokeDasharray={dashed ? "6 5" : undefined} /> : null}
+    {inequalities.map((inequality, index) => {
+      const dashed = inequality.comparator === "<" || inequality.comparator === ">";
+      const stroke = boundaryColors[index % boundaryColors.length];
+      if (inequality.kind === "linear") return Math.abs(inequality.b) > 1e-10
+        ? <Line key={`boundary-${index}`} x1={toX(MIN)} y1={toY((-inequality.a * MIN - inequality.c) / inequality.b)} x2={toX(MAX)} y2={toY((-inequality.a * MAX - inequality.c) / inequality.b)} stroke={stroke} strokeWidth={2.3} strokeDasharray={dashed ? "6 5" : undefined} />
+        : <Line key={`boundary-${index}`} x1={toX(-inequality.c / inequality.a)} y1={0} x2={toX(-inequality.c / inequality.a)} y2={SIZE} stroke={stroke} strokeWidth={2.3} strokeDasharray={dashed ? "6 5" : undefined} />;
+      if (inequality.kind === "quadratic" || inequality.kind === "absolute") return <Path key={`boundary-${index}`} d={curvePath(inequality)} fill="none" stroke={stroke} strokeWidth={2.3} strokeDasharray={dashed ? "6 5" : undefined} />;
+      return <Circle key={`boundary-${index}`} cx={toX(0)} cy={toY(0)} r={(Math.sqrt(inequality.radiusSquared) / (MAX - MIN)) * SIZE} fill="none" stroke={stroke} strokeWidth={2.3} strokeDasharray={dashed ? "6 5" : undefined} />;
+    })}
   </Svg></View>;
 }
 

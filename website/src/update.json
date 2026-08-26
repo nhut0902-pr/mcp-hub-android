@@ -1,6 +1,6 @@
 {
-  "version": "1.0.4",
-  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.4/MCP-Hub-v1.0.4.apk",
-  "notes": "Đồng bộ số phiên bản, bổ sung AI Math vẽ miền nghiệm, gợi ý Composio MCP và cải thiện thông tin AI Cloud.",
-  "publishedAt": "2026-08-26T13:40:00Z"
+  "version": "1.0.5",
+  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.5/MCP-Hub-v1.0.5.apk",
+  "notes": "AI Math hỗ trợ hệ bất phương trình, AI Cloud hiển thị Nhutbot 1.0 Flash và chiến dịch quà tặng Trung Thu.",
+  "publishedAt": "2026-08-26T15:10:00Z"
 }

@@ -157,6 +157,18 @@ export function parseInequality(raw: string): ParsedInequality {
   return result;
 }
 
+/** Parse a system separated by new lines or semicolons, for example: x + y <= 4; x >= 0; y >= 0. */
+export function parseInequalitySystem(raw: string): ParsedInequality[] {
+  const items = raw
+    .replace(/[{}]/g, "")
+    .split(/[;\n]+/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+  if (!items.length) throw new Error("Nhập ít nhất một bất phương trình.");
+  if (items.length > 6) throw new Error("Hệ chỉ hỗ trợ tối đa 6 bất phương trình để đồ thị luôn dễ đọc.");
+  return items.map(parseInequality);
+}
+
 export function evaluateBoundary(inequality: ParsedInequality, x: number, y: number) {
   switch (inequality.kind) {
     case "linear": return inequality.a * x + inequality.b * y + inequality.c;

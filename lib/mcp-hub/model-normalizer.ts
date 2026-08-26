@@ -28,7 +28,8 @@ export function normaliseModelsResponse(payload: unknown, providerId: string, up
     if (!isObject(item)) continue;
     const modelId = firstString(item, ["id", "model", "model_id", "slug", "name"]);
     if (!modelId) continue;
-    const displayName = firstString(item, ["name", "display_name", "title", "id", "model"]) ?? modelId;
+    const rawDisplayName = firstString(item, ["name", "display_name", "title", "id", "model"]) ?? modelId;
+    const displayName = providerId === "ai-cloud" && modelId === "gemini-1.5-flash" ? "Nhutbot 1.0 Flash" : rawDisplayName;
     const supportsThinking = hasReasoningMetadata(item) || (providerKind === "groq" && GROQ_REASONING_MODELS.has(modelId));
     const supportsWebSearch = providerKind === "openrouter" || (providerKind === "groq" && GROQ_WEB_MODELS.has(modelId));
     modelMap.set(modelId, { id: `${providerId}:${modelId}`, providerId, modelId, displayName, imageUrl: modelImageUrl(item), contextLength: firstNumber(item, ["context_length", "contextLength", "context_window", "contextWindow"]), supportsThinking, supportsWebSearch, updatedAt });

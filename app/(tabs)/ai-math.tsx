@@ -6,16 +6,16 @@ import { AiMathGraph } from "@/components/ai-math-graph";
 import { AppButton, Card, palette, StatusPill } from "@/components/hub-ui";
 import { ScreenContainer } from "@/components/screen-container";
 import { VideoScreenHeader } from "@/components/video-screen-header";
-import { comparatorLabel, kindLabel, parseInequality, type ParsedInequality } from "@/lib/ai-math/inequality";
+import { comparatorLabel, kindLabel, parseInequalitySystem, type ParsedInequality } from "@/lib/ai-math/inequality";
 
-const examples = ["2x + y ≤ 6", "y ≥ x^2 - 4", "y ≤ |x| + 2", "x^2 + y^2 ≤ 25"];
+const examples = ["2x + y ≤ 6", "y ≥ x^2 - 4", "y ≤ |x| + 2", "x^2 + y^2 ≤ 25", "x + y ≤ 6; x ≥ 0; y ≥ 0"];
 
 export default function AiMathScreen() {
   const [formula, setFormula] = useState(examples[0]);
-  const [inequality, setInequality] = useState<ParsedInequality>(() => parseInequality(examples[0]));
-  const summary = useMemo(() => `${kindLabel(inequality)} · biên ${comparatorLabel(inequality.comparator)}`, [inequality]);
+  const [inequalities, setInequalities] = useState<ParsedInequality[]>(() => parseInequalitySystem(examples[0]));
+  const summary = useMemo(() => inequalities.length === 1 ? `${kindLabel(inequalities[0])} · biên ${comparatorLabel(inequalities[0].comparator)}` : `Hệ ${inequalities.length} bất phương trình`, [inequalities]);
   const draw = () => {
-    try { setInequality(parseInequality(formula)); }
+    try { setInequalities(parseInequalitySystem(formula)); }
     catch (error) { Alert.alert("Không đọc được miền nghiệm", error instanceof Error ? error.message : "Hãy dùng một bất phương trình hợp lệ."); }
   };
 
@@ -31,18 +31,18 @@ export default function AiMathScreen() {
       </Card>
       <View style={styles.field}>
         <Text style={styles.label}>Bất phương trình</Text>
-        <TextInput value={formula} onChangeText={setFormula} onSubmitEditing={draw} returnKeyType="done" autoCapitalize="none" autoCorrect={false} style={styles.input} placeholder="Ví dụ: 2x + y ≤ 6" placeholderTextColor="#87929E" />
+          <TextInput value={formula} onChangeText={setFormula} onSubmitEditing={draw} returnKeyType="done" autoCapitalize="none" autoCorrect={false} multiline style={styles.input} placeholder="Ví dụ: x + y ≤ 6; x ≥ 0; y ≥ 0" placeholderTextColor="#87929E" />
       </View>
-      <View style={styles.examples}>{examples.map((item) => <Pressable key={item} onPress={() => { setFormula(item); setInequality(parseInequality(item)); }} style={({ pressed }) => [styles.example, { opacity: pressed ? 0.7 : 1 }]}><Text style={styles.exampleText}>{item}</Text></Pressable>)}</View>
+      <View style={styles.examples}>{examples.map((item) => <Pressable key={item} onPress={() => { setFormula(item); setInequalities(parseInequalitySystem(item)); }} style={({ pressed }) => [styles.example, { opacity: pressed ? 0.7 : 1 }]}><Text style={styles.exampleText}>{item}</Text></Pressable>)}</View>
       <AppButton label="Vẽ miền nghiệm" icon="query-stats" onPress={draw} />
       <Card style={styles.graphCard}>
         <View style={styles.graphHeading}><View><Text style={styles.graphTitle}>Miền nghiệm</Text><Text style={styles.formula}>{formula}</Text></View><StatusPill label={summary} tone="neutral" /></View>
-        <AiMathGraph inequality={inequality} />
+        <AiMathGraph inequalities={inequalities} />
         <View style={styles.legend}><View style={styles.legendItem}><View style={styles.fillDot} /><Text style={styles.legendText}>Miền thỏa mãn</Text></View><View style={styles.legendItem}><View style={styles.lineDot} /><Text style={styles.legendText}>Đường biên</Text></View></View>
       </Card>
       <Card style={styles.help}>
         <Text style={styles.helpTitle}>Dạng được hỗ trợ</Text>
-        <Text style={styles.helpText}>Tuyến tính: ax + by ≤ c. Parabol: y ≥ ax^2 + bx + c. Trị tuyệt đối: y ≤ |x| + c. Đường tròn: x^2 + y^2 ≤ r^2. Dấu nhỏ hơn hoặc lớn hơn tạo đường biên nét đứt.</Text>
+        <Text style={styles.helpText}>Nhập một BPT hoặc hệ bằng dấu chấm phẩy hay xuống dòng, ví dụ: x + y ≤ 6; x ≥ 0; y ≥ 0. Hệ sẽ tô phần giao các miền nghiệm. Hỗ trợ tuyến tính, parabol, trị tuyệt đối và đường tròn; dấu nghiêm dùng biên nét đứt.</Text>
       </Card>
     </ScrollView>
   </ScreenContainer>;

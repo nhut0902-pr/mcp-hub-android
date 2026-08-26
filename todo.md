@@ -125,7 +125,13 @@
 - [x] Đưa bộ 6 ảnh website vào README GitHub
 - [x] Sửa kiểm tra kết nối MCP và thông báo sau khi nhập URL, API key hoặc OAuth
 - [x] Thêm danh mục MCP công khai hỗ trợ API key hoặc OAuth để cấu hình nhanh
-- [ ] Đồng bộ số phiên bản hiển thị và metadata tự cập nhật V1.0.4
+- [x] Đồng bộ số phiên bản hiển thị và metadata tự cập nhật V1.0.4
 - [x] Ẩn tên hạ tầng trong mô tả AI Cloud, chỉ hiển thị trạng thái bảo mật
 - [x] Nghiên cứu và thêm preset Composio MCP vào danh mục gợi ý
 - [x] Tích hợp AI Math vẽ đồ thị miền nghiệm từ biểu thức hoặc bất phương trình
+- [x] Mở rộng AI Math để nhập và vẽ giao miền nghiệm của hệ bất phương trình
+- [x] Đổi nhãn model AI Cloud Gemini 1.5 Flash thành Nhutbot 1.0 Flash
+- [x] Tạo ảnh minh hoạ và bảng màu chiến dịch Trung Thu cho MCP Hub
+- [x] Tạo panel quà tặng Trung Thu tự hiển thị khi mở app, trong Chat và Cài đặt
+- [x] Hiển thị thời hạn chiến dịch, quyền lợi model Cloud và hướng dẫn sử dụng trong panel
+- [ ] Phát hành V1.0.5 gồm hệ bất phương trình và chiến dịch Trung Thu qua manifest cập nhật
