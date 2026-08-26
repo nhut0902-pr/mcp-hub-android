@@ -1,6 +1,15 @@
 export type ProviderKind = "nvidia" | "groq" | "openrouter" | "custom";
 export type McpTransport = "streamable-http" | "sse" | "stdio";
 export type McpAuthMode = "none" | "api-key" | "oauth";
+export type McpConnectionStatus = "idle" | "checking" | "connected" | "auth-required" | "failed" | "unsupported";
+
+export interface McpConnectionResult {
+  status: Exclude<McpConnectionStatus, "idle" | "checking">;
+  title: string;
+  detail: string;
+  httpStatus?: number;
+  detectedServerName?: string;
+}
 
 export interface ProviderConfig {
   id: string;
@@ -43,6 +52,10 @@ export interface McpServerConfig {
   oauthIssuer: string;
   oauthClientId: string;
   oauthScopes: string;
+  connectionStatus?: McpConnectionStatus;
+  connectionDetail?: string | null;
+  lastCheckedAt?: string | null;
+  detectedServerName?: string | null;
   enabled: boolean;
   updatedAt: string;
 }

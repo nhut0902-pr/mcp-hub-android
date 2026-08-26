@@ -1,6 +1,6 @@
 {
-  "version": "1.0.2",
-  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.2/MCP-Hub-v1.0.2.apk",
-  "notes": "Cập nhật AI Cloud với Gemini đã xác thực, sửa model không tương thích và bổ sung cập nhật APK ngay trong ứng dụng.",
-  "publishedAt": "2026-08-26T10:00:00Z"
+  "version": "1.0.3",
+  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.3/MCP-Hub-v1.0.3.apk",
+  "notes": "Thêm kiểm tra kết nối MCP sau khi lưu URL/API key/OAuth, thông báo lỗi rõ ràng và danh mục MCP OAuth/API key.",
+  "publishedAt": "2026-08-26T12:45:00Z"
 }

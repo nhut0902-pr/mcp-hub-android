@@ -25,6 +25,10 @@ function normalizeMcpServer(server: McpServerConfig): McpServerConfig {
     oauthIssuer: server.oauthIssuer ?? "",
     oauthClientId: server.oauthClientId ?? "",
     oauthScopes: server.oauthScopes ?? "",
+    connectionStatus: server.connectionStatus ?? "idle",
+    connectionDetail: server.connectionDetail ?? null,
+    lastCheckedAt: server.lastCheckedAt ?? null,
+    detectedServerName: server.detectedServerName ?? null,
   };
 }
 
@@ -72,6 +76,8 @@ export async function saveProviderApiKey(providerId: string, apiKey: string): Pr
 export async function removeProviderApiKey(providerId: string): Promise<void> { await removeSecret(keyForProvider(providerId)); }
 export async function saveMcpApiKey(serverId: string, value: string): Promise<void> { await writeSecret(keyForMcp(serverId, "api"), value); }
 export async function saveMcpOAuthToken(serverId: string, value: string): Promise<void> { await writeSecret(keyForMcp(serverId, "oauth"), value); }
+export async function getMcpApiKey(serverId: string): Promise<string | null> { return readSecret(keyForMcp(serverId, "api")); }
+export async function getMcpOAuthToken(serverId: string): Promise<string | null> { return readSecret(keyForMcp(serverId, "oauth")); }
 export async function removeMcpApiKey(serverId: string): Promise<void> { await removeSecret(keyForMcp(serverId, "api")); }
 export async function removeMcpOAuthToken(serverId: string): Promise<void> { await removeSecret(keyForMcp(serverId, "oauth")); }
 

@@ -1,9 +1,10 @@
 import { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 import { fetchProviderModels } from "./model-sync";
+import { testMcpConnection } from "./mcp-connection";
 import { normalizePinnedModelIds } from "./pinned-models";
-import { clearAllAppData, loadAppState, refreshSecretStatus, removeMcpApiKey, removeMcpOAuthToken, removeProviderApiKey, saveAppState, saveMcpApiKey, saveMcpOAuthToken, saveProviderApiKey } from "./storage";
-import { AppState, createInitialState, McpServerConfig, ModelRecord, ProviderConfig } from "./types";
+import { clearAllAppData, getMcpApiKey, getMcpOAuthToken, loadAppState, refreshSecretStatus, removeMcpApiKey, removeMcpOAuthToken, removeProviderApiKey, saveAppState, saveMcpApiKey, saveMcpOAuthToken, saveProviderApiKey } from "./storage";
+import { AppState, createInitialState, McpConnectionResult, McpServerConfig, ModelRecord, ProviderConfig } from "./types";
 
 type HubContextValue = {
   state: AppState;
@@ -18,6 +19,8 @@ type HubContextValue = {
   saveMcpServer: (server: McpServerConfig, apiKey?: string, oauthToken?: string) => Promise<void>;
   removeMcpServer: (serverId: string) => Promise<void>;
   toggleMcpServer: (serverId: string, enabled: boolean) => Promise<void>;
+  testingMcpId: string | null;
+  testMcpServer: (serverId: string, override?: McpServerConfig) => Promise<McpConnectionResult>;
   clearAll: () => Promise<void>;
 };
 
@@ -27,6 +30,7 @@ export function HubProvider({ children }: PropsWithChildren) {
   const [state, setState] = useState<AppState>(createInitialState);
   const [isLoading, setIsLoading] = useState(true);
   const [syncingProviderId, setSyncingProviderId] = useState<string | null>(null);
+  const [testingMcpId, setTestingMcpId] = useState<string | null>(null);
   useEffect(() => {
     let active = true;
     let secretRefreshTimer: ReturnType<typeof setTimeout> | null = null;
@@ -105,8 +109,21 @@ export function HubProvider({ children }: PropsWithChildren) {
   }, [persist, state]);
   const removeMcpServer = useCallback(async (serverId: string) => { await Promise.all([removeMcpApiKey(serverId), removeMcpOAuthToken(serverId)]); await persist({ ...state, mcpServers: state.mcpServers.filter((server) => server.id !== serverId) }); }, [persist, state]);
   const toggleMcpServer = useCallback(async (serverId: string, enabled: boolean) => { await persist({ ...state, mcpServers: state.mcpServers.map((server) => server.id === serverId ? { ...server, enabled } : server) }); }, [persist, state]);
+  const testMcpServer = useCallback(async (serverId: string, override?: McpServerConfig) => {
+    const server = override ?? state.mcpServers.find((item) => item.id === serverId);
+    if (!server) throw new Error("Không tìm thấy MCP server.");
+    setTestingMcpId(serverId);
+    try {
+      const credential = server.authMode === "api-key" ? await getMcpApiKey(server.id) : server.authMode === "oauth" ? await getMcpOAuthToken(server.id) : null;
+      const result = await testMcpConnection(server, credential);
+      const checkedServer: McpServerConfig = { ...server, connectionStatus: result.status, connectionDetail: result.detail, lastCheckedAt: new Date().toISOString(), detectedServerName: result.detectedServerName ?? null };
+      const exists = state.mcpServers.some((item) => item.id === serverId);
+      await persist({ ...state, mcpServers: exists ? state.mcpServers.map((item) => item.id === serverId ? checkedServer : item) : [...state.mcpServers, checkedServer] });
+      return result;
+    } finally { setTestingMcpId(null); }
+  }, [persist, state]);
   const clearAll = useCallback(async () => { await clearAllAppData(state); await persist(createInitialState()); }, [persist, state]);
-  const value = useMemo<HubContextValue>(() => ({ state, isLoading, syncingProviderId, saveProvider, removeProvider, clearProviderKey, toggleProvider, syncProvider, syncAll, saveMcpServer, removeMcpServer, toggleMcpServer, clearAll }), [clearAll, clearProviderKey, isLoading, removeMcpServer, removeProvider, saveMcpServer, saveProvider, state, syncAll, syncProvider, syncingProviderId, toggleMcpServer, toggleProvider]);
+  const value = useMemo<HubContextValue>(() => ({ state, isLoading, syncingProviderId, saveProvider, removeProvider, clearProviderKey, toggleProvider, syncProvider, syncAll, saveMcpServer, removeMcpServer, toggleMcpServer, testingMcpId, testMcpServer, clearAll }), [clearAll, clearProviderKey, isLoading, removeMcpServer, removeProvider, saveMcpServer, saveProvider, state, syncAll, syncProvider, syncingProviderId, testMcpServer, testingMcpId, toggleMcpServer, toggleProvider]);
   return <HubContext.Provider value={value}>{children}</HubContext.Provider>;
 }
 
