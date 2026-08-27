@@ -1,8 +1,8 @@
 # MCP Hub
 
-**MCP Hub** là ứng dụng Android tập trung cho việc quản lý provider AI, model đã ghim, server Model Context Protocol (MCP) và cuộc trò chuyện AI. Ứng dụng hỗ trợ NVIDIA NIM, Groq, OpenRouter, provider tuỳ chỉnh và AI Cloud qua proxy bảo mật.
+**MCP Hub** là ứng dụng Android tập trung cho việc quản lý provider AI, model đã ghim, server Model Context Protocol (MCP) và cuộc trò chuyện AI. Ứng dụng hỗ trợ NVIDIA NIM, Groq, OpenRouter, provider tuỳ chỉnh và AI Cloud được bảo vệ.
 
-> Phiên bản phát hành hiện tại: [V1.0.2](https://github.com/nhut0902-pr/mcp-hub-android/releases/tag/v1.0.2). API key của AI Cloud chỉ được giữ trong môi trường server, không nằm trong APK.
+> Phiên bản phát hành hiện tại: [V1.0.11](https://github.com/nhut0902-pr/mcp-hub-android/releases/tag/v1.0.11). API key của AI Cloud không nằm trong APK.
 
 ## Tải ứng dụng
 
@@ -23,7 +23,7 @@ Bạn có thể tải bản Android mới nhất từ [GitHub Releases](https://
 | Nhóm | Nội dung |
 |---|---|
 | **Provider & model** | Lưu API key trong SecureStore, đồng bộ model từ endpoint, tìm kiếm và ghim nhiều model. |
-| **AI Cloud** | Chat qua proxy Vercel riêng, dùng Gemini và không đưa API key vào thiết bị. |
+| **AI Cloud** | Chat với nhãn người dùng **Nhutbot 1.0 Flash**, không đưa API key vào thiết bị. |
 | **MCP** | Cấu hình Streamable HTTP, SSE hoặc stdio; API key/Bearer token và OAuth token được lưu bảo mật trên thiết bị. |
 | **Chat** | Thinking, web search, ảnh, tệp, camera, vị trí, bản đồ, archived chats và thông báo lỗi theo provider/model. |
 | **Cập nhật** | Kiểm tra release, tải APK và mở Android installer từ trong ứng dụng. |
@@ -47,12 +47,16 @@ MCP Hub phân biệt rõ cấu hình profile và kết nối thực tế. Với 
 ## Phát triển
 
 ```bash
-pnpm install
+pnpm install --frozen-lockfile
 pnpm dev
 pnpm test
 ```
 
-Website giới thiệu được tách riêng tại `website/`; proxy AI Cloud serverless nằm ở `ai-cloud-proxy/`. Hai project Vercel chỉ build đúng thư mục tương ứng, không chạy source Expo.
+Website giới thiệu và các thành phần dịch vụ được tách thành thư mục riêng, không chạy cùng source Expo.
+
+## Giấy phép và mã nguồn
+
+Từ V1.0.11, MCP Hub được phân phối theo **GNU General Public License v3.0**. Bản đầy đủ nằm trong [`COPYING`](COPYING); mã nguồn tương ứng và hướng dẫn build theo release tag nằm tại [`SOURCE_CODE.md`](SOURCE_CODE.md). Thông báo cho terminal runtime được lưu ở [`modules/mcp-hub-runtime/THIRD_PARTY_NOTICES.md`](modules/mcp-hub-runtime/THIRD_PARTY_NOTICES.md).
 
 ## Tài liệu tham khảo
 

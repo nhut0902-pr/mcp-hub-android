@@ -10,6 +10,10 @@ MCP Hub không thể nhúng hay sao chép runtime Termux vào APK. Tab Terminal 
 
 Tài liệu Android chính thức của OpenClaw mô tả app Android là **companion node**, không host Gateway; một OpenClaw Gateway phải đang chạy ngoài Android (macOS, Linux, hoặc WSL2) và được pair. Vì vậy không được quảng cáo rằng MCP Hub có thể cài/chạy Gateway OpenClaw trực tiếp trên điện thoại. MCP Hub có thể hỗ trợ một profile Provider/Gateway OpenClaw để kết nối endpoint do người dùng vận hành, lưu API key an toàn và chạy qua MCP hoặc API tương thích.
 
+Một dự án Android độc lập là `AidanPark/openclaw-android` công bố giấy phép MIT và mô tả cách chạy OpenClaw trong Android mà không dùng proot. Mã nguồn có thư mục Android native, các bản vá tương thích ELF/shebang và platform OpenClaw riêng. Đây là một implementation độc lập, không phải mã Android companion chính thức của OpenClaw. Vì vậy cần đánh giá dependency và tái dựng runtime native có chủ đích, thay vì sao chép giao diện hoặc chạy installer không được kiểm tra.
+
+Termux là một ứng dụng Android hoàn chỉnh gồm `app`, `terminal-emulator`, `terminal-view`, `termux-shared` và bootstrap rootfs. Repository cập nhật bảo mật RUN_COMMAND cho thấy nhúng/chạy shell phải duy trì điều kiện `allow-external-apps` và phân quyền rõ ràng. Nếu tái sử dụng mã GPL của Termux trong một APK phân phối, MCP Hub phải tuân thủ đầy đủ điều khoản GPL và công bố mã nguồn tương ứng; không được chỉ sao chép một vài tệp giao diện.
+
 Mã nguồn Android chính thức cũng xác nhận ứng dụng kết nối tới Gateway cho chat, voice, approval và khả năng thiết bị. Nó không thay đổi giới hạn kiến trúc này.
 
 ## Quyết định triển khai
@@ -22,3 +26,4 @@ Tab Terminal mới sẽ là giao diện theo phong cách terminal: lịch sử, 
 2. https://docs.openclaw.ai/platforms/android
 3. https://github.com/openclaw/openclaw/tree/main/apps/android
 4. https://raw.githubusercontent.com/termux/termux-app/master/termux-shared/src/main/java/com/termux/shared/termux/TermuxConstants.java
+5. https://github.com/AidanPark/openclaw-android

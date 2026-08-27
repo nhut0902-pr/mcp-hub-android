@@ -13,7 +13,7 @@ const timestamp = bundleId.split(".").pop()?.replace(/^t/, "") ?? "";
 const config = {
   name: "MCP Hub",
   slug: "mcp-provider-configurator",
-  version: "1.0.10",
+  version: "1.0.11",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
   scheme: [`manus${timestamp}`, "mcphub"],
@@ -48,7 +48,7 @@ const config = {
     ["expo-audio", { microphonePermission: "Allow $(PRODUCT_NAME) to access your microphone." }],
     ["expo-video", { supportsBackgroundPlayback: true, supportsPictureInPicture: true }],
     ["expo-splash-screen", { image: "./assets/images/splash-icon.png", imageWidth: 200, resizeMode: "contain", backgroundColor: "#F7F8FC", dark: { backgroundColor: "#111827" } }],
-    ["expo-build-properties", { android: { buildArchs: ["armeabi-v7a", "arm64-v8a"], minSdkVersion: 24 } }],
+    ["expo-build-properties", { android: { buildArchs: ["armeabi-v7a", "arm64-v8a"], minSdkVersion: 24, compileSdkVersion: 36, targetSdkVersion: 36, buildToolsVersion: "36.0.0" } }],
   ],
   experiments: { typedRoutes: true, reactCompiler: true },
   extra: { appName: "MCP Hub", logoUrl: "/manus-storage/mcp-hub-icon_ca900851.png", aiCloudProxyUrl: "https://mcp-hub-ai-cloud.vercel.app" },

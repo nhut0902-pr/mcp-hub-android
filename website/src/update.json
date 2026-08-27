@@ -1,6 +1,6 @@
 {
-  "version": "1.0.10",
-  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.10/MCP-Hub-v1.0.10.apk",
-  "notes": "Thêm tab Terminal riêng, Code Assistant, hướng dẫn Termux và provider ClawLink Gateway; cải thiện fallback MCP khi provider không trả tool call.",
-  "publishedAt": "2026-08-27T05:20:00Z"
+  "version": "1.0.11",
+  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.11/MCP-Hub-v1.0.11.apk",
+  "notes": "Bổ sung Terminal PTY native, thiết lập ClawLink Gateway cục bộ có kiểm tra integrity, foreground service và taskbar; kèm mã nguồn GPLv3 cùng thông báo bên thứ ba.",
+  "publishedAt": "2026-08-27T09:38:43Z"
 }

@@ -1,7 +1,13 @@
 {
   "name": "app-template",
-  "version": "1.0.0",
+  "version": "1.0.11",
   "private": true,
+  "license": "GPL-3.0-only",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nhut0902-pr/mcp-hub-android.git"
+  },
+  "homepage": "https://github.com/nhut0902-pr/mcp-hub-android",
   "main": "expo-router/entry",
   "scripts": {
     "dev": "concurrently -k \"pnpm dev:server\" \"pnpm dev:metro\"",
@@ -63,6 +69,7 @@
     "express": "^4.22.1",
     "jose": "6.1.0",
     "lottie-react-native": "~7.3.1",
+    "mcp-hub-runtime": "file:./modules/mcp-hub-runtime",
     "mysql2": "^3.16.0",
     "nativewind": "^4.2.1",
     "react": "19.1.0",

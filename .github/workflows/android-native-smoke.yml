@@ -1,0 +1,41 @@
+name: Verify Android native runtime
+
+on:
+  push:
+    branches: [native-runtime-wip]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  android-native-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Install JavaScript dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Generate Android project from Expo configuration
+        run: npx expo prebuild --platform android --no-install --clean
+      - name: Compile native terminal module
+        working-directory: android
+        run: ./gradlew :mcp-hub-runtime:assembleDebug --no-daemon --max-workers=2
+      - name: Assemble debug APK
+        working-directory: android
+        run: ./gradlew :app:assembleDebug --no-daemon --max-workers=2
+      - name: Upload debug APK for device testing
+        uses: actions/upload-artifact@v4
+        with:
+          name: mcp-hub-native-runtime-debug
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
