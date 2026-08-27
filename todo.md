@@ -162,4 +162,9 @@
 - [x] Phát hành V1.0.8: MCP Terminal, auto-run tool và panel Chat gọn
 - [x] Sửa nhãn phiên bản trong app còn hiển thị V1.0.7 sau khi cập nhật
 - [x] Hiển thị logo có fallback cho toàn bộ Provider và MCP server
-- [ ] Phát hành V1.0.9 đồng bộ version runtime và nhận diện Provider/MCP
+- [x] Phát hành V1.0.9 đồng bộ version runtime và nhận diện Provider/MCP
+- [x] Sửa thông báo Chat khi model không trả function call và ưu tiên đường gọi MCP khả dụng
+- [x] Thêm tab Terminal Android riêng, hiển thị tiến trình MCP và trợ lý mã
+- [x] Nghiên cứu cách tích hợp an toàn với Termux/OpenClaw trên Android
+- [x] Thêm provider OpenClaw với tên hiển thị và logo thương hiệu riêng
+- [ ] Phát hành bản cập nhật có Terminal, Code Assistant và ClawLink Gateway

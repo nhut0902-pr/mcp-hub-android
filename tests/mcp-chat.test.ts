@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { appendMcpToolResults, extractMcpToolCalls, functionNameForMcpTool, mcpCallMayChangeExternalData, toOpenAiMcpTools } from "../lib/mcp-hub/mcp-chat";
+import { appendMcpToolResults, extractMcpToolCalls, functionNameForMcpTool, mcpCallMayChangeExternalData, mcpStructuredFallbackInstruction, toOpenAiMcpTools } from "../lib/mcp-hub/mcp-chat";
 import type { McpToolDefinition } from "../lib/mcp-hub/mcp-connection";
 
 const tool: McpToolDefinition = { serverId: "github-main", serverName: "GitHub", name: "list_issues", description: "List issues", inputSchema: { type: "object", properties: { repo: { type: "string" } } } };
@@ -13,6 +13,11 @@ describe("MCP chat tools", () => {
   it("chỉ nhận tool call khớp tool MCP đã tải", () => {
     const response = { choices: [{ message: { tool_calls: [{ id: "call-1", function: { name: functionNameForMcpTool(tool), arguments: '{"repo":"owner/repo"}' } }, { id: "ignored", function: { name: "other", arguments: "{}" } }] } }] };
     expect(extractMcpToolCalls(response, [tool])).toEqual([{ id: "call-1", functionName: "mcp_github_main__list_issues", serverId: "github-main", serverName: "GitHub", toolName: "list_issues", description: "List issues", argumentsValue: { repo: "owner/repo" } }]);
+  });
+  it("nhận fallback có thẻ đóng khi provider không trả tool_calls", () => {
+    const response = { choices: [{ message: { content: `<mcp-call>{"name":"${functionNameForMcpTool(tool)}","arguments":{"repo":"owner/repo"}}</mcp-call>` } }] };
+    expect(extractMcpToolCalls(response, [tool])[0]).toMatchObject({ toolName: "list_issues", argumentsValue: { repo: "owner/repo" } });
+    expect(mcpStructuredFallbackInstruction([tool])).toContain(functionNameForMcpTool(tool));
   });
   it("đưa kết quả tool vào message role tool để AI tổng hợp", () => {
     const call = { id: "call-1", functionName: functionNameForMcpTool(tool), serverId: tool.serverId, serverName: tool.serverName, toolName: tool.name, description: tool.description, argumentsValue: {} };

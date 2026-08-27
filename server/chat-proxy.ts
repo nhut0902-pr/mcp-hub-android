@@ -1,7 +1,7 @@
 type ProviderChatInput = {
   apiBaseUrl: string;
   apiKey: string;
-  providerKind?: "nvidia" | "groq" | "openrouter" | "anthropic" | "gemini" | "openai" | "custom";
+  providerKind?: "nvidia" | "groq" | "openrouter" | "anthropic" | "gemini" | "openai" | "openclaw" | "custom";
   payload: Record<string, unknown>;
 };
 

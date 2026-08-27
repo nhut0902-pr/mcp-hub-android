@@ -5,6 +5,7 @@ describe("brand logos", () => {
   it("maps known provider brands to their logo assets", () => {
     expect(providerLogoUrl("openai", "OpenAI")).toContain("/openai.png");
     expect(providerLogoUrl("anthropic", "Claude")).toContain("/anthropic.png");
+    expect(providerLogoUrl("openclaw", "ClawLink Gateway")).toContain("mcp-hub-openclaw-terminal-logo");
     expect(providerLogoUrl("custom", "Nội bộ")).toBeNull();
   });
   it("maps MCP presets and preserves a visible fallback for unknown servers", () => {

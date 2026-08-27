@@ -1,6 +1,6 @@
 {
-  "version": "1.0.9",
-  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.9/MCP-Hub-v1.0.9.apk",
-  "notes": "Sửa phiên bản hiển thị trong app; thêm logo nhận diện và fallback cho mọi Provider và MCP server.",
-  "publishedAt": "2026-08-27T01:55:00Z"
+  "version": "1.0.10",
+  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.10/MCP-Hub-v1.0.10.apk",
+  "notes": "Thêm tab Terminal riêng, Code Assistant, hướng dẫn Termux và provider ClawLink Gateway; cải thiện fallback MCP khi provider không trả tool call.",
+  "publishedAt": "2026-08-27T05:20:00Z"
 }

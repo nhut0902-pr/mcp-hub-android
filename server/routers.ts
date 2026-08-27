@@ -23,7 +23,7 @@ export const appRouter = router({
     send: publicProcedure.input(z.object({
       apiBaseUrl: z.string().url(),
       apiKey: z.string().min(1).max(1024),
-      providerKind: z.enum(["nvidia", "groq", "openrouter", "anthropic", "gemini", "openai", "custom"]).optional(),
+      providerKind: z.enum(["nvidia", "groq", "openrouter", "anthropic", "gemini", "openai", "openclaw", "custom"]).optional(),
       payload: z.record(z.string(), z.unknown()),
     })).mutation(({ input }) => forwardProviderChat(input)),
   }),
