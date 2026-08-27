@@ -6,9 +6,17 @@ const MAX_TOKENS = 2048;
 function normalizeMessages(input) {
   if (!Array.isArray(input)) return null;
   const messages = input.slice(-MAX_MESSAGES).filter((message) => {
-    return message && (message.role === "system" || message.role === "user" || message.role === "assistant") && (typeof message.content === "string" || Array.isArray(message.content));
+    if (!message || !["system", "user", "assistant", "tool"].includes(message.role)) return false;
+    if (typeof message.content === "string" || Array.isArray(message.content)) return true;
+    return message.role === "assistant" && Array.isArray(message.tool_calls);
   });
   return messages.length ? messages : null;
+}
+
+function normalizeTools(input) {
+  if (!Array.isArray(input)) return undefined;
+  const tools = input.filter((tool) => tool && tool.type === "function" && typeof tool.function?.name === "string" && /^[a-zA-Z0-9_]{1,100}$/.test(tool.function.name) && typeof tool.function?.parameters === "object").slice(0, 24);
+  return JSON.stringify(tools).length <= 80_000 ? tools : undefined;
 }
 
 function jsonError(response, status, message) {
@@ -27,12 +35,14 @@ export default async function handler(request, response) {
   const maxTokens = Number.isFinite(requestedTokens) ? Math.max(16, Math.min(Math.floor(requestedTokens), MAX_TOKENS)) : 1024;
   const requestedTemperature = Number(request.body?.temperature);
   const temperature = Number.isFinite(requestedTemperature) ? Math.max(0, Math.min(requestedTemperature, 1.5)) : 0.7;
+  const tools = normalizeTools(request.body?.tools);
+  const toolChoice = tools && (request.body?.tool_choice === "auto" || request.body?.tool_choice === "none") ? request.body.tool_choice : undefined;
 
   try {
     const upstream = await fetch(GEMINI_ENDPOINT, {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, Accept: "application/json", "Content-Type": "application/json" },
-      body: JSON.stringify({ model: MODEL, stream: false, messages, max_tokens: maxTokens, temperature, top_p: request.body?.top_p }),
+      body: JSON.stringify({ model: MODEL, stream: false, messages, max_tokens: maxTokens, temperature, top_p: request.body?.top_p, ...(tools ? { tools } : {}), ...(toolChoice ? { tool_choice: toolChoice } : {}) }),
     });
     const raw = await upstream.text();
     response.setHeader("Cache-Control", "no-store");

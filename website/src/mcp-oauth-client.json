@@ -2,7 +2,7 @@
   "client_id": "https://mcp-hub-android.vercel.app/mcp-oauth-client.json",
   "client_name": "MCP Hub",
   "client_uri": "https://mcp-hub-android.vercel.app",
-  "redirect_uris": ["mcphub://mcp-oauth"],
+  "redirect_uris": ["manusmcpproviderconfigurator://mcp-oauth"],
   "grant_types": ["authorization_code", "refresh_token"],
   "response_types": ["code"],
   "token_endpoint_auth_method": "none"

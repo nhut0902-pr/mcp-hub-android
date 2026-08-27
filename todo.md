@@ -139,4 +139,17 @@
 - [x] Mở luồng đăng nhập OAuth của MCP trong trình duyệt và lưu kết quả xác thực an toàn
 - [x] Thực thi MCP tools đã kết nối từ Chat thay vì chỉ đưa profile vào ngữ cảnh
 - [x] Hiển thị tool MCP được gọi, kết quả và lỗi xác thực/không hỗ trợ trong Chat
-- [ ] Phát hành V1.0.6 gồm OAuth MCP và thực thi tool trong Chat qua manifest cập nhật
+- [x] Phát hành V1.0.6 gồm OAuth MCP và thực thi tool trong Chat qua manifest cập nhật
+- [x] Sửa callback OAuth MCP để không rơi vào trang lỗi sau khi đăng nhập thành công
+- [x] Sửa luồng gọi MCP tool khi AI không tự trả function call và hiển thị tiến trình rõ ràng
+- [x] Chuẩn hoá toàn bộ nhãn người dùng nhìn thấy thành Nhutbot 1.0 Flash
+- [x] Bổ sung nhập/đọc ảnh và tài liệu thật trong Chat, kèm thông báo lỗi có hướng dẫn
+- [x] Tạo giao diện trả lời code dễ đọc và xem trước HTML ngay trong app
+- [x] Nghiên cứu Thinking hiện hành và bổ sung Claude, Gemini, OpenAI vào provider
+- [x] Mở rộng AI Math giải bài, nhận ảnh bài toán và tự vẽ đồ thị từ ảnh
+- [ ] Đưa Copilots ra màn hình chính và tối ưu giao diện sáng/các trường nhập liệu
+- [x] Rà soát preset MCP để hỗ trợ OAuth chuẩn khi máy chủ công bố metadata
+- [x] Sửa luồng Chat để MCP tool được gọi khi model không tự phát function call
+- [x] Chuẩn hoá toàn bộ nhãn hiển thị Gemini 1.5 Flash thành Nhutbot 1.0 Flash
+- [x] Giảm xác nhận lặp lại, chỉ giữ xác nhận cho thao tác thay đổi dữ liệu bên ngoài
+- [ ] Phát hành V1.0.7 gồm sửa callback OAuth, MCP tool calling, Nhutbot và Chat nâng cao

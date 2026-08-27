@@ -5,7 +5,7 @@ import * as WebBrowser from "expo-web-browser";
 import type { McpServerConfig } from "./types";
 
 const MCP_CLIENT_ID = "https://mcp-hub-android.vercel.app/mcp-oauth-client.json";
-const MCP_REDIRECT_URI = "mcphub://mcp-oauth";
+const MCP_REDIRECT_URI = Linking.createURL("mcp-oauth");
 
 type ProtectedResourceMetadata = { authorization_servers?: string[]; scopes_supported?: string[] };
 type AuthorizationServerMetadata = { authorization_endpoint?: string; token_endpoint?: string; registration_endpoint?: string; client_id_metadata_document_supported?: boolean };

@@ -4,6 +4,7 @@ export type ChatAttachment = {
   label: string;
   uri?: string;
   dataUri?: string;
+  textContent?: string;
   mimeType?: string | null;
   size?: number | null;
   latitude?: number;
@@ -14,7 +15,7 @@ export type ChatMcpProfile = { id: string; name: string; transport: string; endp
 
 export function attachmentCaption(attachment: ChatAttachment): string {
   if (attachment.type === "location" && attachment.latitude !== undefined && attachment.longitude !== undefined) return `Vị trí hiện tại: ${attachment.latitude.toFixed(6)}, ${attachment.longitude.toFixed(6)}`;
-  if (attachment.type === "file") return `Tệp đính kèm: ${attachment.label}${attachment.mimeType ? ` (${attachment.mimeType})` : ""}`;
+  if (attachment.type === "file") return `Tệp đính kèm: ${attachment.label}${attachment.mimeType ? ` (${attachment.mimeType})` : ""}${attachment.textContent ? `\n\nNội dung tệp:\n${attachment.textContent}` : "\n\nTệp nhị phân/PDF chưa thể trích xuất trực tiếp. Hãy gửi ảnh từng trang để AI đọc chính xác."}`;
   return `Ảnh đính kèm: ${attachment.label}`;
 }
 

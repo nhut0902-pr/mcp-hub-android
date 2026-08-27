@@ -13,7 +13,7 @@ const timestamp = bundleId.split(".").pop()?.replace(/^t/, "") ?? "";
 const config = {
   name: "MCP Hub",
   slug: "mcp-provider-configurator",
-  version: "1.0.6",
+  version: "1.0.7",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
   scheme: [`manus${timestamp}`, "mcphub"],
@@ -35,11 +35,12 @@ const config = {
     predictiveBackGestureEnabled: false,
     package: bundleId,
     permissions: ["POST_NOTIFICATIONS", "ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION", "CAMERA", "REQUEST_INSTALL_PACKAGES"],
-    intentFilters: [{ action: "VIEW", autoVerify: true, data: [{ scheme: `manus${timestamp}`, host: "*" }, { scheme: "mcphub", host: "*" }], category: ["BROWSABLE", "DEFAULT"] }],
+    intentFilters: [{ action: "VIEW", autoVerify: true, data: [{ scheme: `manus${timestamp}`, host: "mcp-oauth" }, { scheme: "mcphub", host: "mcp-oauth" }], category: ["BROWSABLE", "DEFAULT"] }],
   },
   web: { bundler: "metro", output: "static", favicon: "./assets/images/favicon.png" },
   plugins: [
     "expo-router",
+    ["expo-web-browser", { experimentalLauncherActivity: true }],
     "expo-document-picker",
     ["expo-secure-store", { configureAndroidBackup: true }],
     ["expo-location", { locationWhenInUsePermission: "Allow $(PRODUCT_NAME) to use your location for chat tools." }],

@@ -1,6 +1,6 @@
 import type { McpToolCallResult, McpToolDefinition } from "./mcp-connection";
 
-export type McpProposedCall = { id: string; functionName: string; serverId: string; serverName: string; toolName: string; argumentsValue: Record<string, unknown> };
+export type McpProposedCall = { id: string; functionName: string; serverId: string; serverName: string; toolName: string; description: string; argumentsValue: Record<string, unknown> };
 
 function safePart(value: string): string { return value.replace(/[^a-zA-Z0-9_]/g, "_").slice(0, 45); }
 export function functionNameForMcpTool(tool: McpToolDefinition): string { return `mcp_${safePart(tool.serverId)}__${safePart(tool.name)}`; }
@@ -20,7 +20,7 @@ export function extractMcpToolCalls(response: unknown, tools: McpToolDefinition[
     try {
       const parsed = typeof value.function?.arguments === "string" && value.function.arguments.trim() ? JSON.parse(value.function.arguments) : {};
       if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return [];
-      return [{ id: typeof value.id === "string" ? value.id : `mcp-call-${index}`, functionName, serverId: tool.serverId, serverName: tool.serverName, toolName: tool.name, argumentsValue: parsed as Record<string, unknown> }];
+      return [{ id: typeof value.id === "string" ? value.id : `mcp-call-${index}`, functionName, serverId: tool.serverId, serverName: tool.serverName, toolName: tool.name, description: tool.description, argumentsValue: parsed as Record<string, unknown> }];
     } catch { return []; }
   });
 }
@@ -40,4 +40,8 @@ export function summarizeMcpResults(results: McpToolCallResult[]): string {
     const text = result.content.map((item) => typeof item === "object" && item && "text" in item ? String((item as { text?: unknown }).text ?? "") : JSON.stringify(item)).filter(Boolean).join("\n").slice(0, 1200);
     return `**${result.serverName} · ${result.toolName}**${result.isError ? " (báo lỗi)" : ""}\n${text || "Tool đã hoàn tất nhưng không có nội dung văn bản."}`;
   }).join("\n\n");
+}
+
+export function mcpCallMayChangeExternalData(call: McpProposedCall): boolean {
+  return /\b(create|update|delete|remove|archive|send|post|publish|write|edit|invite|share|upload|payment|transfer|cancel|close)\b/i.test(`${call.toolName} ${call.description}`);
 }

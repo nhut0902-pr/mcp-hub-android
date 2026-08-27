@@ -12,7 +12,7 @@ import { normaliseModelsResponse } from "@/lib/mcp-hub/model-normalizer";
 import { ProviderConfig, ProviderKind, providerKindLabel } from "@/lib/mcp-hub/types";
 import { trpc } from "@/lib/trpc";
 
-const kindOptions: ProviderKind[] = ["nvidia", "groq", "openrouter", "custom"];
+const kindOptions: ProviderKind[] = ["nvidia", "groq", "openrouter", "openai", "gemini", "anthropic", "custom"];
 type LoadResult = { status: "success" | "error"; title: string; detail: string; preview: string[] } | null;
 
 function timeLabel(value: string | null): string { return value ? new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }).format(new Date(value)) : "Chưa đồng bộ"; }

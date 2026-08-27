@@ -3,6 +3,13 @@ import type { ModelRecord, ProviderKind } from "./types";
 type JsonObject = Record<string, unknown>;
 const GROQ_REASONING_MODELS = new Set(["openai/gpt-oss-20b", "openai/gpt-oss-120b", "openai/gpt-oss-safeguard-20b", "qwen/qwen3.6-27b", "minimaxai/minimax-m2.7"]);
 const GROQ_WEB_MODELS = new Set(["groq/compound", "groq/compound-mini"]);
+function knownThinkingModel(modelId: string, providerKind: ProviderKind): boolean {
+  const id = modelId.toLowerCase();
+  if (providerKind === "openai") return /^(o[1-9]|o\d+-mini|gpt-5(?:$|-)|gpt-oss)/.test(id);
+  if (providerKind === "gemini") return /^gemini-(2\.5|3)(?:-|$)/.test(id);
+  if (providerKind === "anthropic") return /^claude-(3-7|4)(?:-|$)/.test(id);
+  return false;
+}
 function isObject(value: unknown): value is JsonObject { return typeof value === "object" && value !== null && !Array.isArray(value); }
 function asString(value: unknown): string | null { if (typeof value === "string" && value.trim()) return value.trim(); if (typeof value === "number") return String(value); return null; }
 function asNumber(value: unknown): number | null { if (typeof value === "number" && Number.isFinite(value)) return value; if (typeof value === "string" && value.trim() && Number.isFinite(Number(value))) return Number(value); return null; }
@@ -30,7 +37,7 @@ export function normaliseModelsResponse(payload: unknown, providerId: string, up
     if (!modelId) continue;
     const rawDisplayName = firstString(item, ["name", "display_name", "title", "id", "model"]) ?? modelId;
     const displayName = providerId === "ai-cloud" && modelId === "gemini-1.5-flash" ? "Nhutbot 1.0 Flash" : rawDisplayName;
-    const supportsThinking = hasReasoningMetadata(item) || (providerKind === "groq" && GROQ_REASONING_MODELS.has(modelId));
+    const supportsThinking = hasReasoningMetadata(item) || (providerKind === "groq" && GROQ_REASONING_MODELS.has(modelId)) || knownThinkingModel(modelId, providerKind);
     const supportsWebSearch = providerKind === "openrouter" || (providerKind === "groq" && GROQ_WEB_MODELS.has(modelId));
     modelMap.set(modelId, { id: `${providerId}:${modelId}`, providerId, modelId, displayName, imageUrl: modelImageUrl(item), contextLength: firstNumber(item, ["context_length", "contextLength", "context_window", "contextWindow"]), supportsThinking, supportsWebSearch, updatedAt });
   }
