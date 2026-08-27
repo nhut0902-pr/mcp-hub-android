@@ -11,7 +11,7 @@ import { McpHubTerminalView } from "mcp-hub-runtime";
 import { parseChatCompletion } from "@/lib/mcp-hub/chat";
 import { sendAiCloudChatFromProxy } from "@/lib/mcp-hub/ai-cloud-client";
 import { APP_VERSION } from "@/lib/mcp-hub/app-update";
-import { hasNativeMcpHubRuntime } from "@/lib/mcp-hub/native-runtime";
+import { getNativeRuntimeProbe, resolveMcpHubRuntime, type ClawLinkRuntimeStatus, type NativeRuntimeProbe } from "@/lib/mcp-hub/native-runtime";
 import { classifyTerminalCommand, loadTerminalHistory, saveTerminalHistory, type TerminalCommandEntry } from "@/lib/mcp-hub/terminal-history";
 
 const TERMUX_URL = "termux://";
@@ -20,17 +20,35 @@ const STARTER_COMMANDS = ["pwd", "ls -la", "id", "getprop ro.product.cpu.abi", "
 
 export default function TerminalScreen() {
   const router = useRouter();
-  const nativeTerminalAvailable = Platform.OS === "android" && hasNativeMcpHubRuntime;
+  const [nativeRuntime, setNativeRuntime] = useState(() => resolveMcpHubRuntime());
+  const [runtimeProbe, setRuntimeProbe] = useState<NativeRuntimeProbe>(() => getNativeRuntimeProbe(nativeRuntime));
+  const nativeTerminalAvailable = Platform.OS === "android" && Boolean(nativeRuntime);
   const [command, setCommand] = useState("");
   const [nativeCommand, setNativeCommand] = useState("");
   const [commandNonce, setCommandNonce] = useState(0);
+  const [restartNonce, setRestartNonce] = useState(0);
   const [history, setHistory] = useState<TerminalCommandEntry[]>([]);
   const [terminalDetail, setTerminalDetail] = useState(nativeTerminalAvailable ? "Đang mở PTY nội bộ…" : "Chế độ tương thích đang sẵn sàng.");
+  const [runtimeStatus, setRuntimeStatus] = useState<ClawLinkRuntimeStatus | null>(null);
+  const [installingRuntime, setInstallingRuntime] = useState(false);
   const [codeRequest, setCodeRequest] = useState("");
   const [codeReply, setCodeReply] = useState("");
   const [askingCode, setAskingCode] = useState(false);
 
-  useEffect(() => { void loadTerminalHistory().then(setHistory); }, []);
+  useEffect(() => {
+    void loadTerminalHistory().then(setHistory);
+    // Retry once after the JS bundle has mounted. Standalone APKs resolve immediately; this
+    // additionally protects development builds where Expo's native bridge starts late.
+    const retry = setTimeout(() => {
+      const runtime = resolveMcpHubRuntime();
+      setNativeRuntime(runtime);
+      setRuntimeProbe(getNativeRuntimeProbe(runtime));
+    }, 0);
+    return () => clearTimeout(retry);
+  }, []);
+  useEffect(() => {
+    if (nativeTerminalAvailable && nativeRuntime) setRuntimeStatus(nativeRuntime.getRuntimeStatus());
+  }, [nativeRuntime, nativeTerminalAvailable]);
 
   const appendHistory = async (entry: TerminalCommandEntry) => {
     const next = [...history, entry].slice(-60);
@@ -38,9 +56,32 @@ export default function TerminalScreen() {
     await saveTerminalHistory(next);
   };
 
+  const installTerminalRuntime = async () => {
+    if (!nativeRuntime || installingRuntime) return;
+    setInstallingRuntime(true);
+    setTerminalDetail("Đang tải và kiểm tra Terminal bootstrap…");
+    try {
+      const status = await nativeRuntime.installTerminalBootstrap();
+      setRuntimeStatus(status);
+      setTerminalDetail(status.detail);
+      if (status.state === "ready") {
+        setRestartNonce((value) => value + 1);
+        Alert.alert("Terminal đã sẵn sàng", "Đã cài runtime nội bộ. Bạn có thể dùng pkg install python, nodejs hoặc các gói hỗ trợ khác.");
+      } else Alert.alert("Không thể cài runtime", status.detail);
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : "lỗi không xác định";
+      setTerminalDetail(detail);
+      Alert.alert("Không thể cài runtime", detail);
+    } finally { setInstallingRuntime(false); }
+  };
+
   const runCommand = async () => {
     const cleaned = command.trim();
     if (!cleaned) { Alert.alert("Chưa có lệnh", "Nhập một lệnh để chạy trong Terminal."); return; }
+    if (nativeTerminalAvailable && /^(pkg|apt|dpkg)\b/i.test(cleaned) && runtimeStatus?.state !== "ready") {
+      Alert.alert("Cần cài runtime Terminal", "Lệnh quản lý thư viện cần môi trường nội bộ có pkg. Hãy bấm “Cài môi trường Terminal” trước, rồi chạy lại lệnh này.");
+      return;
+    }
     const risk = classifyTerminalCommand(cleaned);
     const entry: TerminalCommandEntry = {
       id: `terminal-${Date.now()}`,
@@ -87,8 +128,9 @@ export default function TerminalScreen() {
   return <ScreenContainer edges={["top", "bottom", "left", "right"]}><View style={styles.screen}>
     <View style={styles.header}><Pressable onPress={() => router.replace("/chat" as never)} style={styles.iconButton}><MaterialIcons name="arrow-back-ios-new" size={19} color={palette.text} /></Pressable><View style={styles.headerTitle}><View style={styles.headerLogo}><MaterialIcons name="terminal" color="#FFFFFF" size={17} /></View><View><Text style={styles.title}>Terminal</Text><Text style={styles.version}>MCP Hub · V{APP_VERSION}</Text></View></View><Pressable onPress={() => router.push("/clawlink" as never)} style={styles.iconButton}><MaterialIcons name="dns" size={22} color="#79BFFF" /></Pressable></View>
     <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
-      <Card style={styles.hero}><View style={styles.heroRow}><View style={styles.heroIcon}><MaterialIcons name="terminal" color="#73D6AA" size={23} /></View><View style={{ flex: 1 }}><Text style={styles.heroTitle}>{nativeTerminalAvailable ? "Terminal nội bộ" : "Terminal compatibility"}</Text><Text style={styles.heroDetail}>{nativeTerminalAvailable ? "PTY đang chạy trong APK MCP Hub với shell Android và thư mục riêng của ứng dụng. Nhập lệnh trực tiếp bên dưới." : "Giao diện, nhật ký và Code Assistant vẫn hoạt động. Terminal PTY sẽ có trong APK Android native, còn web giữ chế độ tương thích."}</Text></View></View><View style={styles.chips}><StatusPill label={nativeTerminalAvailable ? "Android PTY" : "Fallback an toàn"} tone={nativeTerminalAvailable ? "success" : "neutral"} /><StatusPill label="Nhật ký cục bộ" tone="neutral" /></View></Card>
-      {nativeTerminalAvailable ? <View style={styles.nativeShell}><View style={styles.nativeShellHead}><MaterialIcons name="terminal" color="#73D6AA" size={16} /><Text style={styles.nativeShellTitle}>Phiên terminal nội bộ</Text><Text numberOfLines={1} style={styles.nativeShellState}>{terminalDetail}</Text></View><McpHubTerminalView style={styles.nativeTerminal} command={nativeCommand} commandNonce={commandNonce} fontSize={14} onSessionState={(event) => setTerminalDetail(event.nativeEvent.detail)} /></View> : null}
+      <Card style={styles.hero}><View style={styles.heroRow}><View style={styles.heroIcon}><MaterialIcons name="terminal" color="#73D6AA" size={23} /></View><View style={{ flex: 1 }}><Text style={styles.heroTitle}>{nativeTerminalAvailable ? "Terminal nội bộ" : "Terminal compatibility"}</Text><Text style={styles.heroDetail}>{nativeTerminalAvailable ? "PTY đang chạy trong APK MCP Hub với shell Android và thư mục riêng của ứng dụng. Nhập lệnh trực tiếp bên dưới." : runtimeProbe.executionEnvironment === "storeClient" ? "Bạn đang mở bằng Expo Go nên không thể nạp Terminal PTY tùy chỉnh. Hãy cài APK MCP Hub để dùng Terminal nội bộ." : "Bridge Terminal Android chưa sẵn sàng trong phiên này. Bản APK cài đặt có registry native; dùng thông tin chẩn đoán bên dưới nếu trạng thái này còn xuất hiện."}</Text></View></View><View style={styles.chips}><StatusPill label={nativeTerminalAvailable ? "Android PTY" : runtimeProbe.executionEnvironment === "storeClient" ? "Expo Go" : "Bridge chưa sẵn sàng"} tone={nativeTerminalAvailable ? "success" : "neutral"} /><StatusPill label="Nhật ký cục bộ" tone="neutral" /></View>{!nativeTerminalAvailable ? <Text selectable style={styles.heroDetail}>Nền tảng: {runtimeProbe.platform} · Môi trường: {runtimeProbe.executionEnvironment} · Bridge: {runtimeProbe.bridgeAvailable ? "có" : "chưa có"}</Text> : null}</Card>
+      {nativeTerminalAvailable && runtimeStatus?.state !== "ready" ? <Card style={styles.clawCard}><View style={styles.heroRow}><View style={styles.heroIcon}><MaterialIcons name="download-for-offline" color="#80C8FF" size={22} /></View><View style={{ flex: 1 }}><Text style={styles.clawTitle}>Cài môi trường Terminal</Text><Text style={styles.clawDetail}>Terminal hiện là shell Android tối thiểu nên chưa có `pkg`. Tải bootstrap arm64 đã kiểm tra SHA-256 để dùng apt/pkg và cài thư viện trong thư mục riêng của MCP Hub.</Text></View></View><AppButton label={installingRuntime ? "Đang cài môi trường…" : "Cài môi trường Terminal"} icon="download" loading={installingRuntime} disabled={installingRuntime} onPress={() => void installTerminalRuntime()} /></Card> : null}
+      {nativeTerminalAvailable ? <View style={styles.nativeShell}><View style={styles.nativeShellHead}><MaterialIcons name="terminal" color="#73D6AA" size={16} /><Text style={styles.nativeShellTitle}>Phiên terminal nội bộ</Text><Text numberOfLines={1} style={styles.nativeShellState}>{terminalDetail}</Text></View><McpHubTerminalView style={styles.nativeTerminal} command={nativeCommand} commandNonce={commandNonce} restartNonce={restartNonce} fontSize={14} onSessionState={(event) => setTerminalDetail(event.nativeEvent.detail)} /></View> : null}
       <View style={styles.sectionHead}><Text style={styles.sectionTitle}>Lệnh</Text><Text style={styles.sectionMeta}>{nativeTerminalAvailable ? "Chạy trong MCP Hub" : "Sao chép tương thích"}</Text></View>
       <View style={styles.commandPanel}><Text style={styles.prompt}>$</Text><TextInput value={command} onChangeText={setCommand} style={styles.commandInput} placeholder="Ví dụ: ls -la" placeholderTextColor="#77838D" multiline autoCapitalize="none" autoCorrect={false} /></View>
       <View style={styles.presetRow}>{STARTER_COMMANDS.map((item) => <Pressable key={item} onPress={() => setCommand(item)} style={styles.preset}><Text style={styles.presetText}>{item}</Text></Pressable>)}</View>

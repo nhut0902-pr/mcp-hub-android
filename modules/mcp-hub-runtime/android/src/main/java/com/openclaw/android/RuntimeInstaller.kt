@@ -64,6 +64,8 @@ class RuntimeInstaller(private val context: Context) {
       val shell = File(staging, "bin/bash").takeIf { it.isFile } ?: File(staging, "bin/sh")
       require(shell.isFile) { "Bootstrap thiếu bin/bash hoặc bin/sh sau khi giải nén." }
       configureAppPrivatePaths(staging, prefix)
+      rewriteTermuxScriptPaths(staging, prefix)
+      require(File(staging, "bin/pkg").isFile) { "Bootstrap thiếu lệnh pkg sau khi giải nén." }
       markExecutableTree(staging)
 
       RuntimeStatusStore.set(context, "installing", "Đang kích hoạt runtime trong vùng riêng của MCP Hub.")
@@ -172,6 +174,9 @@ class RuntimeInstaller(private val context: Context) {
 
   private fun configureAppPrivatePaths(staging: File, finalPrefix: File) {
     val appDataDir = context.filesDir.parentFile?.absolutePath ?: context.filesDir.absolutePath
+    val runtimeRoot = finalPrefix.parentFile ?: context.filesDir
+    val home = File(runtimeRoot, "home").apply { mkdirs() }
+    val packageCache = File(context.cacheDir, "termux").apply { mkdirs() }
     val oldPrefix = "/data/data/com.termux/files/usr"
     val status = File(staging, "var/lib/dpkg/status")
     if (status.isFile) {
@@ -182,6 +187,7 @@ class RuntimeInstaller(private val context: Context) {
     File(staging, "var/cache/apt").mkdirs()
     File(staging, "var/log/apt").mkdirs()
     File(staging, "var/lib/dpkg").mkdirs()
+    File(packageCache, "apt/archives").mkdirs()
     File(aptDir, "apt.conf").writeText(
       """
       Dir "/";
@@ -196,7 +202,6 @@ class RuntimeInstaller(private val context: Context) {
       Dir::Bin::Methods "${finalPrefix.absolutePath}/lib/apt/methods/";
       """.trimIndent(),
     )
-    val runtimeRoot = finalPrefix.parentFile ?: context.filesDir
     val environment = File(staging, "etc/profile.d/mcp-hub-runtime.sh")
     environment.parentFile?.mkdirs()
     environment.writeText(
@@ -209,11 +214,34 @@ class RuntimeInstaller(private val context: Context) {
       export TERMUX__ROOTFS="${runtimeRoot.absolutePath}"
       export TERMUX_APP__DATA_DIR="$appDataDir"
       export TERMUX_APP__LEGACY_DATA_DIR="/data/data/com.termux"
+      export TERMUX_APP_PACKAGE_MANAGER="apt"
+      export TERMUX_MAIN_PACKAGE_FORMAT="debian"
       export APT_CONFIG="${finalPrefix.absolutePath}/etc/apt/apt.conf"
       export DPKG_ADMINDIR="${finalPrefix.absolutePath}/var/lib/dpkg"
       export DPKG_ROOT="${finalPrefix.absolutePath}"
       """.trimIndent(),
     )
+  }
+
+  /** Rewrites only UTF-8 shebang scripts; ELF/binary files are deliberately never modified. */
+  private fun rewriteTermuxScriptPaths(staging: File, finalPrefix: File) {
+    val oldPrefix = "/data/data/com.termux/files/usr"
+    val oldHome = "/data/data/com.termux/files/home"
+    val oldCache = "/data/data/com.termux/cache"
+    val runtimeRoot = finalPrefix.parentFile ?: context.filesDir
+    val replacements = listOf(
+      oldPrefix to finalPrefix.absolutePath,
+      oldHome to File(runtimeRoot, "home").absolutePath,
+      oldCache to File(context.cacheDir, "termux").absolutePath,
+      "/data/data/com.termux" to (context.filesDir.parentFile?.absolutePath ?: context.filesDir.absolutePath),
+    )
+    staging.walkTopDown().filter { it.isFile && it.length() <= 512 * 1024 }.forEach { file ->
+      val bytes = try { file.readBytes() } catch (_: Exception) { return@forEach }
+      if (bytes.size < 2 || bytes[0] != '#'.code.toByte() || bytes[1] != '!'.code.toByte() || bytes.any { it == 0.toByte() }) return@forEach
+      val original = bytes.toString(Charsets.UTF_8)
+      val rewritten = replacements.fold(original) { value, (from, to) -> value.replace(from, to) }
+      if (rewritten != original) file.writeText(rewritten)
+    }
   }
 
   private fun sha256(file: File): String {

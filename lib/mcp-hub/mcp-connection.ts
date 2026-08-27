@@ -1,4 +1,5 @@
 import { buildMcpAuthHeaders } from "./mcp-auth";
+import { APP_VERSION } from "./app-update-manifest";
 import type { McpConnectionResult, McpServerConfig } from "./types";
 
 const TIMEOUT_MS = 12_000;
@@ -93,7 +94,7 @@ async function initializeSession(server: McpServerConfig, credential: string | n
     jsonrpc: "2.0",
     id: `mcp-hub-init-${Date.now()}`,
     method: "initialize",
-    params: { protocolVersion: MCP_PROTOCOL_VERSION, capabilities: {}, clientInfo: { name: "MCP Hub", version: "1.0.9" } },
+    params: { protocolVersion: MCP_PROTOCOL_VERSION, capabilities: {}, clientInfo: { name: "MCP Hub", version: APP_VERSION } },
   });
   if (initialized.payload?.error) throw new Error(`MCP từ chối initialize: ${JSON.stringify(initialized.payload.error).slice(0, 180)}`);
   if (initialized.sessionId) {

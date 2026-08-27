@@ -31,6 +31,7 @@ class McpHubTerminalView(context: Context, @Suppress("UNUSED_PARAMETER") appCont
   private var activeSession: TerminalSession? = null
   private var pendingCommand: String? = null
   private var terminalFontSize = 14
+  private var lastRestartNonce = 0
 
   init {
     setBackgroundColor(Color.rgb(12, 18, 25))
@@ -51,6 +52,18 @@ class McpHubTerminalView(context: Context, @Suppress("UNUSED_PARAMETER") appCont
     activeSession?.write(command)
     activeSession?.write("\r")
     emit("running", "Đã gửi lệnh vào phiên PTY cục bộ.")
+  }
+
+  /** Starts a fresh PTY so a newly installed app-private prefix is selected instead of /system/bin/sh. */
+  fun restartSession(nonce: Int) {
+    if (nonce == lastRestartNonce) return
+    lastRestartNonce = nonce
+    activeSession?.finishIfRunning()
+    activeSession = null
+    post {
+      ensureSession()
+      emit("ready", "Đã chuyển sang phiên Terminal mới; runtime đã cài sẽ được dùng nếu khả dụng.")
+    }
   }
 
   fun setTerminalFontSize(fontSize: Int) {
@@ -82,6 +95,8 @@ class McpHubTerminalView(context: Context, @Suppress("UNUSED_PARAMETER") appCont
       "TERMUX__ROOTFS=${runtimeRoot.absolutePath}",
       "TERMUX_APP__DATA_DIR=${context.filesDir.parentFile?.absolutePath ?: context.filesDir.absolutePath}",
       "TERMUX_APP__LEGACY_DATA_DIR=/data/data/com.termux",
+      "TERMUX_APP_PACKAGE_MANAGER=apt",
+      "TERMUX_MAIN_PACKAGE_FORMAT=debian",
       "APT_CONFIG=${prefix.absolutePath}/etc/apt/apt.conf",
       "DPKG_ADMINDIR=${prefix.absolutePath}/var/lib/dpkg",
       "DPKG_ROOT=${prefix.absolutePath}",

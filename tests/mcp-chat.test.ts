@@ -19,6 +19,16 @@ describe("MCP chat tools", () => {
     expect(extractMcpToolCalls(response, [tool])[0]).toMatchObject({ toolName: "list_issues", argumentsValue: { repo: "owner/repo" } });
     expect(mcpStructuredFallbackInstruction([tool])).toContain(functionNameForMcpTool(tool));
   });
+  it("nhận function_call kiểu cũ và Gemini functionCall", () => {
+    const legacy = { choices: [{ message: { function_call: { name: functionNameForMcpTool(tool), arguments: '{"repo":"owner/repo"}' } } }] };
+    const gemini = { candidates: [{ content: { parts: [{ functionCall: { name: functionNameForMcpTool(tool), args: { repo: "owner/repo" } } }] } }] };
+    expect(extractMcpToolCalls(legacy, [tool])[0]).toMatchObject({ toolName: "list_issues" });
+    expect(extractMcpToolCalls(gemini, [tool])[0]).toMatchObject({ argumentsValue: { repo: "owner/repo" } });
+  });
+  it("nhận JSON fallback cân bằng ngay cả khi provider bỏ thẻ đóng", () => {
+    const response = { choices: [{ message: { content: `Sẽ gọi tool: <mcp-call>{"name":"${functionNameForMcpTool(tool)}","arguments":{}}` } }] };
+    expect(extractMcpToolCalls(response, [tool])[0]).toMatchObject({ toolName: "list_issues", argumentsValue: {} });
+  });
   it("đưa kết quả tool vào message role tool để AI tổng hợp", () => {
     const call = { id: "call-1", functionName: functionNameForMcpTool(tool), serverId: tool.serverId, serverName: tool.serverName, toolName: tool.name, description: tool.description, argumentsValue: {} };
     const next = appendMcpToolResults({ messages: [{ role: "user", content: "Liệt kê issue" }] }, { choices: [{ message: { role: "assistant", tool_calls: [] } }] }, [call], [{ serverId: tool.serverId, serverName: tool.serverName, toolName: tool.name, content: [{ type: "text", text: "one" }], isError: false }]);

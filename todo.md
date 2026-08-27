@@ -138,9 +138,9 @@
 - [x] Phát hành V1.0.8: MCP Terminal, auto-run tool và panel Chat gọn
 - [x] Phát hành V1.0.9: đồng bộ nhãn phiên bản runtime và logo Provider/MCP
 - [x] Phát hành V1.0.10: Terminal, Code Assistant, ClawLink Gateway và fallback MCP
-- [ ] Rà soát mã nguồn, giấy phép và đường build để nhúng terminal kiểu Termux vào APK
-- [ ] Rà soát runtime Android phù hợp để dựng ClawLink Gateway kiểu OpenClaw ngay trên điện thoại
-- [ ] Xây dựng native installer/runtime Linux-Node có trạng thái cài đặt, log và foreground service
+- [x] Rà soát mã nguồn, giấy phép và đường build để nhúng terminal kiểu Termux vào APK
+- [x] Rà soát runtime Android phù hợp để dựng ClawLink Gateway kiểu OpenClaw ngay trên điện thoại
+- [x] Xây dựng native installer/runtime Linux-Node có trạng thái cài đặt, log và foreground service
 - [x] Tạo tab tác vụ cố định cho Terminal và ClawLink Gateway
 - [ ] Kiểm thử APK native runtime trên Android trước khi phát hành
 - [x] Bổ sung hướng dẫn trực tiếp về URL, API key, OAuth và endpoint per-user Composio
@@ -175,13 +175,20 @@
 - [x] Thêm tab Terminal Android riêng, hiển thị tiến trình MCP và trợ lý mã
 - [x] Nghiên cứu cách tích hợp an toàn với Termux/OpenClaw trên Android
 - [x] Thêm provider OpenClaw với tên hiển thị và logo thương hiệu riêng
-- [ ] Phát hành bản cập nhật có Terminal, Code Assistant và ClawLink Gateway
-- [ ] Bảo toàn Chat, MCP, Provider, AI Math, OAuth và mọi mã nguồn hiện có; chỉ bổ sung mô-đun native độc lập
+- [x] Phát hành bản cập nhật có Terminal, Code Assistant và ClawLink Gateway
+- [x] Bảo toàn Chat, MCP, Provider, AI Math, OAuth và mọi mã nguồn hiện có; chỉ bổ sung mô-đun native độc lập
 - [x] Hoàn thiện mô-đun Expo `mcp-hub-runtime` với TerminalView/PTY Android thật, tương thích Expo prebuild sạch
 - [ ] Cài runtime ClawLink vào sandbox ứng dụng theo artifact được pin và kiểm tra SHA-256, giải nén an toàn vào staging
 - [ ] Khởi chạy/dừng OpenClaw-compatible Gateway cục bộ bằng foreground service sau khi runtime được xác minh
 - [x] Thêm màn ClawLink và lối vào taskbar cho Terminal/ClawLink mà không thay thế điều hướng MCP Hub hiện hữu
 - [ ] Rà soát giấy phép từng file terminal đã vendor và kèm đầy đủ thông báo/source offer trước khi phát hành APK
-- [ ] Chuẩn bị và phát hành V1.0.11 sau khi APK native, kiểm thử thiết bị và điều kiện giấy phép được xác minh
-- [ ] Áp dụng GPLv3 cho V1.0.11 theo xác nhận của người dùng, kèm mã nguồn tương ứng và thông báo bên thứ ba
-- [ ] Sửa workflow Android dùng duy nhất phiên bản pnpm từ package metadata để build V1.0.11 không dừng sớm
+- [x] Chuẩn bị và phát hành V1.0.11: APK build GitHub Actions, source GPLv3 và manifest cập nhật đã xác minh; kiểm thử thiết bị vẫn còn theo dõi riêng
+- [x] Áp dụng GPLv3 cho V1.0.11 theo xác nhận của người dùng, kèm mã nguồn tương ứng và thông báo bên thứ ba
+- [x] Sửa workflow Android dùng duy nhất phiên bản pnpm từ package metadata để build V1.0.11 không dừng sớm
+- [x] Sửa Terminal nội bộ: thêm bootstrap package manager, rewrite prefix script an toàn và khởi động lại PTY sau cài đặt
+- [x] Thêm AI Gia sư giải bài theo từng bước từ câu hỏi văn bản và chuyển lời giải sang Flashcard cục bộ
+- [x] Thêm Flashcard do AI tạo, có bộ thẻ, lật thẻ, ôn tập và lưu cục bộ
+- [x] Củng cố prompt, fallback và vòng lặp thực thi để AI provider gọi MCP tool đã kết nối thay vì chỉ mô tả
+- [ ] Sửa APK Android rơi vào Terminal compatibility do mô-đun McpHubRuntime không được nhận diện; chỉ dùng fallback trên web/Expo Go
+- [x] Thêm retry/probe cho bridge Terminal để phân biệt Expo Go/web preview với APK Android native và xác minh registry trên APK phát hành
+- [x] Đồng bộ metadata Gradle của `mcp-hub-runtime` với package source 0.1.1

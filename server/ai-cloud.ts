@@ -22,6 +22,19 @@ function normalizeAiCloudTools(input: unknown): unknown[] | undefined {
   return JSON.stringify(tools).length <= 80_000 ? tools : undefined;
 }
 
+function normalizeAiCloudToolChoice(input: unknown, tools: unknown[] | undefined): unknown {
+  if (!tools?.length) return undefined;
+  if (input === "auto" || input === "none" || input === "required") return input;
+  if (!input || typeof input !== "object") return undefined;
+  const value = input as { type?: unknown; function?: { name?: unknown } };
+  const name = value.function?.name;
+  const validName = typeof name === "string" && tools.some((tool) => {
+    const functionName = tool && typeof tool === "object" ? (tool as { function?: { name?: unknown } }).function?.name : undefined;
+    return functionName === name;
+  });
+  return value.type === "function" && validName ? { type: "function", function: { name } } : undefined;
+}
+
 async function callAiCloud(url: string, init: RequestInit = {}): Promise<unknown> {
   const response = await fetch(url, {
     ...init,
@@ -47,6 +60,7 @@ export async function listAiCloudModels(): Promise<unknown> {
 
 export function sendAiCloudChat(payload: Record<string, unknown>): Promise<unknown> {
   const tools = normalizeAiCloudTools(payload.tools);
+  const toolChoice = normalizeAiCloudToolChoice(payload.tool_choice, tools);
   const safePayload = {
     model: AI_CLOUD_DEFAULT_MODEL,
     stream: false,
@@ -55,7 +69,7 @@ export function sendAiCloudChat(payload: Record<string, unknown>): Promise<unkno
     max_tokens: payload.max_tokens,
     top_p: payload.top_p,
     ...(tools ? { tools } : {}),
-    ...(tools && (payload.tool_choice === "auto" || payload.tool_choice === "none") ? { tool_choice: payload.tool_choice } : {}),
+    ...(toolChoice ? { tool_choice: toolChoice } : {}),
   };
   return callAiCloud(AI_CLOUD_CHAT_ENDPOINT, { method: "POST", body: JSON.stringify(safePayload) });
 }

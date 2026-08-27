@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { callMcpTool, listMcpTools, testMcpConnection } from "../lib/mcp-hub/mcp-connection";
 import { buildMcpAuthHeaders } from "../lib/mcp-hub/mcp-auth";
 import { mcpCatalog } from "../lib/mcp-hub/mcp-catalog";
+import { APP_VERSION } from "../lib/mcp-hub/app-update-manifest";
 import type { McpServerConfig } from "../lib/mcp-hub/types";
 
 const server: McpServerConfig = { id: "test", name: "Test MCP", transport: "streamable-http", endpoint: "https://mcp.example.com/mcp", command: "", args: "", authMode: "api-key", apiKeyStored: true, oauthTokenStored: false, oauthIssuer: "", oauthClientId: "", oauthScopes: "", connectionStatus: "idle", connectionDetail: null, lastCheckedAt: null, detectedServerName: null, enabled: true, updatedAt: "2026-08-26T00:00:00.000Z" };
@@ -21,6 +22,7 @@ describe("MCP connection test", () => {
     expect(result.status).toBe("connected");
     expect(result.detectedServerName).toBe("Example MCP");
     expect(fetchMock.mock.calls[0][1].headers.Authorization).toBe("Bearer secret-token");
+    expect(JSON.parse(String(fetchMock.mock.calls[0][1].body)).params.clientInfo.version).toBe(APP_VERSION);
   });
 
   it("reports missing authorization without sending a network request", async () => {

@@ -6,9 +6,14 @@ const root = resolve(__dirname, "..");
 const source = (file: string) => readFileSync(resolve(root, file), "utf8");
 
 describe("Native Terminal và ClawLink được tích hợp theo kiểu bổ sung", () => {
-  it("giữ fallback Terminal hiện hữu và chỉ dùng native view trên Android khi module có mặt", () => {
+  it("retry bridge Terminal sau mount và chỉ dùng native view Android khi module có mặt", () => {
     const terminal = source("app/(tabs)/terminal.tsx");
-    expect(terminal).toContain('Platform.OS === "android" && hasNativeMcpHubRuntime');
+    const bridge = source("lib/mcp-hub/native-runtime.ts");
+    expect(terminal).toContain("resolveMcpHubRuntime");
+    expect(terminal).toContain("setTimeout");
+    expect(terminal).toContain("runtimeProbe.executionEnvironment === \"storeClient\"");
+    expect(bridge).toContain("export function resolveMcpHubRuntime");
+    expect(bridge).toContain("export function getNativeRuntimeProbe");
     expect(terminal).toContain("McpHubTerminalView");
     expect(terminal).toContain("Code Assistant");
   });

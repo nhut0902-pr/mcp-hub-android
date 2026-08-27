@@ -7,6 +7,7 @@ export type TerminalStateEvent = { state: "ready" | "running" | "stopped" | "err
 export type McpHubTerminalViewProps = ViewProps & {
   command?: string;
   commandNonce?: number;
+  restartNonce?: number;
   fontSize?: number;
   onSessionState?: (event: { nativeEvent: TerminalStateEvent }) => void;
 };

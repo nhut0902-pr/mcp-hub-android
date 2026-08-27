@@ -24,6 +24,9 @@ class McpHubRuntimeModule : Module() {
       Prop("commandNonce") { view: McpHubTerminalView, nonce: Int? ->
         if (nonce != null) view.runPendingCommand()
       }
+      Prop("restartNonce") { view: McpHubTerminalView, nonce: Int? ->
+        if (nonce != null) view.restartSession(nonce)
+      }
       Prop("fontSize") { view: McpHubTerminalView, fontSize: Double? ->
         if (fontSize != null) view.setTerminalFontSize(fontSize.toInt())
       }
