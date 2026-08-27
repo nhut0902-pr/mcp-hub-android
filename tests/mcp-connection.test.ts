@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { testMcpConnection } from "../lib/mcp-hub/mcp-connection";
+import { callMcpTool, listMcpTools, testMcpConnection } from "../lib/mcp-hub/mcp-connection";
 import { buildMcpAuthHeaders } from "../lib/mcp-hub/mcp-auth";
 import { mcpCatalog } from "../lib/mcp-hub/mcp-catalog";
 import type { McpServerConfig } from "../lib/mcp-hub/types";
@@ -28,6 +28,28 @@ describe("MCP connection test", () => {
     const result = await testMcpConnection(server, null);
     expect(result.status).toBe("auth-required");
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("liệt kê tools qua một phiên MCP và giữ session ID", async () => {
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ result: { serverInfo: { name: "Example" } } }), { status: 200, headers: { "Mcp-Session-Id": "session-1" } }))
+      .mockResolvedValueOnce(new Response("", { status: 202 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ result: { tools: [{ name: "list_items", description: "List items", inputSchema: { type: "object" } }] } }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    const tools = await listMcpTools(server, "secret-token");
+    expect(tools).toMatchObject([{ serverId: "test", name: "list_items" }]);
+    expect(fetchMock.mock.calls[2][1].headers["Mcp-Session-Id"]).toBe("session-1");
+  });
+
+  it("gọi MCP tool bằng tools/call sau initialize", async () => {
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ result: {} }), { status: 200, headers: { "Mcp-Session-Id": "session-1" } }))
+      .mockResolvedValueOnce(new Response("", { status: 202 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ result: { content: [{ type: "text", text: "done" }] } }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+    const result = await callMcpTool(server, "secret-token", "do_work", { id: 1 });
+    expect(result.content).toEqual([{ type: "text", text: "done" }]);
+    expect(JSON.parse(fetchMock.mock.calls[2][1].body).params).toEqual({ name: "do_work", arguments: { id: 1 } });
   });
 
   it("has only valid HTTPS remote presets with an explicit auth selection", () => {

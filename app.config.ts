@@ -13,10 +13,10 @@ const timestamp = bundleId.split(".").pop()?.replace(/^t/, "") ?? "";
 const config = {
   name: "MCP Hub",
   slug: "mcp-provider-configurator",
-  version: "1.0.5",
+  version: "1.0.6",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
-  scheme: `manus${timestamp}`,
+  scheme: [`manus${timestamp}`, "mcphub"],
   userInterfaceStyle: "automatic",
   newArchEnabled: true,
   ios: {
@@ -35,7 +35,7 @@ const config = {
     predictiveBackGestureEnabled: false,
     package: bundleId,
     permissions: ["POST_NOTIFICATIONS", "ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION", "CAMERA", "REQUEST_INSTALL_PACKAGES"],
-    intentFilters: [{ action: "VIEW", autoVerify: true, data: [{ scheme: `manus${timestamp}`, host: "*" }], category: ["BROWSABLE", "DEFAULT"] }],
+    intentFilters: [{ action: "VIEW", autoVerify: true, data: [{ scheme: `manus${timestamp}`, host: "*" }, { scheme: "mcphub", host: "*" }], category: ["BROWSABLE", "DEFAULT"] }],
   },
   web: { bundler: "metro", output: "static", favicon: "./assets/images/favicon.png" },
   plugins: [

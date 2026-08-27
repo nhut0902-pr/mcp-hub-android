@@ -1,7 +1,7 @@
 import { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 import { fetchProviderModels } from "./model-sync";
-import { testMcpConnection } from "./mcp-connection";
+import { callMcpTool, listMcpTools, testMcpConnection, type McpToolCallResult, type McpToolDefinition } from "./mcp-connection";
 import { normalizePinnedModelIds } from "./pinned-models";
 import { clearAllAppData, getMcpApiKey, getMcpOAuthToken, loadAppState, refreshSecretStatus, removeMcpApiKey, removeMcpOAuthToken, removeProviderApiKey, saveAppState, saveMcpApiKey, saveMcpOAuthToken, saveProviderApiKey } from "./storage";
 import { AppState, createInitialState, McpConnectionResult, McpServerConfig, ModelRecord, ProviderConfig } from "./types";
@@ -21,6 +21,8 @@ type HubContextValue = {
   toggleMcpServer: (serverId: string, enabled: boolean) => Promise<void>;
   testingMcpId: string | null;
   testMcpServer: (serverId: string, override?: McpServerConfig) => Promise<McpConnectionResult>;
+  listMcpTools: (serverId: string) => Promise<McpToolDefinition[]>;
+  callMcpTool: (serverId: string, toolName: string, argumentsValue: Record<string, unknown>) => Promise<McpToolCallResult>;
   clearAll: () => Promise<void>;
 };
 
@@ -122,8 +124,19 @@ export function HubProvider({ children }: PropsWithChildren) {
       return result;
     } finally { setTestingMcpId(null); }
   }, [persist, state]);
+  const credentialForMcp = useCallback(async (server: McpServerConfig) => server.authMode === "api-key" ? getMcpApiKey(server.id) : server.authMode === "oauth" ? getMcpOAuthToken(server.id) : null, []);
+  const listMcpToolsForServer = useCallback(async (serverId: string) => {
+    const server = state.mcpServers.find((item) => item.id === serverId);
+    if (!server) throw new Error("Không tìm thấy MCP server.");
+    return listMcpTools(server, await credentialForMcp(server));
+  }, [credentialForMcp, state.mcpServers]);
+  const callMcpToolForServer = useCallback(async (serverId: string, toolName: string, argumentsValue: Record<string, unknown>) => {
+    const server = state.mcpServers.find((item) => item.id === serverId);
+    if (!server) throw new Error("Không tìm thấy MCP server.");
+    return callMcpTool(server, await credentialForMcp(server), toolName, argumentsValue);
+  }, [credentialForMcp, state.mcpServers]);
   const clearAll = useCallback(async () => { await clearAllAppData(state); await persist(createInitialState()); }, [persist, state]);
-  const value = useMemo<HubContextValue>(() => ({ state, isLoading, syncingProviderId, saveProvider, removeProvider, clearProviderKey, toggleProvider, syncProvider, syncAll, saveMcpServer, removeMcpServer, toggleMcpServer, testingMcpId, testMcpServer, clearAll }), [clearAll, clearProviderKey, isLoading, removeMcpServer, removeProvider, saveMcpServer, saveProvider, state, syncAll, syncProvider, syncingProviderId, testMcpServer, testingMcpId, toggleMcpServer, toggleProvider]);
+  const value = useMemo<HubContextValue>(() => ({ state, isLoading, syncingProviderId, saveProvider, removeProvider, clearProviderKey, toggleProvider, syncProvider, syncAll, saveMcpServer, removeMcpServer, toggleMcpServer, testingMcpId, testMcpServer, listMcpTools: listMcpToolsForServer, callMcpTool: callMcpToolForServer, clearAll }), [callMcpToolForServer, clearAll, clearProviderKey, isLoading, listMcpToolsForServer, removeMcpServer, removeProvider, saveMcpServer, saveProvider, state, syncAll, syncProvider, syncingProviderId, testMcpServer, testingMcpId, toggleMcpServer, toggleProvider]);
   return <HubContext.Provider value={value}>{children}</HubContext.Provider>;
 }
 

@@ -15,5 +15,6 @@ MCP remote HTTP sử dụng OAuth 2.1 ở tầng transport. MCP server công b�
 | Stripe | `https://mcp.stripe.com` | Streamable HTTP | OAuth hoặc restricted API key qua `Authorization: Bearer` | [Stripe docs](https://docs.stripe.com/mcp?locale=en-GB) |
 | Supabase | `https://mcp.supabase.com/mcp` | Streamable HTTP | OAuth + DCR; CI có thể dùng PAT Bearer | [Supabase docs](https://supabase.com/docs/guides/ai-tools/mcp) |
 | Cloudflare API | `https://mcp.cloudflare.com/mcp` | Streamable HTTP | OAuth hoặc Cloudflare API token qua Bearer | [Cloudflare docs](https://developers.cloudflare.com/agents/model-context-protocol/cloudflare/servers-for-cloudflare/) |
+| Composio | URL theo user: `https://backend.composio.dev/v3/mcp/YOUR_SERVER_ID?user_id=YOUR_USER_ID` | Streamable HTTP | `x-api-key: COMPOSIO_API_KEY`; cần tạo session/server và kết nối toolkit trước | [Composio docs](https://docs.composio.dev/docs/single-toolkit-mcp) |
 
 Các nguồn được truy cập ngày 26-08-2026. Không lưu token trong tài liệu này.

@@ -134,4 +134,9 @@
 - [x] Tạo ảnh minh hoạ và bảng màu chiến dịch Trung Thu cho MCP Hub
 - [x] Tạo panel quà tặng Trung Thu tự hiển thị khi mở app, trong Chat và Cài đặt
 - [x] Hiển thị thời hạn chiến dịch, quyền lợi model Cloud và hướng dẫn sử dụng trong panel
-- [ ] Phát hành V1.0.5 gồm hệ bất phương trình và chiến dịch Trung Thu qua manifest cập nhật
+- [x] Phát hành V1.0.5 gồm hệ bất phương trình và chiến dịch Trung Thu qua manifest cập nhật
+- [x] Bổ sung hướng dẫn trực tiếp về URL, API key, OAuth và endpoint per-user Composio
+- [x] Mở luồng đăng nhập OAuth của MCP trong trình duyệt và lưu kết quả xác thực an toàn
+- [x] Thực thi MCP tools đã kết nối từ Chat thay vì chỉ đưa profile vào ngữ cảnh
+- [x] Hiển thị tool MCP được gọi, kết quả và lỗi xác thực/không hỗ trợ trong Chat
+- [ ] Phát hành V1.0.6 gồm OAuth MCP và thực thi tool trong Chat qua manifest cập nhật

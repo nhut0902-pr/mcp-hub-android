@@ -30,14 +30,17 @@ import { loadArchivedChats, saveArchivedChat } from "@/lib/mcp-hub/chat-archive"
 import { loadWebSearchSettings } from "@/lib/mcp-hub/feature-settings";
 import { sendAiCloudChatFromProxy } from "@/lib/mcp-hub/ai-cloud-client";
 import { getAiCloudModelDisplayName } from "@/lib/mcp-hub/ai-cloud-brand";
+import { appendMcpToolResults, extractMcpToolCalls, summarizeMcpResults, toOpenAiMcpTools, type McpProposedCall } from "@/lib/mcp-hub/mcp-chat";
+import type { McpToolCallResult, McpToolDefinition } from "@/lib/mcp-hub/mcp-connection";
 import { isMidAutumnCampaignActive } from "@/lib/midautumn-campaign";
 import { trpc } from "@/lib/trpc";
 
 type DeviceTool = "location" | "map" | "camera" | "image" | "file";
 type ToolNotice = { title: string; detail: string; tone: "success" | "error" } | null;
+type PendingMcpRun = { payload: Record<string, unknown>; response: unknown; calls: McpProposedCall[] };
 
 export default function ChatScreen() {
-  const { state, toggleMcpServer } = useHub();
+  const { state, toggleMcpServer, listMcpTools, callMcpTool } = useHub();
   const router = useRouter();
   const { archiveId } = useLocalSearchParams<{ archiveId?: string }>();
   const sendMutation = trpc.chat.send.useMutation();
@@ -63,6 +66,7 @@ export default function ChatScreen() {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [expandedReasoningId, setExpandedReasoningId] = useState<string | null>(null);
   const [midAutumnVisible, setMidAutumnVisible] = useState(() => isMidAutumnCampaignActive());
+  const [, setPendingMcpRun] = useState<PendingMcpRun | null>(null);
   const drawerSlide = useRef(new Animated.Value(-320)).current;
 
   useEffect(() => { void loadChatTuning().then(setTuning); void loadWebSearchSettings().then((settings) => setWebSearch(settings.enabledByDefault)); }, []);
@@ -128,12 +132,35 @@ export default function ChatScreen() {
   };
   const useTool = async (tool: DeviceTool) => { if (tool === "location") return addLocation(false); if (tool === "map") return addLocation(true); if (tool === "file") return addFile(); return addImage(tool); };
   const canChat = Boolean(provider && model);
+  const sendProviderPayload = async (payload: Record<string, unknown>) => provider?.managedByApp ? sendAiCloudChatFromProxy(payload) : await (async () => { const apiKey = await getProviderApiKey(provider!.id); if (!apiKey) throw new Error(`Chưa có API key cho ${provider!.name}. Vào Provider để lưu key lại.`); return sendMutation.mutateAsync({ apiBaseUrl: provider!.apiBaseUrl, apiKey, payload }); })();
+  const appendAssistantResponse = (response: unknown) => { const parsed = parseChatCompletion(response); setMessages((current) => [...current, parsed.content ? parsed : { id: `mcp-result-${Date.now()}`, role: "assistant", content: "MCP đã trả kết quả. Hãy xem chi tiết tool ở tin nhắn trước." }]); };
+  const loadEnabledMcpTools = async (): Promise<McpToolDefinition[]> => {
+    const servers = state.mcpServers.filter((server) => server.enabled && server.connectionStatus === "connected" && server.transport === "streamable-http");
+    if (!servers.length) return [];
+    const settled = await Promise.all(servers.map(async (server) => { try { return await listMcpTools(server.id); } catch (error) { setToolNotice({ title: `Không tải được tools từ ${server.name}`, detail: error instanceof Error ? error.message : "Hãy kiểm tra kết nối MCP.", tone: "error" }); return []; } }));
+    return settled.flat();
+  };
+  const requestMcpApproval = (pending: PendingMcpRun) => {
+    setPendingMcpRun(pending);
+    const preview = pending.calls.map((call) => `${call.serverName} · ${call.toolName}\n${JSON.stringify(call.argumentsValue).slice(0, 360)}`).join("\n\n");
+    Alert.alert("Xác nhận gọi MCP", `AI đề nghị gọi ${pending.calls.length} tool. Tool có thể đọc hoặc thay đổi dữ liệu bên ngoài.\n\n${preview}`, [{ text: "Từ chối", style: "cancel", onPress: () => { setPendingMcpRun(null); setMessages((current) => [...current, { id: `mcp-cancel-${Date.now()}`, role: "assistant", content: "Bạn đã từ chối gọi MCP tool. Tôi không thực hiện thay đổi nào." }]); } }, { text: "Cho phép & chạy", onPress: () => void executeApprovedMcpTools(pending) }]);
+  };
+  const executeApprovedMcpTools = async (pending: PendingMcpRun) => {
+    setPendingMcpRun(null); setSending(true);
+    try {
+      const results = await Promise.all(pending.calls.map(async (call): Promise<McpToolCallResult> => { try { return await callMcpTool(call.serverId, call.toolName, call.argumentsValue); } catch (error) { return { serverId: call.serverId, serverName: call.serverName, toolName: call.toolName, isError: true, content: [{ type: "text", text: error instanceof Error ? error.message : "Không thể gọi MCP tool." }] }; } }));
+      setMessages((current) => [...current, { id: `mcp-tools-${Date.now()}`, role: "assistant", content: summarizeMcpResults(results) }]);
+      setToolNotice({ title: results.some((result) => result.isError) ? "MCP có tool báo lỗi" : "Đã chạy MCP tool", detail: results.map((result) => `${result.serverName} · ${result.toolName}`).join(" · "), tone: results.some((result) => result.isError) ? "error" : "success" });
+      appendAssistantResponse(await sendProviderPayload(appendMcpToolResults(pending.payload, pending.response, pending.calls, results)));
+    } catch (error) { setMessages((current) => [...current, { id: `mcp-followup-failure-${Date.now()}`, role: "assistant", content: "MCP đã chạy nhưng AI không thể tổng hợp kết quả: " + (error instanceof Error ? error.message : "lỗi không xác định") }]); }
+    finally { setSending(false); }
+  };
   const send = async () => {
     const sendState = getSendState(draft, sending); if (!sendState.canSend) { if (sendState.message && !sending) Alert.alert("Chưa thể gửi", sendState.message); return; }
     if (!provider || !model) { Alert.alert("Chưa có model", "Hãy chọn một model đã ghim trước khi gửi tin nhắn."); return; }
     const user: ChatMessage = { id: `user-${Date.now()}`, role: "user", content: draft.trim(), attachments, mcpProfiles: state.mcpServers.filter((server) => server.enabled).map((server) => ({ id: server.id, name: server.name, transport: server.transport, endpoint: server.endpoint })) };
     const history = [...messages, user]; setMessages(history); setDraft(""); setSending(true);
-    try { const payload = buildChatPayload(provider, model, history, { thinking, webSearch, temperature: tuning.temperature, maxTokens: tuning.maxTokens, topP: tuning.topP, instruction: tuning.instruction }); const response = provider.managedByApp ? await sendAiCloudChatFromProxy(payload) : await (async () => { const apiKey = await getProviderApiKey(provider.id); if (!apiKey) throw new Error(`Chưa có API key cho ${provider.name}. Vào Provider để lưu key lại.`); return sendMutation.mutateAsync({ apiBaseUrl: provider.apiBaseUrl, apiKey, payload }); })(); setMessages((current) => [...current, parseChatCompletion(response)]); setAttachments([]); }
+    try { const basePayload = buildChatPayload(provider, model, history, { thinking, webSearch, temperature: tuning.temperature, maxTokens: tuning.maxTokens, topP: tuning.topP, instruction: tuning.instruction }); const mcpTools = await loadEnabledMcpTools(); const payload = mcpTools.length ? { ...basePayload, tools: toOpenAiMcpTools(mcpTools), tool_choice: "auto" } : basePayload; let response: unknown; try { response = await sendProviderPayload(payload); } catch (toolError) { if (!mcpTools.length) throw toolError; setToolNotice({ title: "Model chưa nhận MCP tools", detail: "Tin nhắn vẫn được gửi bình thường; hãy dùng model/provider hỗ trợ function calling để AI có thể đề nghị gọi MCP.", tone: "error" }); response = await sendProviderPayload(basePayload); } const calls = extractMcpToolCalls(response, mcpTools); if (calls.length) requestMcpApproval({ payload, response, calls }); else appendAssistantResponse(response); setAttachments([]); }
     catch (error) { const issue = classifyProviderError(error); setMessages((current) => [...current, { id: `failure-${Date.now()}`, role: "assistant", content: "", failure: { title: issue.title, detail: issue.detail, action: issue.action, providerName: provider.name, modelId: model.modelId, retryText: user.content } }]); setDraft(user.content); } finally { setSending(false); }
   };
   return <ScreenContainer edges={["top", "bottom", "left", "right"]}><View style={styles.screen} testID="chat-screen">

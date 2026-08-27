@@ -2,8 +2,10 @@ const AI_CLOUD_MODELS_BASE_URL = "https://chatgpt-api.chocode.com.vn/v1";
 export const AI_CLOUD_CHAT_ENDPOINT = "https://gemini-api.chocode.com.vn/v1/chat/completions";
 export const AI_CLOUD_DEFAULT_MODEL = "gemini-1.5-flash";
 
-const managedGeminiModel = {
+const managedNhutbotModel = {
   id: AI_CLOUD_DEFAULT_MODEL,
+  name: "Nhutbot 1.0 Flash",
+  display_name: "Nhutbot 1.0 Flash",
   object: "model",
   owned_by: "AI Cloud",
 };
@@ -34,7 +36,7 @@ export async function listAiCloudModels(): Promise<unknown> {
     // Chat is still usable with the embedded Gemini model when the optional catalog
     // endpoint is temporarily unavailable.
   }
-  return { object: "list", data: [managedGeminiModel] };
+  return { object: "list", data: [managedNhutbotModel] };
 }
 
 export function sendAiCloudChat(payload: Record<string, unknown>): Promise<unknown> {
