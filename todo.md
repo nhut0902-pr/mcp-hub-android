@@ -160,3 +160,6 @@
 - [x] Thêm MCP Terminal thủ công có tools/list, schema JSON và tools/call làm đường chạy tin cậy khi model không phát function call
 - [x] Bỏ hộp xác nhận lặp lại; mọi tool AI đề nghị được ghi rõ trong MCP Terminal khi chạy
 - [x] Phát hành V1.0.8: MCP Terminal, auto-run tool và panel Chat gọn
+- [x] Sửa nhãn phiên bản trong app còn hiển thị V1.0.7 sau khi cập nhật
+- [x] Hiển thị logo có fallback cho toàn bộ Provider và MCP server
+- [ ] Phát hành V1.0.9 đồng bộ version runtime và nhận diện Provider/MCP
