@@ -159,4 +159,4 @@
 - [x] Thu gọn panel Trung Thu để không che composer và luồng Chat
 - [x] Thêm MCP Terminal thủ công có tools/list, schema JSON và tools/call làm đường chạy tin cậy khi model không phát function call
 - [x] Bỏ hộp xác nhận lặp lại; mọi tool AI đề nghị được ghi rõ trong MCP Terminal khi chạy
-- [ ] Phát hành V1.0.8: MCP Terminal, auto-run tool và panel Chat gọn
+- [x] Phát hành V1.0.8: MCP Terminal, auto-run tool và panel Chat gọn
