@@ -189,6 +189,8 @@
 - [x] Thêm AI Gia sư giải bài theo từng bước từ câu hỏi văn bản và chuyển lời giải sang Flashcard cục bộ
 - [x] Thêm Flashcard do AI tạo, có bộ thẻ, lật thẻ, ôn tập và lưu cục bộ
 - [x] Củng cố prompt, fallback và vòng lặp thực thi để AI provider gọi MCP tool đã kết nối thay vì chỉ mô tả
-- [ ] Sửa APK Android rơi vào Terminal compatibility do mô-đun McpHubRuntime không được nhận diện; chỉ dùng fallback trên web/Expo Go
+- [x] Chẩn đoán registry APK và sửa phát hiện bridge Terminal bằng retry/probe; fallback nay được phân biệt rõ cho web/Expo Go
 - [x] Thêm retry/probe cho bridge Terminal để phân biệt Expo Go/web preview với APK Android native và xác minh registry trên APK phát hành
 - [x] Đồng bộ metadata Gradle của `mcp-hub-runtime` với package source 0.1.1
+- [ ] Phát hành V1.0.12: retry/probe bridge Terminal, AI Gia sư, Flashcard và các sửa MCP đã kiểm thử
+- [ ] Kiểm thử trực tiếp APK V1.0.12 trên thiết bị Android: Terminal PTY, cài bootstrap, `pkg update`, `pkg install python` và Gateway cục bộ

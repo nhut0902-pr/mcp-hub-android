@@ -1,6 +1,6 @@
 {
-  "version": "1.0.11",
-  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.11/MCP-Hub-v1.0.11.apk",
-  "notes": "Bổ sung Terminal PTY native, thiết lập ClawLink Gateway cục bộ có kiểm tra integrity, foreground service và taskbar; kèm mã nguồn GPLv3 cùng thông báo bên thứ ba.",
-  "publishedAt": "2026-08-27T09:38:43Z"
+  "version": "1.0.12",
+  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.12/MCP-Hub-v1.0.12.apk",
+  "notes": "Sửa phát hiện Terminal native: bridge được kiểm tra lại sau khi Expo khởi tạo và màn Terminal nói rõ khi đang chạy web/Expo Go. Giữ PTY, installer pkg, ClawLink, AI Gia sư, Flashcard AI và MCP tool calling.",
+  "publishedAt": "2026-08-27T11:36:00Z"
 }

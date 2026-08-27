@@ -2,7 +2,7 @@
 
 **MCP Hub** là ứng dụng Android tập trung cho việc quản lý provider AI, model đã ghim, server Model Context Protocol (MCP) và cuộc trò chuyện AI. Ứng dụng hỗ trợ NVIDIA NIM, Groq, OpenRouter, provider tuỳ chỉnh và AI Cloud được bảo vệ.
 
-> Phiên bản phát hành hiện tại: [V1.0.11](https://github.com/nhut0902-pr/mcp-hub-android/releases/tag/v1.0.11). API key của AI Cloud không nằm trong APK.
+> Phiên bản phát hành hiện tại: [V1.0.12](https://github.com/nhut0902-pr/mcp-hub-android/releases/tag/v1.0.12). API key của AI Cloud không nằm trong APK.
 
 ## Tải ứng dụng
 
