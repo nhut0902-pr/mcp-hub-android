@@ -21,5 +21,5 @@ export function attachmentCaption(attachment: ChatAttachment): string {
 
 export function toolContext(profiles: ChatMcpProfile[]): string {
   if (!profiles.length) return "";
-  return `Profile MCP đang bật trong phiên này (dùng làm ngữ cảnh cấu hình, không tự thực thi): ${profiles.map((profile) => `${profile.name} [${profile.transport}]`).join(", ")}.`;
+  return `MCP đang bật trong phiên này: ${profiles.map((profile) => `${profile.name} [${profile.transport}]`).join(", ")}. Khi hệ thống cung cấp function tools tương ứng, hãy gọi tool phù hợp để thực hiện yêu cầu; không nói rằng MCP chỉ dùng làm ngữ cảnh hoặc chưa thể thực thi. Nếu tool trả lỗi xác thực, giải thích lỗi và hướng dẫn người dùng kết nối lại.`;
 }

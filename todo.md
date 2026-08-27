@@ -152,4 +152,11 @@
 - [x] Sửa luồng Chat để MCP tool được gọi khi model không tự phát function call
 - [x] Chuẩn hoá toàn bộ nhãn hiển thị Gemini 1.5 Flash thành Nhutbot 1.0 Flash
 - [x] Giảm xác nhận lặp lại, chỉ giữ xác nhận cho thao tác thay đổi dữ liệu bên ngoài
-- [ ] Phát hành V1.0.7 gồm sửa callback OAuth, MCP tool calling, Nhutbot và Chat nâng cao
+- [x] Phát hành V1.0.7 gồm sửa callback OAuth, MCP tool calling, Nhutbot và Chat nâng cao
+- [x] Sửa prompt và điều phối để Chat gọi MCP tool thay vì trả lời chỉ dùng ngữ cảnh
+- [x] Hiển thị tiến trình, tool call và kết quả MCP thống nhất cho mọi provider
+- [x] Thêm terminal thao tác lệnh trong app với phạm vi và cảnh báo an toàn rõ ràng
+- [x] Thu gọn panel Trung Thu để không che composer và luồng Chat
+- [x] Thêm MCP Terminal thủ công có tools/list, schema JSON và tools/call làm đường chạy tin cậy khi model không phát function call
+- [x] Bỏ hộp xác nhận lặp lại; mọi tool AI đề nghị được ghi rõ trong MCP Terminal khi chạy
+- [ ] Phát hành V1.0.8: MCP Terminal, auto-run tool và panel Chat gọn

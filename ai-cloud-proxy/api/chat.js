@@ -36,7 +36,7 @@ export default async function handler(request, response) {
   const requestedTemperature = Number(request.body?.temperature);
   const temperature = Number.isFinite(requestedTemperature) ? Math.max(0, Math.min(requestedTemperature, 1.5)) : 0.7;
   const tools = normalizeTools(request.body?.tools);
-  const toolChoice = tools && (request.body?.tool_choice === "auto" || request.body?.tool_choice === "none") ? request.body.tool_choice : undefined;
+  const toolChoice = tools && (["auto", "none", "required"].includes(request.body?.tool_choice) || (request.body?.tool_choice && typeof request.body.tool_choice === "object")) ? request.body.tool_choice : undefined;
 
   try {
     const upstream = await fetch(GEMINI_ENDPOINT, {

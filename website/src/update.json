@@ -1,6 +1,6 @@
 {
-  "version": "1.0.7",
-  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.7/MCP-Hub-v1.0.7.apk",
-  "notes": "Sửa callback OAuth trở về app, chuyển tiếp MCP tools cho Nhutbot, tự chạy tool chỉ đọc, hỗ trợ ảnh/tệp/code/HTML preview và AI Math nhận ảnh.",
+  "version": "1.0.8",
+  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.8/MCP-Hub-v1.0.8.apk",
+  "notes": "MCP thực thi tool thay vì chỉ dùng ngữ cảnh; Chat hiển thị MCP Terminal với tool, tham số an toàn và kết quả; panel Trung Thu không còn che khung nhập.",
   "publishedAt": "2026-08-27T01:55:00Z"
 }
