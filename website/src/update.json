@@ -1,6 +1,6 @@
 {
-  "version": "1.0.13",
-  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.13/MCP-Hub-v1.0.13.apk",
-  "notes": "Sửa repair Terminal: kiểm tra pkg/curl/shim Termux trước khi cài thư viện; thêm đăng nhập bắt buộc cho Nhutbot 1.0 Flash và trang Quản trị Cloud theo role.",
-  "publishedAt": "2026-08-27T11:36:00Z"
+  "version": "1.0.14",
+  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.14/MCP-Hub-v1.0.14.apk",
+  "notes": "Sửa lỗi APK báo thiếu cấu hình OAuth production: nhúng fallback portal/server/App ID hợp lệ, dùng backend MCP Hub và giữ callback đăng nhập Android.",
+  "publishedAt": "2026-08-28T03:20:00Z"
 }

@@ -8,12 +8,17 @@ const bundleId = "com.app.mcpproviderconfigurator";
 const timestamp = bundleId.split(".").pop()?.replace(/^t/, "") ?? "";
 const schemeFromBundleId = `manus${timestamp}`;
 
-const extra = (Constants.expoConfig?.extra ?? {}) as { apiBaseUrl?: string };
+const extra = (Constants.expoConfig?.extra ?? {}) as {
+  apiBaseUrl?: string;
+  oauthPortalUrl?: string;
+  oauthServerUrl?: string;
+  appId?: string;
+};
 
 const env = {
-  portal: process.env.EXPO_PUBLIC_OAUTH_PORTAL_URL ?? "",
-  server: process.env.EXPO_PUBLIC_OAUTH_SERVER_URL ?? "",
-  appId: process.env.EXPO_PUBLIC_APP_ID ?? "",
+  portal: process.env.EXPO_PUBLIC_OAUTH_PORTAL_URL ?? extra.oauthPortalUrl ?? "https://api.manus.im",
+  server: process.env.EXPO_PUBLIC_OAUTH_SERVER_URL ?? extra.oauthServerUrl ?? "https://api.manus.im",
+  appId: process.env.EXPO_PUBLIC_APP_ID ?? extra.appId ?? "HTXjZUzGMdUDVZZQVvSs4U",
   ownerId: process.env.EXPO_PUBLIC_OWNER_OPEN_ID ?? "",
   ownerName: process.env.EXPO_PUBLIC_OWNER_NAME ?? "",
   apiBaseUrl: process.env.EXPO_PUBLIC_API_BASE_URL ?? extra.apiBaseUrl ?? "",

@@ -1,4 +1,4 @@
-export const APP_VERSION = "1.0.13";
+export const APP_VERSION = "1.0.14";
 export const UPDATE_MANIFEST_URL = "https://mcp-hub-android.vercel.app/update.json";
 
 export type AppUpdate = {

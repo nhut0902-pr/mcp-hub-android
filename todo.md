@@ -199,3 +199,6 @@
 - [x] Thêm khu vực quản trị Cloud có guard role server-side, hiển thị trạng thái dịch vụ và session admin
 - [x] Bổ sung repair Terminal: xác minh `pkg`/`curl`/`libtermux-exec`, rollback prefix khi kiểm tra thất bại và hiển thị hướng dẫn sửa runtime
 - [ ] Hoàn thiện end-to-end bản tiếp theo: triển khai proxy V1.0.13, test APK trên thiết bị và bổ sung CRUD quyền Cloud nếu backend production hỗ trợ
+- [x] Tạo và xác minh GitHub Release V1.0.13 kèm APK sau khi checkpoint mới nhất chưa được gắn tag/release
+- [ ] Tạo và xác minh GitHub Release V1.0.14 với cấu hình OAuth production đã sửa
+- [x] Sửa APK login báo thiếu cấu hình OAuth production: nhúng fallback backend project, App ID và callback Android hợp lệ

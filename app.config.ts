@@ -13,7 +13,7 @@ const timestamp = bundleId.split(".").pop()?.replace(/^t/, "") ?? "";
 const config = {
   name: "MCP Hub",
   slug: "mcp-provider-configurator",
-  version: "1.0.13",
+  version: "1.0.14",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
   scheme: [`manus${timestamp}`, "mcphub"],
@@ -51,7 +51,15 @@ const config = {
     ["expo-build-properties", { android: { buildArchs: ["armeabi-v7a", "arm64-v8a"], minSdkVersion: 24, compileSdkVersion: 36, targetSdkVersion: 36, buildToolsVersion: "36.0.0" } }],
   ],
   experiments: { typedRoutes: true, reactCompiler: true },
-  extra: { appName: "MCP Hub", logoUrl: "/manus-storage/mcp-hub-icon_ca900851.png", apiBaseUrl: "https://mcpconfig-htxjzuzg.manus.space", aiCloudProxyUrl: "https://mcp-hub-ai-cloud.vercel.app" },
+  extra: {
+    appName: "MCP Hub",
+    logoUrl: "/manus-storage/mcp-hub-icon_ca900851.png",
+    apiBaseUrl: process.env.EXPO_PUBLIC_API_BASE_URL ?? "https://mcpconfig-htxjzuzg.manus.space",
+    oauthPortalUrl: process.env.EXPO_PUBLIC_OAUTH_PORTAL_URL ?? "https://api.manus.im",
+    oauthServerUrl: process.env.EXPO_PUBLIC_OAUTH_SERVER_URL ?? "https://api.manus.im",
+    appId: process.env.EXPO_PUBLIC_APP_ID ?? "HTXjZUzGMdUDVZZQVvSs4U",
+    aiCloudProxyUrl: "https://mcp-hub-ai-cloud.vercel.app",
+  },
 };
 
 export default config;
