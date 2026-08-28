@@ -9,7 +9,7 @@ describe("OAuth production configuration", () => {
     });
     // A public endpoint must answer either with an authenticated user or the expected 401.
     expect([200, 401]).toContain(response.status);
-  });
+  }, 15_000);
 
   it("has valid OAuth endpoint URLs and a non-empty client id", () => {
     const portal = process.env.EXPO_PUBLIC_OAUTH_PORTAL_URL;

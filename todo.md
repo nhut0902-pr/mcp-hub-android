@@ -200,5 +200,9 @@
 - [x] Bổ sung repair Terminal: xác minh `pkg`/`curl`/`libtermux-exec`, rollback prefix khi kiểm tra thất bại và hiển thị hướng dẫn sửa runtime
 - [ ] Hoàn thiện end-to-end bản tiếp theo: triển khai proxy V1.0.13, test APK trên thiết bị và bổ sung CRUD quyền Cloud nếu backend production hỗ trợ
 - [x] Tạo và xác minh GitHub Release V1.0.13 kèm APK sau khi checkpoint mới nhất chưa được gắn tag/release
-- [ ] Tạo và xác minh GitHub Release V1.0.14 với cấu hình OAuth production đã sửa
+- [x] Tạo và xác minh GitHub Release V1.0.14 với cấu hình OAuth production đã sửa
 - [x] Sửa APK login báo thiếu cấu hình OAuth production: nhúng fallback backend project, App ID và callback Android hợp lệ
+- [x] Sửa OAuth login không mở `api.manus.im/app-auth` 404; xác định route portal production thật và callback Android tương ứng
+
+- [x] V1.0.15: sửa OAuth callback để deep link dùng scheme runtime thực tế và portal authorize manus.im
+- [ ] V1.0.15: xác minh release APK public và kiểm thử login/Terminal trên thiết bị Android thật

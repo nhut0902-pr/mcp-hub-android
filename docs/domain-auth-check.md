@@ -12,3 +12,5 @@ Kết luận: domain này có thể dùng để thử `EXPO_PUBLIC_API_BASE_URL`
 
 Chưa kiểm tra bằng token thật hoặc thực hiện đăng nhập/thay đổi dữ liệu.
 
+Ngày 28/08/2026, kiểm tra bổ sung: `https://api.manus.im/app-auth` trả HTTP 404; `https://manus.im/app-auth` trả trang Login với lỗi `Permission denied — Redirect URI is not set` khi thiếu query. Với query `appId`, `redirectUri`, `state`, `type=signIn`, portal Manus mở được trang login/loading, xác nhận host portal đúng là `https://manus.im`, còn `api.manus.im` là OAuth API server để exchange token.
+

@@ -7,6 +7,8 @@ import * as ReactNative from "react-native";
 const bundleId = "com.app.mcpproviderconfigurator";
 const timestamp = bundleId.split(".").pop()?.replace(/^t/, "") ?? "";
 const schemeFromBundleId = `manus${timestamp}`;
+const configuredScheme = Constants.expoConfig?.scheme;
+const deepLinkScheme = Array.isArray(configuredScheme) ? configuredScheme[0] : configuredScheme || schemeFromBundleId;
 
 const extra = (Constants.expoConfig?.extra ?? {}) as {
   apiBaseUrl?: string;
@@ -16,13 +18,13 @@ const extra = (Constants.expoConfig?.extra ?? {}) as {
 };
 
 const env = {
-  portal: process.env.EXPO_PUBLIC_OAUTH_PORTAL_URL ?? extra.oauthPortalUrl ?? "https://api.manus.im",
+  portal: process.env.EXPO_PUBLIC_OAUTH_PORTAL_URL ?? extra.oauthPortalUrl ?? "https://manus.im",
   server: process.env.EXPO_PUBLIC_OAUTH_SERVER_URL ?? extra.oauthServerUrl ?? "https://api.manus.im",
   appId: process.env.EXPO_PUBLIC_APP_ID ?? extra.appId ?? "HTXjZUzGMdUDVZZQVvSs4U",
   ownerId: process.env.EXPO_PUBLIC_OWNER_OPEN_ID ?? "",
   ownerName: process.env.EXPO_PUBLIC_OWNER_NAME ?? "",
   apiBaseUrl: process.env.EXPO_PUBLIC_API_BASE_URL ?? extra.apiBaseUrl ?? "",
-  deepLinkScheme: schemeFromBundleId,
+  deepLinkScheme,
 };
 
 export const OAUTH_PORTAL_URL = env.portal;
