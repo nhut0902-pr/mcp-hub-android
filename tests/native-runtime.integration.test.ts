@@ -15,6 +15,8 @@ describe("Native Terminal và ClawLink được tích hợp theo kiểu bổ sun
     expect(bridge).toContain("export function resolveMcpHubRuntime");
     expect(bridge).toContain("export function getNativeRuntimeProbe");
     expect(terminal).toContain("McpHubTerminalView");
+    expect(terminal).toContain("repairTerminalBootstrap");
+    expect(terminal).toContain("packageToolsReady");
     expect(terminal).toContain("Code Assistant");
   });
 
@@ -30,6 +32,8 @@ describe("Native Terminal và ClawLink được tích hợp theo kiểu bổ sun
     expect(bootstrap).toContain("BOOTSTRAP_SHA256");
     expect(bootstrap).toContain("private fun sha256");
     expect(bootstrap).toContain("canonicalFile");
+    expect(bootstrap).toContain("verifyPackageTools");
+    expect(bootstrap).toContain("LD_PRELOAD");
     expect(gateway).toContain("OPENCLAW_SRI");
     expect(gateway).toContain("npm pack openclaw@");
     expect(gateway).not.toMatch(/curl\s.*\|\s*(bash|sh)/i);

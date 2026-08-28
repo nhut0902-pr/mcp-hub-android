@@ -7,11 +7,13 @@ export type ClawLinkRuntimeStatus = {
   detail: string;
   updatedAt: number;
   runtimePath: string;
+  packageToolsReady?: boolean;
 };
 
 type McpHubRuntimeNativeModule = {
   getRuntimeStatus(): ClawLinkRuntimeStatus;
   installTerminalBootstrap(): Promise<ClawLinkRuntimeStatus>;
+  repairTerminalBootstrap(): Promise<ClawLinkRuntimeStatus>;
   installGatewayRuntime(): Promise<ClawLinkRuntimeStatus>;
   startGatewayService(): ClawLinkRuntimeStatus;
   stopGatewayService(): ClawLinkRuntimeStatus;

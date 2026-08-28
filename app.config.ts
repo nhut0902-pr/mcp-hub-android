@@ -13,7 +13,7 @@ const timestamp = bundleId.split(".").pop()?.replace(/^t/, "") ?? "";
 const config = {
   name: "MCP Hub",
   slug: "mcp-provider-configurator",
-  version: "1.0.12",
+  version: "1.0.13",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
   scheme: [`manus${timestamp}`, "mcphub"],
@@ -51,7 +51,7 @@ const config = {
     ["expo-build-properties", { android: { buildArchs: ["armeabi-v7a", "arm64-v8a"], minSdkVersion: 24, compileSdkVersion: 36, targetSdkVersion: 36, buildToolsVersion: "36.0.0" } }],
   ],
   experiments: { typedRoutes: true, reactCompiler: true },
-  extra: { appName: "MCP Hub", logoUrl: "/manus-storage/mcp-hub-icon_ca900851.png", aiCloudProxyUrl: "https://mcp-hub-ai-cloud.vercel.app" },
+  extra: { appName: "MCP Hub", logoUrl: "/manus-storage/mcp-hub-icon_ca900851.png", apiBaseUrl: "https://mcpconfig-htxjzuzg.manus.space", aiCloudProxyUrl: "https://mcp-hub-ai-cloud.vercel.app" },
 };
 
 export default config;

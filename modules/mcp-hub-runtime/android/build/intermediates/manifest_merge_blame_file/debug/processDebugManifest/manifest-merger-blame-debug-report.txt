@@ -1,0 +1,35 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.openclaw.android" >
+4
+5    <uses-sdk android:minSdkVersion="24" />
+6
+7    <uses-permission android:name="android.permission.INTERNET" />
+7-->/home/ubuntu/mcp-provider-configurator/modules/mcp-hub-runtime/android/src/main/AndroidManifest.xml:2:3-65
+7-->/home/ubuntu/mcp-provider-configurator/modules/mcp-hub-runtime/android/src/main/AndroidManifest.xml:2:20-62
+8    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+8-->/home/ubuntu/mcp-provider-configurator/modules/mcp-hub-runtime/android/src/main/AndroidManifest.xml:3:3-75
+8-->/home/ubuntu/mcp-provider-configurator/modules/mcp-hub-runtime/android/src/main/AndroidManifest.xml:3:20-72
+9    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+9-->/home/ubuntu/mcp-provider-configurator/modules/mcp-hub-runtime/android/src/main/AndroidManifest.xml:4:3-85
+9-->/home/ubuntu/mcp-provider-configurator/modules/mcp-hub-runtime/android/src/main/AndroidManifest.xml:4:20-82
+10    <uses-permission android:name="android.permission.WAKE_LOCK" />
+10-->/home/ubuntu/mcp-provider-configurator/modules/mcp-hub-runtime/android/src/main/AndroidManifest.xml:5:3-66
+10-->/home/ubuntu/mcp-provider-configurator/modules/mcp-hub-runtime/android/src/main/AndroidManifest.xml:5:20-63
+11    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+11-->/home/ubuntu/mcp-provider-configurator/modules/mcp-hub-runtime/android/src/main/AndroidManifest.xml:6:3-79
+11-->/home/ubuntu/mcp-provider-configurator/modules/mcp-hub-runtime/android/src/main/AndroidManifest.xml:6:20-76
+12
+13    <application>
+13-->/home/ubuntu/mcp-provider-configurator/modules/mcp-hub-runtime/android/src/main/AndroidManifest.xml:7:3-12:17
+14        <service
+14-->/home/ubuntu/mcp-provider-configurator/modules/mcp-hub-runtime/android/src/main/AndroidManifest.xml:8:5-11:50
+15            android:name="com.openclaw.android.ClawLinkForegroundService"
+15-->/home/ubuntu/mcp-provider-configurator/modules/mcp-hub-runtime/android/src/main/AndroidManifest.xml:9:7-68
+16            android:exported="false"
+16-->/home/ubuntu/mcp-provider-configurator/modules/mcp-hub-runtime/android/src/main/AndroidManifest.xml:10:7-31
+17            android:foregroundServiceType="dataSync" />
+17-->/home/ubuntu/mcp-provider-configurator/modules/mcp-hub-runtime/android/src/main/AndroidManifest.xml:11:7-47
+18    </application>
+19
+20</manifest>

@@ -192,5 +192,10 @@
 - [x] Chẩn đoán registry APK và sửa phát hiện bridge Terminal bằng retry/probe; fallback nay được phân biệt rõ cho web/Expo Go
 - [x] Thêm retry/probe cho bridge Terminal để phân biệt Expo Go/web preview với APK Android native và xác minh registry trên APK phát hành
 - [x] Đồng bộ metadata Gradle của `mcp-hub-runtime` với package source 0.1.1
-- [ ] Phát hành V1.0.12: retry/probe bridge Terminal, AI Gia sư, Flashcard và các sửa MCP đã kiểm thử
+- [x] Phát hành V1.0.12: retry/probe bridge Terminal, AI Gia sư, Flashcard và các sửa MCP đã kiểm thử; APK/manifest công khai đã xác minh
 - [ ] Kiểm thử trực tiếp APK V1.0.12 trên thiết bị Android: Terminal PTY, cài bootstrap, `pkg update`, `pkg install python` và Gateway cục bộ
+- [x] Điều tra và sửa Terminal Android không cài được thư viện ngoài, gồm gói Python standalone aarch64 do người dùng cung cấp; bổ sung repair bootstrap, pkg/curl và shim Termux
+- [x] Bắt buộc đăng nhập trước khi truy cập Nhutbot 1.0 Flash, xử lý rõ luồng chưa đăng nhập và hết phiên ở client/proxy
+- [x] Thêm khu vực quản trị Cloud có guard role server-side, hiển thị trạng thái dịch vụ và session admin
+- [x] Bổ sung repair Terminal: xác minh `pkg`/`curl`/`libtermux-exec`, rollback prefix khi kiểm tra thất bại và hiển thị hướng dẫn sửa runtime
+- [ ] Hoàn thiện end-to-end bản tiếp theo: triển khai proxy V1.0.13, test APK trên thiết bị và bổ sung CRUD quyền Cloud nếu backend production hỗ trợ

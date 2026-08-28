@@ -2,6 +2,22 @@ const GEMINI_ENDPOINT = "https://gemini-api.chocode.com.vn/v1/chat/completions";
 const MODEL = "gemini-1.5-flash";
 const MAX_MESSAGES = 24;
 const MAX_TOKENS = 2048;
+const AUTH_VERIFY_URL = process.env.AUTH_VERIFY_URL || "https://mcpconfig-htxjzuzg.manus.space/api/auth/me";
+
+async function hasAuthenticatedUser(request) {
+  const authorization = request.headers.authorization;
+  if (typeof authorization !== "string" || !authorization.startsWith("Bearer ")) return false;
+  try {
+    const verification = await fetch(AUTH_VERIFY_URL, {
+      headers: { Accept: "application/json", Authorization: authorization },
+    });
+    if (!verification.ok) return false;
+    const body = await verification.json();
+    return Boolean(body?.user);
+  } catch {
+    return false;
+  }
+}
 
 function normalizeMessages(input) {
   if (!Array.isArray(input)) return null;
@@ -25,6 +41,7 @@ function jsonError(response, status, message) {
 
 export default async function handler(request, response) {
   if (request.method !== "POST") return jsonError(response, 405, "Method not allowed");
+  if (!(await hasAuthenticatedUser(request))) return jsonError(response, 401, "Bạn cần đăng nhập để sử dụng Nhutbot 1.0 Flash.");
   const apiKey = process.env.AI_CLOUD_API_KEY;
   if (!apiKey) return jsonError(response, 503, "AI Cloud chưa được cấu hình trên máy chủ.");
 

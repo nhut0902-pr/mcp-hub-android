@@ -32,8 +32,9 @@ export function useAuth(options?: UseAuthOptions) {
             name: apiUser.name,
             email: apiUser.email,
             loginMethod: apiUser.loginMethod,
-            lastSignedIn: new Date(apiUser.lastSignedIn),
-          };
+                lastSignedIn: new Date(apiUser.lastSignedIn),
+                role: apiUser.role,
+              };
           setUser(userInfo);
           // Cache user info in localStorage for faster subsequent loads
           await Auth.setUserInfo(userInfo);
@@ -59,15 +60,24 @@ export function useAuth(options?: UseAuthOptions) {
         return;
       }
 
-      // Use cached user info for native (token validates the session)
-      const cachedUser = await Auth.getUserInfo();
-      console.log("[useAuth] Cached user:", cachedUser);
-      if (cachedUser) {
-        console.log("[useAuth] Using cached user info");
-        setUser(cachedUser);
+      // Refresh the role from the backend; fall back to cached identity when offline.
+      const apiUser = await Api.getMe();
+      if (apiUser) {
+        const freshUser: Auth.User = {
+          id: apiUser.id,
+          openId: apiUser.openId,
+          name: apiUser.name,
+          email: apiUser.email,
+          loginMethod: apiUser.loginMethod,
+          lastSignedIn: new Date(apiUser.lastSignedIn),
+          role: apiUser.role,
+        };
+        await Auth.setUserInfo(freshUser);
+        setUser(freshUser);
       } else {
-        console.log("[useAuth] No cached user, setting user to null");
-        setUser(null);
+        const cachedUser = await Auth.getUserInfo();
+        console.log("[useAuth] Cached user fallback:", cachedUser);
+        setUser(cachedUser);
       }
     } catch (err) {
       const error = err instanceof Error ? err : new Error("Failed to fetch user");

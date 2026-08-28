@@ -33,12 +33,15 @@ class McpHubRuntimeModule : Module() {
     }
 
     Function("getRuntimeStatus") {
-      val context = requireContext()
-      RuntimeStatusStore.snapshot(context)
+      RuntimeInstaller(requireContext()).runtimeStatus()
     }
 
     AsyncFunction("installTerminalBootstrap") {
       RuntimeInstaller(requireContext()).installTerminalBootstrap()
+    }.runOnQueue(Queues.DEFAULT)
+
+    AsyncFunction("repairTerminalBootstrap") {
+      RuntimeInstaller(requireContext()).installTerminalBootstrap(force = true)
     }.runOnQueue(Queues.DEFAULT)
 
     AsyncFunction("installGatewayRuntime") {

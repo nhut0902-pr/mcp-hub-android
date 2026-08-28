@@ -10,6 +10,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.security.MessageDigest
 import java.util.UUID
+import java.util.concurrent.TimeUnit
 import java.util.zip.ZipInputStream
 
 /**
@@ -26,7 +27,12 @@ class RuntimeInstaller(private val context: Context) {
     private const val MAX_DOWNLOAD_SIZE = 64L * 1024L * 1024L
   }
 
-  fun installTerminalBootstrap(): Map<String, Any> {
+  fun runtimeStatus(): Map<String, Any> {
+    val prefix = File(context.filesDir, "runtime/usr")
+    return RuntimeStatusStore.snapshot(context) + mapOf("packageToolsReady" to isRuntimeStructurallyReady(prefix))
+  }
+
+  fun installTerminalBootstrap(force: Boolean = false): Map<String, Any> {
     val abi = Build.SUPPORTED_ABIS.firstOrNull().orEmpty()
     if (!Build.SUPPORTED_ABIS.contains("arm64-v8a")) {
       return fail("Thiết bị $abi chưa được hỗ trợ; bootstrap nội bộ hiện chỉ hỗ trợ arm64-v8a.")
@@ -37,9 +43,9 @@ class RuntimeInstaller(private val context: Context) {
     }
     val runtime = File(root, "runtime").apply { mkdirs() }
     val prefix = File(runtime, "usr")
-    if (File(prefix, "bin/bash").canExecute() || File(prefix, "bin/sh").canExecute()) {
+    if (!force && isRuntimeStructurallyReady(prefix)) {
       RuntimeStatusStore.set(context, "ready", "Terminal bootstrap đã tồn tại trong thư mục riêng của MCP Hub.")
-      return RuntimeStatusStore.snapshot(context)
+      return runtimeStatus()
     }
 
     val downloads = File(context.cacheDir, "clawlink-downloads").apply { mkdirs() }
@@ -47,7 +53,10 @@ class RuntimeInstaller(private val context: Context) {
     val part = File(downloads, "bootstrap-aarch64.zip.part")
     val staging = File(runtime, "usr-staging-${UUID.randomUUID()}")
 
+    var backup: File? = null
+    var activated = false
     try {
+      if (prefix.exists()) RuntimeStatusStore.set(context, "installing", "Đang sửa runtime Terminal hiện có trước khi kiểm tra package tools.")
       RuntimeStatusStore.set(context, "installing", "Đang tải terminal bootstrap qua HTTPS (${BOOTSTRAP_SIZE / 1024 / 1024} MB).")
       downloadPinnedArchive(part)
       if (!sha256(part).equals(BOOTSTRAP_SHA256, ignoreCase = true)) {
@@ -67,20 +76,25 @@ class RuntimeInstaller(private val context: Context) {
       rewriteTermuxScriptPaths(staging, prefix)
       require(File(staging, "bin/pkg").isFile) { "Bootstrap thiếu lệnh pkg sau khi giải nén." }
       markExecutableTree(staging)
+      require(File(staging, "lib/libtermux-exec.so").isFile) { "Bootstrap thiếu shim libtermux-exec.so cần cho pkg/curl." }
 
       RuntimeStatusStore.set(context, "installing", "Đang kích hoạt runtime trong vùng riêng của MCP Hub.")
-      val backup = File(runtime, "usr-backup-${UUID.randomUUID()}")
+      backup = File(runtime, "usr-backup-${UUID.randomUUID()}")
       if (prefix.exists()) require(prefix.renameTo(backup)) { "Không thể bảo toàn prefix runtime cũ trước khi cập nhật." }
       if (!staging.renameTo(prefix)) {
-        backup.renameTo(prefix)
+        backup?.renameTo(prefix)
         error("Không thể kích hoạt runtime vừa giải nén.")
       }
-      backup.deleteRecursively()
-      RuntimeStatusStore.set(context, "ready", "Terminal bootstrap đã được kiểm tra SHA-256 và cài trong files/runtime/usr. Gateway chưa được cài.")
-      return RuntimeStatusStore.snapshot(context)
+      activated = true
+      verifyPackageTools(prefix)
+      backup?.deleteRecursively()
+      RuntimeStatusStore.set(context, "ready", "Terminal bootstrap, pkg và curl đã được kiểm tra trong files/runtime/usr. Gateway chưa được cài.")
+      return runtimeStatus()
     } catch (error: Exception) {
       staging.deleteRecursively()
-      return fail(error.message ?: "Không thể cài terminal bootstrap.")
+      if (activated && prefix.exists()) prefix.deleteRecursively()
+      if (backup?.exists() == true && !prefix.exists()) backup?.renameTo(prefix)
+      return fail(error.message ?: "Không thể cài hoặc kiểm tra terminal bootstrap.")
     }
   }
 
@@ -244,6 +258,52 @@ class RuntimeInstaller(private val context: Context) {
     }
   }
 
+  private fun isRuntimeStructurallyReady(prefix: File): Boolean {
+    val shell = File(prefix, "bin/bash").takeIf { it.canExecute() } ?: File(prefix, "bin/sh")
+    val shim = File(prefix, "lib/libtermux-exec.so")
+    return shell.canExecute() && File(prefix, "bin/pkg").canExecute() &&
+      File(prefix, "bin/curl").canExecute() && shim.isFile && shim.canRead()
+  }
+
+  /** Runs local read-only checks before package commands are exposed to the user. */
+  private fun verifyPackageTools(prefix: File) {
+    require(isRuntimeStructurallyReady(prefix)) { "Runtime thiếu bash, pkg, curl hoặc libtermux-exec.so." }
+    val shell = File(prefix, "bin/bash").takeIf { it.canExecute() } ?: File(prefix, "bin/sh")
+    val runtimeRoot = prefix.parentFile ?: context.filesDir
+    val home = File(runtimeRoot, "home").apply { mkdirs() }
+    val tmp = File(runtimeRoot, "tmp").apply { mkdirs() }
+    val process = ProcessBuilder(shell.absolutePath, "-lc", "command -v pkg >/dev/null && command -v curl >/dev/null && pkg --help >/dev/null")
+      .directory(home)
+      .redirectErrorStream(true)
+    val environment = process.environment()
+    environment.clear()
+    environment["HOME"] = home.absolutePath
+    environment["PREFIX"] = prefix.absolutePath
+    environment["TMPDIR"] = tmp.absolutePath
+    environment["PATH"] = "${prefix.absolutePath}/bin:${prefix.absolutePath}/bin/applets:/system/bin:/system/xbin"
+    environment["LD_LIBRARY_PATH"] = "${prefix.absolutePath}/lib"
+    environment["LD_PRELOAD"] = File(prefix, "lib/libtermux-exec.so").absolutePath
+    environment["TERMUX__PREFIX"] = prefix.absolutePath
+    environment["TERMUX_PREFIX"] = prefix.absolutePath
+    environment["TERMUX__ROOTFS"] = runtimeRoot.absolutePath
+    environment["TERMUX_APP__DATA_DIR"] = context.filesDir.parentFile?.absolutePath ?: context.filesDir.absolutePath
+    environment["TERMUX_APP__LEGACY_DATA_DIR"] = "/data/data/com.termux"
+    environment["TERMUX_APP_PACKAGE_MANAGER"] = "apt"
+    environment["TERMUX_MAIN_PACKAGE_FORMAT"] = "debian"
+    environment["APT_CONFIG"] = "${prefix.absolutePath}/etc/apt/apt.conf"
+    environment["DPKG_ADMINDIR"] = "${prefix.absolutePath}/var/lib/dpkg"
+    environment["DPKG_ROOT"] = prefix.absolutePath
+    environment["TERM"] = "xterm-256color"
+    environment["LANG"] = "C.UTF-8"
+    val started = process.start()
+    if (!started.waitFor(8, TimeUnit.SECONDS)) {
+      started.destroyForcibly()
+      error("Kiểm tra pkg/curl quá thời gian chờ; runtime không được kích hoạt.")
+    }
+    val output = started.inputStream.bufferedReader().readText().trim().take(280)
+    require(started.exitValue() == 0) { "Kiểm tra pkg/curl không đạt${if (output.isNotEmpty()) ": $output" else "."}" }
+  }
+
   private fun sha256(file: File): String {
     val digest = MessageDigest.getInstance("SHA-256")
     file.inputStream().use { input ->
@@ -259,6 +319,6 @@ class RuntimeInstaller(private val context: Context) {
 
   private fun fail(detail: String): Map<String, Any> {
     RuntimeStatusStore.set(context, "error", detail)
-    return RuntimeStatusStore.snapshot(context)
+    return runtimeStatus()
   }
 }
