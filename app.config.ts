@@ -13,7 +13,7 @@ const timestamp = bundleId.split(".").pop()?.replace(/^t/, "") ?? "";
 const config = {
   name: "MCP Hub",
   slug: "mcp-provider-configurator",
-  version: "1.0.15",
+  version: "1.0.16",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
   scheme: [`manus${timestamp}`, "mcphub"],
@@ -59,6 +59,8 @@ const config = {
     oauthServerUrl: process.env.EXPO_PUBLIC_OAUTH_SERVER_URL ?? "https://api.manus.im",
     appId: process.env.EXPO_PUBLIC_APP_ID ?? "HTXjZUzGMdUDVZZQVvSs4U",
     aiCloudProxyUrl: "https://mcp-hub-ai-cloud.vercel.app",
+    supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL ?? "https://cnmnrmmvdciewflywlbi.supabase.co",
+    supabasePublishableKey: process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? "sb_publishable_Uo97m3-mlH1nBmgWoUGiSA_3QKKtzOx",
   },
 };
 

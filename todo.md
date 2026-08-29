@@ -205,4 +205,14 @@
 - [x] Sửa OAuth login không mở `api.manus.im/app-auth` 404; xác định route portal production thật và callback Android tương ứng
 
 - [x] V1.0.15: sửa OAuth callback để deep link dùng scheme runtime thực tế và portal authorize manus.im
-- [ ] V1.0.15: xác minh release APK public và kiểm thử login/Terminal trên thiết bị Android thật
+- [x] V1.0.15: xác minh release APK public và checksum APK
+
+- [ ] V1.0.15: kiểm thử login OAuth và Terminal Repair trên thiết bị Android thật (sandbox chưa có adb/emulator)
+
+- [x] Chuyển xác thực MCP Hub sang Supabase Auth Free, không phụ thuộc Manus OAuth
+- [x] Tạo Supabase project Free và lưu URL/anon key an toàn
+- [x] Tích hợp session Supabase vào app, AI Cloud proxy và admin role
+- [x] Kiểm thử đăng nhập, logout, hết phiên và bảo toàn các tính năng hiện có (cấu hình/session bridge và regression suite đạt; E2E thiết bị thật vẫn theo dõi riêng)
+
+- [ ] Build APK bản mới tích hợp Supabase Auth Free
+- [ ] Xác minh artifact APK, version, package và checksum sau workflow

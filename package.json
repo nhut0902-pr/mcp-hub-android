@@ -1,6 +1,6 @@
 {
   "name": "app-template",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "private": true,
   "license": "GPL-3.0-only",
   "repository": {
@@ -32,6 +32,7 @@
     "@react-navigation/bottom-tabs": "^7.8.12",
     "@react-navigation/elements": "^2.9.2",
     "@react-navigation/native": "^7.1.25",
+    "@supabase/supabase-js": "^2.112.4",
     "@tanstack/react-query": "^5.90.12",
     "@trpc/client": "11.7.2",
     "@trpc/react-query": "11.7.2",

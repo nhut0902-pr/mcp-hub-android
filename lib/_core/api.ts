@@ -171,3 +171,30 @@ export async function establishSession(token: string): Promise<boolean> {
     return false;
   }
 }
+
+
+/** Exchange a Supabase Auth access token for the existing MCP Hub session contract. */
+export async function establishSupabaseSession(
+  accessToken: string,
+): Promise<{ sessionToken: string; user: any }> {
+  const baseUrl = getApiBaseUrl();
+  const cleanBaseUrl = baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
+  const response = await fetch(`${cleanBaseUrl}/api/auth/supabase/session`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  const payload = (await response.json().catch(() => ({}))) as {
+    app_session_id?: string;
+    user?: any;
+    error?: string;
+  };
+  if (!response.ok || !payload.app_session_id) {
+    throw new Error(payload.error || "Không thể tạo phiên MCP Hub từ Supabase");
+  }
+
+  return { sessionToken: payload.app_session_id, user: payload.user };
+}

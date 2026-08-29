@@ -1,6 +1,6 @@
 {
-  "version": "1.0.15",
-  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.15/MCP-Hub-v1.0.15.apk",
-  "notes": "Sửa lỗi APK báo thiếu cấu hình OAuth production: nhúng fallback portal/server/App ID hợp lệ, dùng backend MCP Hub và giữ callback đăng nhập Android.",
-  "publishedAt": "2026-08-28T05:30:00Z"
+  "version": "1.0.16",
+  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.16/MCP-Hub-v1.0.16.apk",
+  "notes": "Tích hợp Supabase Auth Free: đăng nhập email/mật khẩu không phụ thuộc Manus, session bridge tương thích AI Cloud và protected routes.",
+  "publishedAt": "2026-08-29T00:00:00Z"
 }

@@ -61,7 +61,63 @@ function buildUserResponse(
   };
 }
 
+async function getSupabaseUser(accessToken: string) {
+  const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
+  const publishableKey = process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  if (!supabaseUrl || !publishableKey) {
+    throw new Error("Supabase Auth server configuration is missing");
+  }
+
+  const response = await fetch(`${supabaseUrl.replace(/\/$/, "")}/auth/v1/user`, {
+    headers: {
+      apikey: publishableKey,
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  if (!response.ok) {
+    throw new Error(`Supabase user verification failed (${response.status})`);
+  }
+
+  const profile = (await response.json()) as {
+    id?: string;
+    email?: string;
+    user_metadata?: { full_name?: string; name?: string };
+  };
+  if (!profile.id) throw new Error("Supabase user id is missing");
+  return profile;
+}
+
 export function registerOAuthRoutes(app: Express) {
+  // Exchange a Supabase Auth bearer token for the existing MCP Hub session.
+  // This keeps all existing protected routes and AI Cloud proxy compatible.
+  app.post("/api/auth/supabase/session", async (req: Request, res: Response) => {
+    try {
+      const authHeader = req.headers.authorization || req.headers.Authorization;
+      if (typeof authHeader !== "string" || !authHeader.startsWith("Bearer ")) {
+        res.status(401).json({ error: "Supabase Bearer token required" });
+        return;
+      }
+      const accessToken = authHeader.slice("Bearer ".length).trim();
+      const profile = await getSupabaseUser(accessToken);
+      const user = await syncUser({
+        openId: `supabase:${profile.id}`,
+        name: profile.user_metadata?.full_name || profile.user_metadata?.name || profile.email || null,
+        email: profile.email || null,
+        loginMethod: "supabase",
+      });
+      const sessionToken = await sdk.createSessionToken(`supabase:${profile.id}`, {
+        name: profile.user_metadata?.full_name || profile.user_metadata?.name || profile.email || "",
+        expiresInMs: ONE_YEAR_MS,
+      });
+      const cookieOptions = getSessionCookieOptions(req);
+      res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
+      res.json({ app_session_id: sessionToken, user: buildUserResponse(user) });
+    } catch (error) {
+      console.error("[Auth] Supabase session exchange failed:", error);
+      res.status(401).json({ error: "Invalid Supabase session" });
+    }
+  });
+
   app.get("/api/oauth/callback", async (req: Request, res: Response) => {
     const code = getQueryParam(req, "code");
     const state = getQueryParam(req, "state");
