@@ -1,6 +1,6 @@
 {
   "version": "1.0.20",
   "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.20/MCP-Hub-v1.0.20.apk",
-  "notes": "BỎ Manus backend hoàn toàn. Auth flow mới: app verify JWT trực tiếp với web nhutcoder-team-v2.vercel.app (stateless, no DB lookup). Workflow thêm cache busting để tránh stale build.",
-  "publishedAt": "2026-08-30T07:00:00Z"
+  "notes": "Cập nhật phiên bản 1.0.20 với cải tiến bảo mật và tính năng mới.",
+  "publishedAt": "2026-08-30T07:17:48Z"
 }
