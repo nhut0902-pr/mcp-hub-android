@@ -107,14 +107,14 @@ export default function LoginScreen() {
     <ScreenContainer edges={["top", "bottom", "left", "right"]}>
       <View style={styles.content}>
         <View style={styles.brand}>
-          <MaterialIcons name="hub" size={56} color={palette.primary} />
+          <MaterialIcons name="hub" size={56} color={palette.navy} />
           <Text style={styles.title}>MCP Hub</Text>
           <Text style={styles.subtitle}>Đăng nhập qua NhutCoder Team</Text>
         </View>
 
         <Card style={styles.card}>
           <View style={styles.row}>
-            <MaterialIcons name="lock-outline" size={20} color={palette.primary} />
+            <MaterialIcons name="lock-outline" size={20} color={palette.navy} />
             <Text style={styles.cardTitle}>Đăng nhập bảo mật</Text>
           </View>
           <Text style={styles.cardText}>
@@ -130,7 +130,7 @@ export default function LoginScreen() {
 
         {loading ? (
           <View style={styles.centeredRow}>
-            <ActivityIndicator color={palette.primary} />
+            <ActivityIndicator color={palette.navy} />
             <Text style={styles.statusText}>Đang kiểm tra phiên...</Text>
           </View>
         ) : isAuthenticated && user ? (
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 14,
-    color: palette.textSecondary,
+    color: palette.muted,
   },
   card: {
     gap: 12,
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
   },
   cardText: {
     fontSize: 13,
-    color: palette.textSecondary,
+    color: palette.muted,
     lineHeight: 18,
   },
   centeredRow: {
@@ -195,11 +195,11 @@ const styles = StyleSheet.create({
   },
   statusText: {
     fontSize: 13,
-    color: palette.textSecondary,
+    color: palette.muted,
   },
   disclaimer: {
     fontSize: 11,
-    color: palette.textMuted,
+    color: palette.muted,
     textAlign: "center",
     lineHeight: 16,
   },

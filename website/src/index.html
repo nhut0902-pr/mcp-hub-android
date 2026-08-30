@@ -24,7 +24,7 @@
           <p class="eyebrow">MCP HUB / ANDROID WORKSPACE</p>
           <h1>Để AI làm việc<br />với <em>đúng ngữ cảnh.</em></h1>
           <p class="intro">Một nơi gọn gàng để cài provider, ghim model, kết nối MCP và giữ cuộc trò chuyện của bạn không bị ngắt quãng.</p>
-          <div class="hero-actions"><a class="button primary" href="https://github.com/nhut0902-pr/mcp-hub-android/releases">Tải APK mới nhất <span>↓</span></a><a class="button plain" href="#workflows">Xem cách hoạt động <span>→</span></a></div>
+          <div class="hero-actions"><a class="button primary" data-apk-url href="https://github.com/nhut0902-pr/mcp-hub-android/releases">Tải APK mới nhất <span>↓</span></a><a class="button plain" href="#workflows">Xem cách hoạt động <span>→</span></a></div>
           <div class="hero-note"><span class="note-dot"></span> Dành cho Android · API key được lưu trong vùng bảo mật thiết bị</div>
         </div>
 
@@ -74,7 +74,39 @@
 
       <section class="release wrap" id="release">
         <div><p class="eyebrow">03 / PHÁT HÀNH</p><h2>Bản Android<br /><em>sẵn để cài đặt.</em></h2></div>
-        <div class="release-action"><p>APK được build bằng GitHub Actions và đính kèm trực tiếp trong mỗi GitHub Release. Bạn luôn có thể tải bản mới nhất từ trang phát hành.</p><a class="button dark" href="https://github.com/nhut0902-pr/mcp-hub-android/releases">Mở trang phát hành <span>↗</span></a></div>
+        <div class="release-action">
+          <p>APK được build bằng GitHub Actions và đính kèm trực tiếp trong mỗi GitHub Release. Tải trực tiếp APK dưới đây, không cần qua Google Play.</p>
+
+          <div data-apk-loader aria-live="polite" style="padding:20px 0;color:#888">Đang tải thông tin phiên bản mới nhất…</div>
+
+          <div data-apk-card hidden style="background:#f7f3e8;border:1px solid #d8cba8;border-radius:18px;padding:24px 26px;margin:18px 0;display:grid;gap:14px">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+              <div>
+                <p style="margin:0 0 4px;font-size:0.75rem;letter-spacing:0.12em;color:#8b7d54;text-transform:uppercase">Phiên bản mới nhất</p>
+                <h3 style="margin:0;font-family:'Fraunces',serif;font-size:2rem;color:#1a1a1a">v<span data-apk-version>1.0.16</span></h3>
+                <p style="margin:4px 0 0;font-size:0.85rem;color:#5a5a5a">Phát hành: <span data-apk-published-at>—</span></p>
+              </div>
+              <a class="button dark" data-apk-url href="https://github.com/nhut0902-pr/mcp-hub-android/releases" style="font-size:1rem;padding:14px 22px">Tải APK v<span data-apk-version>1.0.16</span> <span>↓</span></a>
+            </div>
+            <p data-apk-notes style="margin:0;font-size:0.9rem;color:#3a3a3a;line-height:1.55"></p>
+            <p style="margin:0;font-size:0.78rem;color:#7a7a7a">⚠ Chỉ cài APK từ nguồn chính thức. SHA256 checksum có trong trang GitHub Release để kiểm tra toàn vẹn tệp.</p>
+            <a class="text-link" href="https://github.com/nhut0902-pr/mcp-hub-android/releases" target="_blank" rel="noreferrer" style="font-size:0.85rem">Xem tất cả phiên bản trên GitHub <span>↗</span></a>
+          </div>
+
+          <details style="margin-top:14px;border:1px solid #d8cba8;border-radius:12px;padding:12px 18px;background:#fbf7ec">
+            <summary style="cursor:pointer;font-weight:600;color:#1a1a1a">Hướng dẫn cài đặt APK</summary>
+            <ol style="margin:12px 0 0;padding-left:20px;font-size:0.9rem;color:#3a3a3a;line-height:1.7">
+              <li>Tải file <code>.apk</code> về điện thoại Android.</li>
+              <li>Mở file (qua ứng dụng Files hoặc thông báo tải xuống).</li>
+              <li>Cho phép "Cài đặt từ nguồn không xác định" khi Chrome/Files yêu cầu.</li>
+              <li>Mở app <strong>MCP Hub</strong> và nhấn <strong>Đăng nhập qua NhutCoder Team</strong>.</li>
+              <li>Trình duyệt mở trang <code>/mobile-login</code> trên <code>nhutcoder-team-v2.vercel.app</code>.</li>
+              <li>Đăng nhập bằng tài khoản NhutCoder Team (cùng tài khoản với web).</li>
+              <li>Sau khi đăng nhập, app tự quay lại và bạn có thể dùng Nhutbot 1.0 Flash.</li>
+            </ol>
+            <p style="margin:10px 0 0;font-size:0.78rem;color:#7a7a7a">Yêu cầu: Android 7.0 (API 24) trở lên · Kết nối Internet · Tài khoản NhutCoder Team</p>
+          </details>
+        </div>
       </section>
     </main>
 

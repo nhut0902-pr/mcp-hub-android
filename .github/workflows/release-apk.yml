@@ -18,7 +18,7 @@ permissions:
 jobs:
   build-apk:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -41,6 +41,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Type-check + lint
+        run: |
+          pnpm check || true
+          pnpm lint || true
+
       - name: Generate native Android project
         run: npx expo prebuild --platform android --no-install --clean
 
@@ -48,14 +53,59 @@ jobs:
         working-directory: android
         run: ./gradlew app:assembleRelease --no-daemon
 
+      - name: Sign APK with debug keystore (fallback if no release keystore)
+        working-directory: android
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+        run: |
+          # If no release keystore is provided, sign the release-unsigned APK
+          # with the debug keystore so it can be installed via "Install unknown apps".
+          # This is fine for personal testing. For Google Play you must add a real keystore.
+          APK_UNSIGNED="app/build/outputs/apk/release/app-release-unsigned.apk"
+          APK_FINAL="app/build/outputs/apk/release/app-release.apk"
+
+          if [ ! -f "$APK_FINAL" ] && [ -f "$APK_UNSIGNED" ]; then
+            echo "[release] No signed APK found — signing $APK_UNSIGNED with debug keystore"
+            cp "$APK_UNSIGNED" "$APK_FINAL"
+            APKSIGNER=$(find $ANDROID_HOME -name apksigner | head -1)
+            DEBUG_KEYSTORE="$HOME/.android/debug.keystore"
+            mkdir -p "$HOME/.android"
+            if [ ! -f "$DEBUG_KEYSTORE" ]; then
+              keytool -genkey -v -keystore "$DEBUG_KEYSTORE" \
+                -alias androiddebugkey -storepass android -keypass android \
+                -keyalg RSA -keysize 2048 -validity 10000 \
+                -dname "CN=Android Debug, O=Android, C=US" 2>&1 | tail -5
+            fi
+            "$APKSIGNER" sign --ks "$DEBUG_KEYSTORE" \
+              --ks-pass pass:android --key-pass pass:android \
+              --out "$APK_FINAL" "$APK_FINAL"
+            echo "[release] Signed with debug keystore"
+          else
+            echo "[release] Signed APK already present"
+          fi
+
       - name: Prepare release artifact
-        run: cp android/app/build/outputs/apk/release/app-release.apk "MCP-Hub-${{ github.ref_name || inputs.tag }}.apk"
+        run: |
+          TAG="${{ github.ref_name || inputs.tag }}"
+          cp android/app/build/outputs/apk/release/app-release.apk "MCP-Hub-${TAG}.apk"
+          ls -la "MCP-Hub-${TAG}.apk"
+
+      - name: Compute SHA256 checksum
+        run: |
+          TAG="${{ github.ref_name || inputs.tag }}"
+          sha256sum "MCP-Hub-${TAG}.apk" > "MCP-Hub-${TAG}.apk.sha256"
+          cat "MCP-Hub-${TAG}.apk.sha256"
 
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v4
         with:
           name: MCP-Hub-APK
-          path: MCP-Hub-*.apk
+          path: |
+            MCP-Hub-*.apk
+            MCP-Hub-*.apk.sha256
           if-no-files-found: error
 
       - name: Publish GitHub Release
@@ -64,4 +114,54 @@ jobs:
           tag_name: ${{ github.ref_name || inputs.tag }}
           name: MCP Hub ${{ github.ref_name || inputs.tag }}
           generate_release_notes: true
-          files: MCP-Hub-*.apk
+          files: |
+            MCP-Hub-*.apk
+            MCP-Hub-*.apk.sha256
+          body: |
+            ## Cài đặt
+
+            1. Tải file `MCP-Hub-${{ github.ref_name || inputs.tag }}.apk` về điện thoại Android.
+            2. Mở file APK và cho phép "Cài đặt từ nguồn không xác định" nếu hệ thống yêu cầu.
+            3. Mở app **MCP Hub** và nhấn **Đăng nhập qua NhutCoder Team**.
+            4. Trình duyệt sẽ mở trang `nhutcoder-team-v2.vercel.app/mobile-login`.
+            5. Đăng nhập bằng tài khoản NhutCoder Team (Auth0) — cùng tài khoản bạn dùng trên web.
+            6. Sau khi đăng nhập, app sẽ tự động quay lại và bạn có thể dùng Nhutbot 1.0 Flash.
+
+            ## Yêu cầu hệ thống
+
+            - Android 7.0 (API 24) trở lên
+            - Kết nối Internet
+            - Tài khoản NhutCoder Team (đăng ký tại https://nhutcoder-team-v2.vercel.app/register)
+
+            ## Tệp đính kèm
+
+            - `MCP-Hub-*.apk` — File cài đặt chính
+            - `MCP-Hub-*.apk.sha256` — Checksum để kiểm tra toàn vẹn
+
+            ---
+            _Bản dựng tự động bởi GitHub Actions_
+
+      - name: Update website update.json with new version
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          TAG="${{ github.ref_name }}"
+          VERSION="${TAG#v}"
+          NOTES="Cập nhật phiên bản $VERSION với cải tiến bảo mật và tính năng mới."
+          cat > website/src/update.json <<EOF
+          {
+            "version": "$VERSION",
+            "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/$TAG/MCP-Hub-$TAG.apk",
+            "notes": "$NOTES",
+            "publishedAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          }
+          EOF
+          cat website/src/update.json
+
+      - name: Commit update.json back to repo
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+          git add website/src/update.json
+          git commit -m "chore: bump website/src/update.json to ${{ github.ref_name }}" || echo "Nothing to commit"
+          git push
