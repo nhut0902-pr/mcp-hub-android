@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
   drawerText: { color: palette.text, fontSize: 14, flex: 1 },
   drawerFooter: { marginTop: "auto", paddingBottom: 15, gap: 8 },
   drawerPrimary: { height: 45, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, borderRadius: 23, backgroundColor: palette.primary },
-  drawerPrimaryText: { color: #FFFFFF, fontSize: 13, fontWeight: "800" },
+  drawerPrimaryText: { color: "#FFFFFF", fontSize: 13, fontWeight: "800" },
   drawerNav: { flexDirection: "row", justifyContent: "space-around", paddingTop: 8 },
   drawerNavItem: { alignItems: "center", gap: 2 },
   drawerNavText: { color: palette.textSecondary, fontSize: 9, fontWeight: "700" },
