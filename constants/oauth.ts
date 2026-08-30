@@ -2,38 +2,27 @@ import Constants from "expo-constants";
 import * as Linking from "expo-linking";
 import * as ReactNative from "react-native";
 
-// Extract scheme from bundle ID (last segment timestamp, prefixed with "manus")
-// e.g., "space.manus.my.app.t20240115103045" -> "manus20240115103045"
-const bundleId = "com.app.mcpproviderconfigurator";
-const timestamp = bundleId.split(".").pop()?.replace(/^t/, "") ?? "";
-const schemeFromBundleId = `manus${timestamp}`;
+// v1.0.23+: Deep link scheme is now hardcoded as "mcphub".
+// Previously derived from bundleId (`com.app.mcpproviderconfigurator` →
+// `manusmcpproviderconfigurator`) which leaked the "manus" brand name in
+// OAuth consent screens. The new scheme is clean and short.
+//
+// If the app.config.ts `scheme` field is set, we use that; otherwise fall back
+// to "mcphub".
 const configuredScheme = Constants.expoConfig?.scheme;
-const deepLinkScheme = Array.isArray(configuredScheme) ? configuredScheme[0] : configuredScheme || schemeFromBundleId;
+const deepLinkScheme = (Array.isArray(configuredScheme) ? configuredScheme[0] : configuredScheme) ?? "mcphub";
 
 const extra = (Constants.expoConfig?.extra ?? {}) as {
   apiBaseUrl?: string;
-  oauthPortalUrl?: string;
-  oauthServerUrl?: string;
-  appId?: string;
   webAuthUrl?: string;
 };
 
 const env = {
-  portal: process.env.EXPO_PUBLIC_OAUTH_PORTAL_URL ?? extra.oauthPortalUrl ?? "https://manus.im",
-  server: process.env.EXPO_PUBLIC_OAUTH_SERVER_URL ?? extra.oauthServerUrl ?? "https://api.manus.im",
-  appId: process.env.EXPO_PUBLIC_APP_ID ?? extra.appId ?? "HTXjZUzGMdUDVZZQVvSs4U",
-  ownerId: process.env.EXPO_PUBLIC_OWNER_OPEN_ID ?? "",
-  ownerName: process.env.EXPO_PUBLIC_OWNER_NAME ?? "",
   apiBaseUrl: process.env.EXPO_PUBLIC_API_BASE_URL ?? extra.apiBaseUrl ?? "",
   webAuthUrl: process.env.EXPO_PUBLIC_WEB_AUTH_URL ?? extra.webAuthUrl ?? "https://nhutcoder-team-v2.vercel.app",
   deepLinkScheme,
 };
 
-export const OAUTH_PORTAL_URL = env.portal;
-export const OAUTH_SERVER_URL = env.server;
-export const APP_ID = env.appId;
-export const OWNER_OPEN_ID = env.ownerId;
-export const OWNER_NAME = env.ownerName;
 export const API_BASE_URL = env.apiBaseUrl;
 export const WEB_AUTH_URL = env.webAuthUrl;
 export const DEEP_LINK_SCHEME = env.deepLinkScheme;
@@ -41,8 +30,8 @@ export const DEEP_LINK_SCHEME = env.deepLinkScheme;
 /**
  * Build the deep-link URL the web should redirect the browser to after the
  * one-time token is minted. We expose the scheme via the
- * `?scheme=manusmcpproviderconfigurator` query param when the app opens the
- * web's /mobile-login page, so the web knows exactly which scheme to use.
+ * `?scheme=mcphub` query param when the app opens the web's /mobile-login
+ * page, so the web knows exactly which scheme to use.
  *
  * Default: `${DEEP_LINK_SCHEME}://auth?token=xxx&email=yyy&name=zzz`
  */
@@ -57,8 +46,7 @@ export function buildAuthDeepLink(token: string, opts?: { email?: string; name?:
 /**
  * Build the URL of the web's /mobile-login bridge page. We append the app's
  * deep-link scheme as a query param so the web knows which scheme to redirect
- * back to (otherwise the web has no way to know the app's bundleId-derived
- * scheme).
+ * back to.
  */
 export function buildWebLoginUrl(): string {
   const base = env.webAuthUrl.replace(/\/$/, "");
@@ -84,7 +72,7 @@ export function getApiBaseUrl(): string {
 }
 
 export const SESSION_TOKEN_KEY = "app_session_token";
-export const USER_INFO_KEY = "manus-runtime-user-info";
+export const USER_INFO_KEY = "mcphub-user-info";
 
 const encodeState = (value: string) => {
   if (typeof globalThis.btoa === "function") {
@@ -111,55 +99,3 @@ export const getRedirectUri = () => {
     });
   }
 };
-
-export const getLoginUrl = () => {
-  const redirectUri = getRedirectUri();
-  const state = encodeState(redirectUri);
-
-  const url = new URL(`${OAUTH_PORTAL_URL}/app-auth`);
-  url.searchParams.set("appId", APP_ID);
-  url.searchParams.set("redirectUri", redirectUri);
-  url.searchParams.set("state", state);
-  url.searchParams.set("type", "signIn");
-
-  return url.toString();
-};
-
-/**
- * Start OAuth login flow.
- *
- * On native platforms (iOS/Android), open the system browser directly so
- * the OAuth callback returns via deep link to the app.
- *
- * On web, this simply redirects to the login URL.
- *
- * @returns Always null, the callback is handled via deep link.
- */
-export async function startOAuthLogin(): Promise<string | null> {
-  const loginUrl = getLoginUrl();
-
-  if (ReactNative.Platform.OS === "web") {
-    // On web, just redirect
-    if (typeof window !== "undefined") {
-      window.location.href = loginUrl;
-    }
-    return null;
-  }
-
-  const supported = await Linking.canOpenURL(loginUrl);
-  if (!supported) {
-    console.warn("[OAuth] Cannot open login URL: URL scheme not supported");
-    // 可考虑抛出错误或返回错误状态，让调用方处理
-    return null;
-  }
-
-  try {
-    await Linking.openURL(loginUrl);
-  } catch (error) {
-    console.error("[OAuth] Failed to open login URL:", error);
-    // 可考虑抛出错误让调用方处理
-  }
-
-  // The OAuth callback will reopen the app via deep link.
-  return null;
-}

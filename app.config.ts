@@ -1,27 +1,27 @@
-const rawBundleId = "com.app.mcpproviderconfigurator";
-const bundleId = rawBundleId
-  .replace(/[-_]/g, ".")
-  .replace(/[^a-zA-Z0-9.]/g, "")
-  .replace(/\.+/g, ".")
-  .replace(/^\.+|\.+$/g, "")
-  .toLowerCase()
-  .split(".")
-  .map((segment) => (/^[a-zA-Z]/.test(segment) ? segment : `x${segment}`))
-  .join(".") || "space.manus.app";
-const timestamp = bundleId.split(".").pop()?.replace(/^t/, "") ?? "";
-
 const config = {
   name: "MCP Hub",
   slug: "mcp-provider-configurator",
-  version: "1.0.22",
+  version: "1.0.23",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
-  scheme: [`manus${timestamp}`, "mcphub"],
+  // v1.0.23: Changed scheme from `manus${timestamp}` (derived from bundleId
+  // `com.app.mcpproviderconfigurator` → `manusmcpproviderconfigurator`) to
+  // just `mcphub`. The old scheme leaked the "manus" brand name in OAuth
+  // consent screens (Notion, GitHub, Slack, etc. showed
+  // "manusmcpproviderconfigurator" as the app requesting access).
+  //
+  // Single scheme means we lose backward compat with deep links created by
+  // v1.0.22 and earlier — but those were only used for one-time OAuth
+  // callbacks that are stored per-server, so users just need to re-authorize
+  // MCP servers after upgrading. The /mobile-login web auth flow uses the
+  // scheme dynamically (app passes ?scheme=mcphub), so login flow works
+  // without any migration.
+  scheme: "mcphub",
   userInterfaceStyle: "automatic",
   newArchEnabled: true,
   ios: {
     supportsTablet: true,
-    bundleIdentifier: bundleId,
+    bundleIdentifier: "com.nhutcoder.mcphub",
     infoPlist: { ITSAppUsesNonExemptEncryption: false },
   },
   android: {
@@ -33,9 +33,9 @@ const config = {
     },
     edgeToEdgeEnabled: true,
     predictiveBackGestureEnabled: false,
-    package: bundleId,
+    package: "com.nhutcoder.mcphub",
     permissions: ["POST_NOTIFICATIONS", "ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION", "CAMERA", "REQUEST_INSTALL_PACKAGES"],
-    intentFilters: [{ action: "VIEW", autoVerify: true, data: [{ scheme: `manus${timestamp}`, host: "mcp-oauth" }, { scheme: "mcphub", host: "mcp-oauth" }], category: ["BROWSABLE", "DEFAULT"] }],
+    intentFilters: [{ action: "VIEW", autoVerify: true, data: [{ scheme: "mcphub", host: "mcp-oauth" }, { scheme: "mcphub", host: "auth" }], category: ["BROWSABLE", "DEFAULT"] }],
   },
   web: { bundler: "metro", output: "static", favicon: "./assets/images/favicon.png" },
   plugins: [
@@ -61,15 +61,8 @@ const config = {
     // is signed with the WEB's AUTH_SECRET, not Manus's sdk session secret.
     // To override for local dev, set EXPO_PUBLIC_API_BASE_URL env var.
     apiBaseUrl: process.env.EXPO_PUBLIC_API_BASE_URL ?? "https://nhutcoder-team-v2.vercel.app",
-    oauthPortalUrl: process.env.EXPO_PUBLIC_OAUTH_PORTAL_URL ?? "https://manus.im",
-    oauthServerUrl: process.env.EXPO_PUBLIC_OAUTH_SERVER_URL ?? "https://api.manus.im",
-    appId: process.env.EXPO_PUBLIC_APP_ID ?? "HTXjZUzGMdUDVZZQVvSs4U",
     aiCloudProxyUrl: "https://mcp-hub-ai-cloud.vercel.app",
     webAuthUrl: process.env.EXPO_PUBLIC_WEB_AUTH_URL ?? "https://nhutcoder-team-v2.vercel.app",
-    // Legacy Supabase config — kept for backward compatibility but no longer used
-    // by the login flow (v1.0.17+ uses NhutCoder Team web auth bridge).
-    supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL ?? "",
-    supabasePublishableKey: process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? "",
   },
 };
 
