@@ -13,7 +13,7 @@ const timestamp = bundleId.split(".").pop()?.replace(/^t/, "") ?? "";
 const config = {
   name: "MCP Hub",
   slug: "mcp-provider-configurator",
-  version: "1.0.21",
+  version: "1.0.22",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
   scheme: [`manus${timestamp}`, "mcphub"],
@@ -54,7 +54,13 @@ const config = {
   extra: {
     appName: "MCP Hub",
     logoUrl: "/manus-storage/mcp-hub-icon_ca900851.png",
-    apiBaseUrl: process.env.EXPO_PUBLIC_API_BASE_URL ?? "https://mcpconfig-htxjzuzg.manus.space",
+    // v1.0.22+: apiBaseUrl now defaults to the NhutCoder Team web app (Vercel).
+    // Previously defaulted to "https://mcpconfig-htxjzuzg.manus.space" (Manus
+    // backend) which caused the app to call /api/auth/me on Manus instead of
+    // on the web — and Manus returned "Not authenticated" because the JWT
+    // is signed with the WEB's AUTH_SECRET, not Manus's sdk session secret.
+    // To override for local dev, set EXPO_PUBLIC_API_BASE_URL env var.
+    apiBaseUrl: process.env.EXPO_PUBLIC_API_BASE_URL ?? "https://nhutcoder-team-v2.vercel.app",
     oauthPortalUrl: process.env.EXPO_PUBLIC_OAUTH_PORTAL_URL ?? "https://manus.im",
     oauthServerUrl: process.env.EXPO_PUBLIC_OAUTH_SERVER_URL ?? "https://api.manus.im",
     appId: process.env.EXPO_PUBLIC_APP_ID ?? "HTXjZUzGMdUDVZZQVvSs4U",
