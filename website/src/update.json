@@ -1,6 +1,6 @@
 {
-  "version": "1.0.16",
-  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.16/MCP-Hub-v1.0.16.apk",
-  "notes": "Tích hợp Supabase Auth Free: đăng nhập email/mật khẩu không phụ thuộc Manus, session bridge tương thích AI Cloud và protected routes.",
-  "publishedAt": "2026-08-29T00:00:00Z"
+  "version": "1.0.17",
+  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.17/MCP-Hub-v1.0.17.apk",
+  "notes": "Bỏ Supabase Auth, tích hợp đăng nhập qua NhutCoder Team (Auth0) với bridge token one-time. Web app mở /mobile-login, redirect mcphub://auth?token=xxx → app tự động đăng nhập.",
+  "publishedAt": "2026-08-30T00:00:00Z"
 }
