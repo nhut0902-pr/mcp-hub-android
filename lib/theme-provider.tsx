@@ -3,6 +3,7 @@ import { Appearance, View, useColorScheme as useSystemColorScheme } from "react-
 import { colorScheme as nativewindColorScheme, vars } from "nativewind";
 
 import { SchemeColors, type ColorScheme } from "@/constants/theme";
+import { loadGeneralSettings, type GeneralSettings } from "@/lib/mcp-hub/feature-settings";
 
 type ThemeContextValue = {
   colorScheme: ColorScheme;
@@ -11,8 +12,19 @@ type ThemeContextValue = {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
+/**
+ * Resolve a GeneralSettings.theme value ("dark" | "light" | "system") into
+ * an actual ColorScheme ("dark" | "light") using the system preference.
+ */
+function resolveScheme(setting: GeneralSettings["theme"], systemScheme: ColorScheme): ColorScheme {
+  if (setting === "light") return "light";
+  if (setting === "dark") return "dark";
+  return systemScheme; // "system" — follow OS
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const systemScheme = useSystemColorScheme() ?? "light";
+  // Start with system scheme; will be overridden once we load saved settings
   const [colorScheme, setColorSchemeState] = useState<ColorScheme>(systemScheme);
 
   const applyScheme = useCallback((scheme: ColorScheme) => {
@@ -34,6 +46,27 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     applyScheme(scheme);
   }, [applyScheme]);
 
+  // v1.0.24+: Load saved theme from GeneralSettings on app start.
+  // Previously ThemeProvider always defaulted to system scheme, ignoring the
+  // "Dark" / "Light" / "System" choice the user made in General Settings.
+  useEffect(() => {
+    let cancelled = false;
+    loadGeneralSettings()
+      .then((settings) => {
+        if (cancelled) return;
+        const resolved = resolveScheme(settings.theme, systemScheme);
+        setColorSchemeState(resolved);
+        applyScheme(resolved);
+      })
+      .catch((err) => {
+        console.warn("[ThemeProvider] Failed to load saved theme:", err);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [applyScheme, systemScheme]);
+
+  // React to system scheme changes (only when user has chosen "system")
   useEffect(() => {
     applyScheme(colorScheme);
   }, [applyScheme, colorScheme]);
@@ -61,7 +94,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }),
     [colorScheme, setColorScheme],
   );
-  console.log(value, themeVariables)
 
   return (
     <ThemeContext.Provider value={value}>
