@@ -1,6 +1,6 @@
 {
   "version": "1.0.26",
   "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.26/MCP-Hub-v1.0.26.apk",
-  "notes": "Thêm 20+ MCP servers OAuth mới: Zernio (social media 15 platforms), Airtable, Canva, HubSpot, Vercel, Sentry, PayPal, Webflow, Wix, Neon, Prisma, Docker, Exa Search, Fireflies, Atlassian, monday.com, Attio, Buildkite, Netlify, Cloudinary, Box, Square, Plaid, Ramp, GitLab, VibeMarketing.",
-  "publishedAt": "2026-08-30T12:30:00Z"
+  "notes": "Cập nhật phiên bản 1.0.26 với cải tiến bảo mật và tính năng mới.",
+  "publishedAt": "2026-08-30T13:16:16Z"
 }
