@@ -1,6 +1,6 @@
 {
   "version": "1.0.21",
   "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.21/MCP-Hub-v1.0.21.apk",
-  "notes": "Debug JWT verification — app log detailed error from /api/auth/me. Web thêm /api/auth/debug-token để verify mint+verify trong cùng request.",
-  "publishedAt": "2026-08-30T08:30:00Z"
+  "notes": "Cập nhật phiên bản 1.0.21 với cải tiến bảo mật và tính năng mới.",
+  "publishedAt": "2026-08-30T08:53:08Z"
 }
