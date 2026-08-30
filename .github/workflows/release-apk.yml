@@ -180,5 +180,18 @@ jobs:
           fi
           git add website/src/update.json
           git commit -m "chore: bump website/src/update.json to ${TAG}"
-          # Push to main branch (we're in detached HEAD after a tag checkout)
-          git push origin HEAD:main
+          # Push to main branch (we're in detached HEAD after a tag checkout).
+          # Use --force-with-lease to handle race conditions where another
+          # commit landed on main between this workflow start and the push.
+          # If --force-with-lease fails (i.e., remote moved), retry with
+          # rebase then push.
+          if ! git push origin HEAD:main --force-with-lease; then
+            echo "Push failed, attempting rebase + retry..."
+            git fetch origin main
+            git rebase origin/main
+            git push origin HEAD:main
+          fi
+          # Always exit 0 — update.json commit is non-critical.
+          # The APK has already been built + released in previous steps.
+          # If this step fails, it should NOT mark the workflow as failed.
+          exit 0
