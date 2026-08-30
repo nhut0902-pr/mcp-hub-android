@@ -1,6 +1,6 @@
 {
-  "version": "1.0.27",
-  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.27/MCP-Hub-v1.0.27.apk",
-  "notes": "Cập nhật phiên bản 1.0.27 với cải tiến bảo mật và tính năng mới.",
-  "publishedAt": "2026-08-30T14:18:01Z"
+  "version": "1.0.28",
+  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.28/MCP-Hub-v1.0.28.apk",
+  "notes": "REDESIGN toàn bộ app: chat header, welcome, composer, drawer, about screen — tất cả dùng palette mới indigo/violet. Bỏ 70+ hardcoded color codes, thay bằng palette tokens nhất quán. About screen redesign với hero + version badge + icon rows. Screen container + header dùng palette.background thay vì hardcoded.",
+  "publishedAt": "2026-08-30T14:40:00Z"
 }
