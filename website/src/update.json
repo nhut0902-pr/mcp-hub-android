@@ -1,6 +1,6 @@
 {
   "version": "1.0.23",
   "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.23/MCP-Hub-v1.0.23.apk",
-  "notes": "REBRAND: Bỏ hoàn toàn 'manus' khỏi app. Scheme đổi từ manusmcpproviderconfigurator:// → mcphub://. Bundle ID đổi từ com.app.mcpproviderconfigurator → com.nhutcoder.mcphub. OAuth consent screens (Notion, GitHub, Slack) sẽ hiển thị 'MCP Hub' thay vì 'manusmcpproviderconfigurator'.",
-  "publishedAt": "2026-08-30T10:30:00Z"
+  "notes": "Cập nhật phiên bản 1.0.23 với cải tiến bảo mật và tính năng mới.",
+  "publishedAt": "2026-08-30T10:59:51Z"
 }
