@@ -159,9 +159,18 @@ jobs:
 
       - name: Commit update.json back to repo
         if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          TAG="${{ github.ref_name }}"
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions"
+          # Check if there's anything to commit
+          if git diff --quiet website/src/update.json; then
+            echo "Nothing to commit — update.json already up to date"
+            exit 0
+          fi
           git add website/src/update.json
-          git commit -m "chore: bump website/src/update.json to ${{ github.ref_name }}" || echo "Nothing to commit"
-          git push
+          git commit -m "chore: bump website/src/update.json to ${TAG}"
+          # Push to main branch (we're in detached HEAD after a tag checkout)
+          git push origin HEAD:main
