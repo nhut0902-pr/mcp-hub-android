@@ -222,6 +222,12 @@ export async function establishWebSession(
   const baseUrl = getApiBaseUrl();
   const cleanBaseUrl = baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
 
+  console.log("[establishWebSession] baseUrl:", cleanBaseUrl);
+  console.log("[establishWebSession] token length:", webToken.length);
+  console.log("[establishWebSession] token preview:", webToken.slice(0, 40) + "..." + webToken.slice(-20));
+  console.log("[establishWebSession] token has period:", webToken.includes("."));
+  console.log("[establishWebSession] token parts count:", webToken.split(".").length);
+
   // Verify the JWT by calling /api/auth/me on the web — if it's valid,
   // we get back the user info. If not, we throw.
   const meResponse = await fetch(`${cleanBaseUrl}/api/auth/me`, {
@@ -231,14 +237,33 @@ export async function establishWebSession(
     },
   });
 
+  console.log("[establishWebSession] /api/auth/me status:", meResponse.status);
+
   if (!meResponse.ok) {
-    const errBody = (await meResponse.json().catch(() => ({}))) as { error?: string };
-    throw new Error(errBody?.error || `JWT verification failed (${meResponse.status})`);
+    const errBody = (await meResponse.json().catch(() => ({}))) as {
+      error?: string;
+      reason?: string;
+      decodedBody?: unknown;
+      tokenPreview?: string;
+      tokenLength?: number;
+      hasAuthSecret?: boolean;
+    };
+    console.error("[establishWebSession] verify failed:", JSON.stringify(errBody));
+    // Build a detailed error message so the user can see what went wrong
+    const reason = errBody?.reason || "unknown";
+    const detail = errBody?.reason === "verify_failed"
+      ? `JWT signature mismatch (tokenLength=${errBody.tokenLength}, hasAuthSecret=${errBody.hasAuthSecret})`
+      : errBody?.reason === "no_bearer_token"
+      ? "No Bearer token in Authorization header"
+      : errBody?.reason === "invalid_token_format"
+      ? `Invalid token format (tokenLength=${errBody.tokenLength})`
+      : errBody?.error || `HTTP ${meResponse.status}`;
+    throw new Error(`Không thể xác thực JWT: ${detail}`);
   }
 
   const mePayload = (await meResponse.json()) as { user?: any };
   if (!mePayload.user) {
-    throw new Error("JWT không hợp lệ hoặc đã hết hạn");
+    throw new Error("JWT không hợp lệ hoặc đã hết hạn (user=null)");
   }
 
   return { sessionToken: webToken, user: mePayload.user };
