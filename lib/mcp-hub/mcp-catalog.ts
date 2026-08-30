@@ -14,7 +14,7 @@ export type McpCatalogEntry = {
 
 export const mcpCatalog: McpCatalogEntry[] = [
   // ─── Social Media & Posting ───
-  { id: "zernio", name: "Zernio", endpoint: "https://mcp.zernio.com/mcp", transport: "streamable-http", authMode: "api-key", apiKeyHeader: "Authorization", detail: "280+ tools, 15 social platforms (TikTok, Facebook, Instagram, X, LinkedIn...). Đăng bài, lên lịch, comment, DM, analytics. Bearer token = API key từ dashboard Zernio.", docsUrl: "https://zernio.com/agents" },
+  { id: "zernio", name: "Zernio", endpoint: "https://mcp.zernio.com/mcp", transport: "streamable-http", authMode: "api-key", apiKeyHeader: "authorization", detail: "280+ tools, 15 social platforms (TikTok, Facebook, Instagram, X, LinkedIn...). Đăng bài, lên lịch, comment, DM, analytics. Bearer token = API key từ dashboard Zernio.", docsUrl: "https://zernio.com/agents" },
   { id: "vibemarketing", name: "VibeMarketing", endpoint: "https://vibemarketing.ninja/mcp", transport: "streamable-http", authMode: "oauth", detail: "Tự động hoá social media marketing — tạo nội dung, lên lịch, đăng bài.", docsUrl: "https://vibemarketing.ninja" },
   { id: "tweetsave", name: "TweetSave", endpoint: "https://mcp.tweetsave.org/sse", transport: "sse", authMode: "none", detail: "Tải video Twitter/X — không cần auth.", docsUrl: "https://tweetsave.org" },
 

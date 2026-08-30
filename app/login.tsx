@@ -10,7 +10,8 @@ import { ScreenContainer } from "@/components/screen-container";
 import { useAuth } from "@/hooks/use-auth";
 import * as Api from "@/lib/_core/api";
 import * as Auth from "@/lib/_core/auth";
-import { APP_VERSION, DEEP_LINK_SCHEME, buildWebLoginUrl } from "@/constants/oauth";
+import { DEEP_LINK_SCHEME, buildWebLoginUrl } from "@/constants/oauth";
+import { APP_VERSION } from "@/lib/mcp-hub/app-update";
 
 function toHubUser(user: any): Auth.User {
   return {
