@@ -1,21 +1,19 @@
-import Constants from "expo-constants";
-
-// Try to read from Expo config (app.config.ts version field); fall back to
-// hardcoded constant if Constants isn't available (e.g. during SSR or tests).
-// IMPORTANT: Keep this in sync with the `version` field in app.config.ts and
-// package.json — they should all match. If you bump the version in those files,
-// this constant will auto-pick it up via Constants.expoConfig.version.
-const FALLBACK_VERSION = "1.0.19";
-
-function resolveAppVersion(): string {
-  const fromConfig = (Constants.expoConfig as { version?: string } | null | undefined)?.version;
-  if (typeof fromConfig === "string" && /^\d+\.\d+\.\d+$/.test(fromConfig)) {
-    return fromConfig;
-  }
-  return FALLBACK_VERSION;
-}
-
-export const APP_VERSION = resolveAppVersion();
+/**
+ * APP_VERSION — hardcoded to match the release tag.
+ *
+ * IMPORTANT: When bumping the version, update these THREE files together:
+ * 1. package.json — `"version"` field
+ * 2. app.config.ts — `version` field
+ * 3. lib/mcp-hub/app-update-manifest.ts — APP_VERSION constant below
+ *
+ * Why hardcoded instead of Constants.expoConfig.version?
+ * — In v1.0.19, we tried reading from Constants.expoConfig.version but the
+ *   build served stale cached bundle showing "1.0.18" instead of "1.0.19".
+ * — A hardcoded constant is bundled into the JS at compile time — there's
+ *   no way for runtime caching to serve a different value.
+ * — Slightly more maintenance, but bulletproof.
+ */
+export const APP_VERSION = "1.0.20";
 export const UPDATE_MANIFEST_URL = "https://mcp-hub-android.vercel.app/update.json";
 
 export type AppUpdate = {

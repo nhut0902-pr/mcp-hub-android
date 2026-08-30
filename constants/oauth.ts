@@ -66,28 +66,21 @@ export function buildWebLoginUrl(): string {
 }
 
 /**
- * Get the API base URL, deriving from current hostname if not set.
- * Metro runs on 8081, API server runs on 3000.
- * URL pattern: https://PORT-sandboxid.region.domain
+ * Get the API base URL.
+ *
+ * v1.0.20+: All API calls go directly to the NhutCoder Team web app on Vercel
+ * (nhutcoder-team-v2.vercel.app) — no Manus backend dependency. The web's
+ * /api/auth/* endpoints handle JWT verification statelessly.
+ *
+ * Override via `EXPO_PUBLIC_API_BASE_URL` env var if needed (e.g. for local dev).
  */
 export function getApiBaseUrl(): string {
-  // If API_BASE_URL is set, use it
+  // If API_BASE_URL is set explicitly, use it (highest priority)
   if (API_BASE_URL) {
     return API_BASE_URL.replace(/\/$/, "");
   }
-
-  // On web, derive from current hostname by replacing port 8081 with 3000
-  if (ReactNative.Platform.OS === "web" && typeof window !== "undefined" && window.location) {
-    const { protocol, hostname } = window.location;
-    // Pattern: 8081-sandboxid.region.domain -> 3000-sandboxid.region.domain
-    const apiHostname = hostname.replace(/^8081-/, "3000-");
-    if (apiHostname !== hostname) {
-      return `${protocol}//${apiHostname}`;
-    }
-  }
-
-  // Fallback to empty (will use relative URL)
-  return "";
+  // Default: the NhutCoder Team web app (handles /api/auth/me, /api/auth/logout, etc.)
+  return WEB_AUTH_URL.replace(/\/$/, "");
 }
 
 export const SESSION_TOKEN_KEY = "app_session_token";

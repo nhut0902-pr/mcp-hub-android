@@ -200,34 +200,46 @@ export async function establishSupabaseSession(
 }
 
 /**
- * Exchange a one-time NhutCoder Team web auth token for an MCP Hub session.
- * The token is minted by the web's /api/auth/mobile/token endpoint after the
- * user completes Auth0 login, and is delivered via deep-link redirect
- * `mcphub://auth?token=xxx`. The backend's /api/auth/web/session endpoint
- * verifies the token against the web's /api/auth/mobile/verify endpoint
- * and returns the long-lived app_session_id.
+ * Exchange a NhutCoder Team web auth JWT for the app's session.
+ *
+ * v1.0.20+: Stateless JWT flow. The web's /mobile-login mints a JWT signed
+ * with AUTH_SECRET (TTL 7 days), then redirects the browser to
+ * `${DEEP_LINK_SCHEME}://auth?token=jwt`. The app stores the JWT in
+ * SecureStore and uses it as Bearer for all subsequent API calls to
+ * /api/auth/me, /api/auth/logout, etc. on the web (nhutcoder-team-v2.vercel.app).
+ *
+ * No Manus backend dependency — all on Vercel. No DB lookup on subsequent
+ * requests — the JWT itself contains user info, verified by the web's
+ * verifyToken() helper.
+ *
+ * To preserve backward compatibility with the existing app_session_id
+ * contract used throughout the app, this function returns the JWT as
+ * `sessionToken` and synthesizes a user object by calling /api/auth/me.
  */
 export async function establishWebSession(
   webToken: string,
 ): Promise<{ sessionToken: string; user: any }> {
   const baseUrl = getApiBaseUrl();
   const cleanBaseUrl = baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
-  const response = await fetch(`${cleanBaseUrl}/api/auth/web/session`, {
-    method: "POST",
+
+  // Verify the JWT by calling /api/auth/me on the web — if it's valid,
+  // we get back the user info. If not, we throw.
+  const meResponse = await fetch(`${cleanBaseUrl}/api/auth/me`, {
     headers: {
-      "Content-Type": "application/json",
       Authorization: `Bearer ${webToken}`,
+      Accept: "application/json",
     },
   });
 
-  const payload = (await response.json().catch(() => ({}))) as {
-    app_session_id?: string;
-    user?: any;
-    error?: string;
-  };
-  if (!response.ok || !payload.app_session_id) {
-    throw new Error(payload.error || "Không thể tạo phiên MCP Hub từ NhutCoder Team");
+  if (!meResponse.ok) {
+    const errBody = (await meResponse.json().catch(() => ({}))) as { error?: string };
+    throw new Error(errBody?.error || `JWT verification failed (${meResponse.status})`);
   }
 
-  return { sessionToken: payload.app_session_id, user: payload.user };
+  const mePayload = (await meResponse.json()) as { user?: any };
+  if (!mePayload.user) {
+    throw new Error("JWT không hợp lệ hoặc đã hết hạn");
+  }
+
+  return { sessionToken: webToken, user: mePayload.user };
 }

@@ -30,7 +30,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: pnpm
+          # Intentionally NOT using cache: pnpm — pnpm cache can serve stale
+          # node_modules from previous builds, which caused v1.0.19 APK to be
+          # built with v1.0.18 source. We always want a fresh install.
+          # cache: pnpm
 
       - name: Setup Java
         uses: actions/setup-java@v5
@@ -38,8 +41,13 @@ jobs:
           distribution: temurin
           java-version: "17"
 
+      - name: Remove stale caches (force fresh build)
+        run: |
+          rm -rf node_modules .expo android/app/build dist
+          echo "Caches cleared — forcing fresh build"
+
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
 
       - name: Type-check + lint
         run: |
