@@ -1,6 +1,6 @@
 {
-  "version": "1.0.25",
-  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.25/MCP-Hub-v1.0.25.apk",
-  "notes": "Fix lỗi 'Authentication failed' hiện phía sau dialog 'Kết nối MCP thành công'. Route /mcp-oauth giờ chỉ hiển thị loading + redirect, không còn gọi /api/oauth/mobile (endpoint Manus cũ đã bị xóa).",
-  "publishedAt": "2026-08-30T12:00:00Z"
+  "version": "1.0.26",
+  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.26/MCP-Hub-v1.0.26.apk",
+  "notes": "Thêm 20+ MCP servers OAuth mới: Zernio (social media 15 platforms), Airtable, Canva, HubSpot, Vercel, Sentry, PayPal, Webflow, Wix, Neon, Prisma, Docker, Exa Search, Fireflies, Atlassian, monday.com, Attio, Buildkite, Netlify, Cloudinary, Box, Square, Plaid, Ramp, GitLab, VibeMarketing.",
+  "publishedAt": "2026-08-30T12:30:00Z"
 }
