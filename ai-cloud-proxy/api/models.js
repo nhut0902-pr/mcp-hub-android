@@ -1,5 +1,9 @@
 const MODEL = { id: "gemini-1.5-flash", object: "model", owned_by: "AI Cloud" };
-const AUTH_VERIFY_URL = process.env.AUTH_VERIFY_URL || "https://mcpconfig-htxjzuzg.manus.space/api/auth/me";
+// v1.0.22+: Verify JWT against the NhutCoder Team web app (which signs the JWT
+// with AUTH_SECRET and exposes /api/auth/me). Previously defaulted to the
+// Manus backend which used a different session secret — JWT verification
+// always failed with "Not authenticated".
+const AUTH_VERIFY_URL = process.env.AUTH_VERIFY_URL || "https://nhutcoder-team-v2.vercel.app/api/auth/me";
 
 async function hasAuthenticatedUser(request) {
   const authorization = request.headers.authorization;
