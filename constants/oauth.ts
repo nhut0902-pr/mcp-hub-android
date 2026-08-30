@@ -36,6 +36,34 @@ export const OWNER_OPEN_ID = env.ownerId;
 export const OWNER_NAME = env.ownerName;
 export const API_BASE_URL = env.apiBaseUrl;
 export const WEB_AUTH_URL = env.webAuthUrl;
+export const DEEP_LINK_SCHEME = env.deepLinkScheme;
+
+/**
+ * Build the deep-link URL the web should redirect the browser to after the
+ * one-time token is minted. We expose the scheme via the
+ * `?scheme=manusmcpproviderconfigurator` query param when the app opens the
+ * web's /mobile-login page, so the web knows exactly which scheme to use.
+ *
+ * Default: `${DEEP_LINK_SCHEME}://auth?token=xxx&email=yyy&name=zzz`
+ */
+export function buildAuthDeepLink(token: string, opts?: { email?: string; name?: string }): string {
+  const params = new URLSearchParams();
+  params.set("token", token);
+  if (opts?.email) params.set("email", opts.email);
+  if (opts?.name) params.set("name", opts.name);
+  return `${env.deepLinkScheme}://auth?${params.toString()}`;
+}
+
+/**
+ * Build the URL of the web's /mobile-login bridge page. We append the app's
+ * deep-link scheme as a query param so the web knows which scheme to redirect
+ * back to (otherwise the web has no way to know the app's bundleId-derived
+ * scheme).
+ */
+export function buildWebLoginUrl(): string {
+  const base = env.webAuthUrl.replace(/\/$/, "");
+  return `${base}/mobile-login?scheme=${encodeURIComponent(env.deepLinkScheme)}`;
+}
 
 /**
  * Get the API base URL, deriving from current hostname if not set.

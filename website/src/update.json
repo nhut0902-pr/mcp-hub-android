@@ -1,6 +1,6 @@
 {
-  "version": "1.0.18",
-  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.18/MCP-Hub-v1.0.18.apk",
-  "notes": "Fix bug: APP_VERSION was hardcoded as '1.0.16' — About screen luôn báo có cập nhật dù đã cài v1.0.17. APP_VERSION giờ đọc động từ Constants.expoConfig.version.",
-  "publishedAt": "2026-08-30T05:30:00Z"
+  "version": "1.0.19",
+  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.19/MCP-Hub-v1.0.19.apk",
+  "notes": "Fix login: deep link scheme động (manusmcpproviderconfigurator://) thay vì hardcoded mcphub://. App pass scheme qua ?scheme= param khi mở /mobile-login.",
+  "publishedAt": "2026-08-30T06:15:00Z"
 }

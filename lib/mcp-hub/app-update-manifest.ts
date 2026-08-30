@@ -5,7 +5,7 @@ import Constants from "expo-constants";
 // IMPORTANT: Keep this in sync with the `version` field in app.config.ts and
 // package.json — they should all match. If you bump the version in those files,
 // this constant will auto-pick it up via Constants.expoConfig.version.
-const FALLBACK_VERSION = "1.0.18";
+const FALLBACK_VERSION = "1.0.19";
 
 function resolveAppVersion(): string {
   const fromConfig = (Constants.expoConfig as { version?: string } | null | undefined)?.version;
