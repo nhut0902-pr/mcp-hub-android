@@ -1,7 +1,7 @@
 const config = {
   name: "MCP Hub",
   slug: "mcp-provider-configurator",
-  version: "1.0.26",
+  version: "1.0.27",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
   // v1.0.23: Changed scheme from `manus${timestamp}` (derived from bundleId
@@ -26,7 +26,7 @@ const config = {
   },
   android: {
     adaptiveIcon: {
-      backgroundColor: "#E6F4FE",
+      backgroundColor: "#0F1117",
       foregroundImage: "./assets/images/android-icon-foreground.png",
       backgroundImage: "./assets/images/android-icon-background.png",
       monochromeImage: "./assets/images/android-icon-monochrome.png",

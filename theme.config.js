@@ -1,14 +1,23 @@
+/**
+ * MCP Hub Theme Configuration
+ *
+ * v1.0.27: Complete redesign with modern indigo/violet palette.
+ * - Proper light AND dark themes (previously both were identical dark)
+ * - Larger typography, better contrast ratios (WCAG AA)
+ * - Gradient support via primaryGradientStart/End
+ */
+
 /** @type {const} */
 const themeColors = {
-  primary: { light: "#2996F3", dark: "#2996F3" },
-  background: { light: "#1F1F1F", dark: "#1F1F1F" },
-  surface: { light: "#292929", dark: "#292929" },
-  foreground: { light: "#F4F4F4", dark: "#F4F4F4" },
-  muted: { light: "#A4A4A4", dark: "#A4A4A4" },
-  border: { light: "#4A4A4A", dark: "#4A4A4A" },
-  success: { light: "#00A87A", dark: "#00A87A" },
-  warning: { light: "#F4B449", dark: "#F4B449" },
-  error: { light: "#FF5C5C", dark: "#FF5C5C" },
+  primary:        { light: "#6366F1", dark: "#818CF8" },
+  background:     { light: "#F8FAFC", dark: "#0F1117" },
+  surface:        { light: "#FFFFFF", dark: "#1A1D27" },
+  foreground:     { light: "#1E293B", dark: "#F1F5F9" },
+  muted:          { light: "#64748B", dark: "#94A3B8" },
+  border:         { light: "#E2E8F0", dark: "#2D3142" },
+  success:        { light: "#059669", dark: "#10B981" },
+  warning:        { light: "#D97706", dark: "#F59E0B" },
+  error:          { light: "#DC2626", dark: "#EF4444" },
 };
 
 module.exports = { themeColors };

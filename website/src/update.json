@@ -1,6 +1,6 @@
 {
-  "version": "1.0.26",
-  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.26/MCP-Hub-v1.0.26.apk",
-  "notes": "Cập nhật phiên bản 1.0.26 với cải tiến bảo mật và tính năng mới.",
-  "publishedAt": "2026-08-30T13:16:16Z"
+  "version": "1.0.27",
+  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.27/MCP-Hub-v1.0.27.apk",
+  "notes": "REDESIGN hoàn toàn UI/UX: palette mới indigo/violet, typography lớn hơn, component modern, icon app mới, login screen đẹp hơn với hero section + feature badges.",
+  "publishedAt": "2026-08-30T14:10:00Z"
 }

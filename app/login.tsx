@@ -10,7 +10,7 @@ import { ScreenContainer } from "@/components/screen-container";
 import { useAuth } from "@/hooks/use-auth";
 import * as Api from "@/lib/_core/api";
 import * as Auth from "@/lib/_core/auth";
-import { DEEP_LINK_SCHEME, buildWebLoginUrl } from "@/constants/oauth";
+import { APP_VERSION, DEEP_LINK_SCHEME, buildWebLoginUrl } from "@/constants/oauth";
 
 function toHubUser(user: any): Auth.User {
   return {
@@ -24,16 +24,9 @@ function toHubUser(user: any): Auth.User {
   };
 }
 
-/** Extract `token` query param from a deep-link URL of the form
- *  `${DEEP_LINK_SCHEME}://auth?token=xxx&email=yyy&name=zzz`.
- *  Returns null if the URL doesn't match the auth callback pattern. */
 function extractTokenFromDeepLink(url: string): string | null {
   try {
     const parsed = Linking.parse(url);
-    // Linking.parse returns { hostname, path, queryParams }
-    // For `manusmcpproviderconfigurator://auth?token=xxx`:
-    //   hostname === "auth"  (some RN versions put it in `path`)
-    //   queryParams.token === "xxx"
     const host = parsed.hostname || parsed.path || "";
     if (host !== "auth") return null;
     const token = parsed.queryParams?.token;
@@ -49,9 +42,6 @@ export default function LoginScreen() {
   const { user, loading, isAuthenticated, logout } = useAuth();
   const [starting, setStarting] = useState(false);
 
-  // Single handler for processing the auth deep link. Used both for the
-  // initial launch URL and for incoming deep-link events while the app is
-  // open.
   const handleAuthDeepLink = async (url: string | null) => {
     if (!url) return;
     const token = extractTokenFromDeepLink(url);
@@ -59,7 +49,6 @@ export default function LoginScreen() {
 
     setStarting(true);
     try {
-      // Exchange the one-time web token for a long-lived MCP Hub session.
       const session = await Api.establishWebSession(token);
       const hubUser = toHubUser(session.user);
       await Auth.setSessionToken(session.sessionToken);
@@ -78,15 +67,9 @@ export default function LoginScreen() {
   };
 
   useEffect(() => {
-    // Check if the app was launched via a deep link
     Linking.getInitialURL().then(handleAuthDeepLink).catch(() => undefined);
-
-    // Listen for deep links received while the app is already open
     const sub = Linking.addEventListener("url", (event) => handleAuthDeepLink(event.url));
-
-    return () => {
-      sub.remove();
-    };
+    return () => { sub.remove(); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
@@ -94,28 +77,12 @@ export default function LoginScreen() {
     setStarting(true);
     try {
       const loginUrl = buildWebLoginUrl();
-      console.log("[Login] Opening web browser to:", loginUrl, "scheme:", DEEP_LINK_SCHEME);
-      // `openAuthSessionAsync` is the right choice for OAuth-like flows:
-      // - iOS: opens SFSafariViewController, returns the redirect URL
-      // - Android: opens a Custom Tab, returns the redirect URL
-      // The redirect URL is `${DEEP_LINK_SCHEME}://auth?token=xxx` — we pass
-      // DEEP_LINK_SCHEME so the browser session knows when to hand control
-      // back to the app.
       const result = await WebBrowser.openAuthSessionAsync(loginUrl, `${DEEP_LINK_SCHEME}://auth`);
-      console.log("[Login] WebBrowser result:", result?.type);
       if (result?.type === "success") {
-        // On Android, `openAuthSessionAsync` returns the final redirect URL
-        // but Linking events don't always fire for self-opened URLs, so we
-        // manually invoke the handler here too.
-        // Some RN versions put the URL on `result.url`, others don't expose it
-        // — in that case we rely on the Linking event listener above.
         const resultWithUrl = result as { url?: string };
         if (typeof resultWithUrl.url === "string") {
           await handleAuthDeepLink(resultWithUrl.url);
         }
-      } else if (result?.type === "cancel") {
-        // User dismissed the browser without completing login
-        console.log("[Login] User cancelled web login");
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : "Không thể mở trang đăng nhập";
@@ -125,26 +92,26 @@ export default function LoginScreen() {
     }
   };
 
-  const handleLogout = async () => {
-    await logout();
-  };
-
   return (
     <ScreenContainer edges={["top", "bottom", "left", "right"]}>
       <View style={styles.content}>
-        <View style={styles.brand}>
-          <MaterialIcons name="hub" size={56} color={palette.navy} />
+        {/* Hero section */}
+        <View style={styles.hero}>
+          <View style={styles.logoWrap}>
+            <MaterialIcons name="hub" size={48} color="#FFFFFF" />
+          </View>
           <Text style={styles.title}>MCP Hub</Text>
-          <Text style={styles.subtitle}>Đăng nhập qua NhutCoder Team</Text>
+          <Text style={styles.subtitle}>Trung tâm AI trên Android</Text>
         </View>
 
-        <Card style={styles.card}>
-          <View style={styles.row}>
-            <MaterialIcons name="lock-outline" size={20} color={palette.navy} />
+        {/* Login card */}
+        <Card style={styles.loginCard}>
+          <View style={styles.cardHeader}>
+            <MaterialIcons name="lock-outline" size={22} color={palette.primary} />
             <Text style={styles.cardTitle}>Đăng nhập bảo mật</Text>
           </View>
           <Text style={styles.cardText}>
-            Đăng nhập bằng tài khoản NhutCoder Team của bạn để truy cập Nhutbot 1.0 Flash và các tính năng Cloud.
+            Đăng nhập bằng tài khoản NhutCoder Team để truy cập Nhutbot 1.0 Flash, MCP servers và các tính năng Cloud.
           </Text>
           <AppButton
             label={starting ? "Đang mở trình duyệt..." : "Đăng nhập qua NhutCoder Team"}
@@ -154,22 +121,43 @@ export default function LoginScreen() {
           />
         </Card>
 
+        {/* Loading / current session */}
         {loading ? (
           <View style={styles.centeredRow}>
-            <ActivityIndicator color={palette.navy} />
+            <ActivityIndicator color={palette.primary} size="small" />
             <Text style={styles.statusText}>Đang kiểm tra phiên...</Text>
           </View>
         ) : isAuthenticated && user ? (
-          <Card style={styles.card}>
-            <Text style={styles.cardTitle}>Phiên hiện tại</Text>
-            <Text style={styles.cardText}>{user.email ?? user.name ?? "Đã đăng nhập"}</Text>
-            <AppButton label="Đăng xuất" icon="logout" variant="secondary" onPress={handleLogout} />
+          <Card style={styles.sessionCard}>
+            <View style={styles.sessionHeader}>
+              <MaterialIcons name="check-circle" size={20} color={palette.success} />
+              <Text style={styles.cardTitle}>Phiên hiện tại</Text>
+            </View>
+            <Text style={styles.sessionEmail}>{user.email ?? user.name ?? "Đã đăng nhập"}</Text>
+            <AppButton label="Đăng xuất" icon="logout" variant="secondary" onPress={() => void logout()} />
           </Card>
         ) : null}
 
+        {/* Features teaser */}
+        <View style={styles.features}>
+          <View style={styles.featureItem}>
+            <MaterialIcons name="cloud" size={18} color={palette.primary} />
+            <Text style={styles.featureText}>AI Cloud miễn phí</Text>
+          </View>
+          <View style={styles.featureItem}>
+            <MaterialIcons name="hub" size={18} color={palette.accent} />
+            <Text style={styles.featureText}>35+ MCP servers</Text>
+          </View>
+          <View style={styles.featureItem}>
+            <MaterialIcons name="security" size={18} color={palette.success} />
+            <Text style={styles.featureText}>API key bảo mật</Text>
+          </View>
+        </View>
+
         <Text style={styles.disclaimer}>
-          Bằng việc đăng nhập, bạn đồng ý với các điều khoản sử dụng và chính sách bảo mật của NhutCoder Team.
+          Bằng việc đăng nhập, bạn đồng ý với điều khoản sử dụng và chính sách bảo mật của NhutCoder Team.
         </Text>
+        <Text style={styles.version}>v{APP_VERSION}</Text>
       </View>
     </ScreenContainer>
   );
@@ -178,55 +166,110 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   content: {
     flex: 1,
-    padding: 16,
+    padding: 24,
     justifyContent: "center",
-    gap: 16,
+    gap: 20,
   },
-  brand: {
+  hero: {
     alignItems: "center",
-    gap: 6,
+    gap: 10,
+    marginBottom: 8,
+  },
+  logoWrap: {
+    width: 80,
+    height: 80,
+    borderRadius: 24,
+    backgroundColor: palette.primary,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: palette.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
   },
   title: {
-    fontSize: 28,
-    fontWeight: "800",
+    fontSize: 32,
+    fontWeight: "900",
     color: palette.text,
+    letterSpacing: -0.5,
   },
   subtitle: {
-    fontSize: 14,
-    color: palette.muted,
+    fontSize: 16,
+    color: palette.textSecondary,
+    fontWeight: "500",
   },
-  card: {
+  loginCard: {
+    gap: 14,
+  },
+  cardHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  cardTitle: {
+    fontSize: 17,
+    fontWeight: "700",
+    color: palette.text,
+    letterSpacing: 0.2,
+  },
+  cardText: {
+    fontSize: 14,
+    color: palette.textSecondary,
+    lineHeight: 21,
+  },
+  sessionCard: {
     gap: 12,
   },
-  row: {
+  sessionHeader: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
   },
-  cardTitle: {
-    fontSize: 16,
-    fontWeight: "700",
+  sessionEmail: {
+    fontSize: 15,
     color: palette.text,
-  },
-  cardText: {
-    fontSize: 13,
-    color: palette.muted,
-    lineHeight: 18,
+    fontWeight: "600",
   },
   centeredRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8,
+    gap: 10,
   },
   statusText: {
+    fontSize: 14,
+    color: palette.textSecondary,
+  },
+  features: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 20,
+    flexWrap: "wrap",
+    marginTop: 4,
+  },
+  featureItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  featureText: {
     fontSize: 13,
-    color: palette.muted,
+    color: palette.textSecondary,
+    fontWeight: "600",
   },
   disclaimer: {
-    fontSize: 11,
-    color: palette.muted,
+    fontSize: 12,
+    color: palette.textMuted,
     textAlign: "center",
-    lineHeight: 16,
+    lineHeight: 17,
+    paddingHorizontal: 16,
+  },
+  version: {
+    fontSize: 12,
+    color: palette.textMuted,
+    textAlign: "center",
+    fontWeight: "600",
+    letterSpacing: 0.5,
   },
 });
