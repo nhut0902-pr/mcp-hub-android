@@ -1,6 +1,6 @@
 {
   "version": "1.0.18",
   "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.18/MCP-Hub-v1.0.18.apk",
-  "notes": "Fix bug: APP_VERSION was hardcoded as '1.0.16' — About screen luôn báo có cập nhật dù đã cài v1.0.17. APP_VERSION giờ đọc động từ Constants.expoConfig.version.",
-  "publishedAt": "2026-08-30T05:30:00Z"
+  "notes": "Cập nhật phiên bản 1.0.18 với cải tiến bảo mật và tính năng mới.",
+  "publishedAt": "2026-08-30T05:49:37Z"
 }
