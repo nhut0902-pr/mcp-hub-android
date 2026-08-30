@@ -1,4 +1,21 @@
-export const APP_VERSION = "1.0.16";
+import Constants from "expo-constants";
+
+// Try to read from Expo config (app.config.ts version field); fall back to
+// hardcoded constant if Constants isn't available (e.g. during SSR or tests).
+// IMPORTANT: Keep this in sync with the `version` field in app.config.ts and
+// package.json — they should all match. If you bump the version in those files,
+// this constant will auto-pick it up via Constants.expoConfig.version.
+const FALLBACK_VERSION = "1.0.18";
+
+function resolveAppVersion(): string {
+  const fromConfig = (Constants.expoConfig as { version?: string } | null | undefined)?.version;
+  if (typeof fromConfig === "string" && /^\d+\.\d+\.\d+$/.test(fromConfig)) {
+    return fromConfig;
+  }
+  return FALLBACK_VERSION;
+}
+
+export const APP_VERSION = resolveAppVersion();
 export const UPDATE_MANIFEST_URL = "https://mcp-hub-android.vercel.app/update.json";
 
 export type AppUpdate = {
