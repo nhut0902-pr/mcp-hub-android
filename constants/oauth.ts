@@ -15,6 +15,7 @@ const extra = (Constants.expoConfig?.extra ?? {}) as {
   oauthPortalUrl?: string;
   oauthServerUrl?: string;
   appId?: string;
+  webAuthUrl?: string;
 };
 
 const env = {
@@ -24,6 +25,7 @@ const env = {
   ownerId: process.env.EXPO_PUBLIC_OWNER_OPEN_ID ?? "",
   ownerName: process.env.EXPO_PUBLIC_OWNER_NAME ?? "",
   apiBaseUrl: process.env.EXPO_PUBLIC_API_BASE_URL ?? extra.apiBaseUrl ?? "",
+  webAuthUrl: process.env.EXPO_PUBLIC_WEB_AUTH_URL ?? extra.webAuthUrl ?? "https://nhutcoder-team-v2.vercel.app",
   deepLinkScheme,
 };
 
@@ -33,6 +35,7 @@ export const APP_ID = env.appId;
 export const OWNER_OPEN_ID = env.ownerId;
 export const OWNER_NAME = env.ownerName;
 export const API_BASE_URL = env.apiBaseUrl;
+export const WEB_AUTH_URL = env.webAuthUrl;
 
 /**
  * Get the API base URL, deriving from current hostname if not set.

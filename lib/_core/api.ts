@@ -198,3 +198,36 @@ export async function establishSupabaseSession(
 
   return { sessionToken: payload.app_session_id, user: payload.user };
 }
+
+/**
+ * Exchange a one-time NhutCoder Team web auth token for an MCP Hub session.
+ * The token is minted by the web's /api/auth/mobile/token endpoint after the
+ * user completes Auth0 login, and is delivered via deep-link redirect
+ * `mcphub://auth?token=xxx`. The backend's /api/auth/web/session endpoint
+ * verifies the token against the web's /api/auth/mobile/verify endpoint
+ * and returns the long-lived app_session_id.
+ */
+export async function establishWebSession(
+  webToken: string,
+): Promise<{ sessionToken: string; user: any }> {
+  const baseUrl = getApiBaseUrl();
+  const cleanBaseUrl = baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
+  const response = await fetch(`${cleanBaseUrl}/api/auth/web/session`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${webToken}`,
+    },
+  });
+
+  const payload = (await response.json().catch(() => ({}))) as {
+    app_session_id?: string;
+    user?: any;
+    error?: string;
+  };
+  if (!response.ok || !payload.app_session_id) {
+    throw new Error(payload.error || "Không thể tạo phiên MCP Hub từ NhutCoder Team");
+  }
+
+  return { sessionToken: payload.app_session_id, user: payload.user };
+}

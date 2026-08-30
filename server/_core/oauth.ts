@@ -118,6 +118,76 @@ export function registerOAuthRoutes(app: Express) {
     }
   });
 
+  // Exchange a one-time NhutCoder Team web auth token for an MCP Hub session.
+  // The mobile app opens the web's /mobile-login page in a browser; the web
+  // mints a one-time token via /api/auth/mobile/token and redirects the
+  // browser back to the deep link `mcphub://auth?token=xxx`. The app then
+  // POSTs here with that token as the Bearer credential, the backend calls
+  // the web's /api/auth/mobile/verify endpoint to redeem it (single-use),
+  // and finally creates the long-lived app_session_id.
+  app.post("/api/auth/web/session", async (req: Request, res: Response) => {
+    try {
+      const authHeader = req.headers.authorization || req.headers.Authorization;
+      if (typeof authHeader !== "string" || !authHeader.startsWith("Bearer ")) {
+        res.status(401).json({ error: "Web auth Bearer token required" });
+        return;
+      }
+      const webToken = authHeader.slice("Bearer ".length).trim();
+
+      const webAuthUrl = (
+        process.env.EXPO_PUBLIC_WEB_AUTH_URL ||
+        "https://nhutcoder-team-v2.vercel.app"
+      ).replace(/\/$/, "");
+
+      const verifyUrl = `${webAuthUrl}/api/auth/mobile/verify?token=${encodeURIComponent(webToken)}`;
+      const verifyHeaders: Record<string, string> = {
+        Accept: "application/json",
+      };
+      const sharedSecret = process.env.MCP_HUB_AUTH_SECRET;
+      if (sharedSecret) {
+        verifyHeaders["X-Auth-Secret"] = sharedSecret;
+      }
+
+      const verifyRes = await fetch(verifyUrl, { headers: verifyHeaders });
+      if (!verifyRes.ok) {
+        const errBody = (await verifyRes.json().catch(() => ({}))) as { error?: string };
+        console.error("[Auth] Web token verify failed:", verifyRes.status, errBody?.error);
+        res.status(401).json({
+          error: errBody?.error || `Web token verification failed (${verifyRes.status})`,
+        });
+        return;
+      }
+      const verifyPayload = (await verifyRes.json()) as {
+        ok: boolean;
+        user?: { id: string; email?: string | null; name?: string | null; avatarUrl?: string | null };
+      };
+      if (!verifyPayload.ok || !verifyPayload.user?.id) {
+        res.status(401).json({ error: "Web token returned no user" });
+        return;
+      }
+
+      const webUser = verifyPayload.user;
+      const openId = `web:${webUser.id}`;
+      const displayName = webUser.name || webUser.email || "MCP Hub User";
+      const user = await syncUser({
+        openId,
+        name: webUser.name ?? null,
+        email: webUser.email ?? null,
+        loginMethod: "nhutcoder-web",
+      });
+      const sessionToken = await sdk.createSessionToken(openId, {
+        name: displayName,
+        expiresInMs: ONE_YEAR_MS,
+      });
+      const cookieOptions = getSessionCookieOptions(req);
+      res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
+      res.json({ app_session_id: sessionToken, user: buildUserResponse(user) });
+    } catch (error) {
+      console.error("[Auth] Web session exchange failed:", error);
+      res.status(401).json({ error: "Invalid web auth session" });
+    }
+  });
+
   app.get("/api/oauth/callback", async (req: Request, res: Response) => {
     const code = getQueryParam(req, "code");
     const state = getQueryParam(req, "state");
