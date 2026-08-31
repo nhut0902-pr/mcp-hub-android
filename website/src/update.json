@@ -1,6 +1,6 @@
 {
   "version": "1.0.31",
   "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.31/MCP-Hub-v1.0.31.apk",
-  "notes": "Fix Bot Runner không hiện trong Settings. Fix lỗi Parallel Search OAuth redirect_uri. Đổi Parallel Search sang API key auth. Thêm 3 icon mới (AI Chat, AI Search, AI Voice). Settings dùng palette tokens.",
-  "publishedAt": "2026-08-31T02:30:00Z"
+  "notes": "Cập nhật phiên bản 1.0.31 với cải tiến bảo mật và tính năng mới.",
+  "publishedAt": "2026-08-31T02:42:22Z"
 }
