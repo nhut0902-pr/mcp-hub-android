@@ -14,8 +14,8 @@ export type McpCatalogEntry = {
 
 export const mcpCatalog: McpCatalogEntry[] = [
   // ─── Web Search & Research ───
-  { id: "parallel-search", name: "Parallel Search", endpoint: "https://search-mcp.parallel.ai/mcp", transport: "streamable-http", authMode: "oauth", detail: "AI web search — quét nguồn trực tiếp trong chat. Tìm kiếm real-time, trả về nguồn trích dẫn. Hoạt động với cả AI Cloud và Provider model.", docsUrl: "https://parallel.ai" },
-  { id: "parallel-task", name: "Parallel Task", endpoint: "https://task-mcp.parallel.ai/mcp", transport: "streamable-http", authMode: "oauth", detail: "AI agent cho web research — tự động duyệt trang, tổng hợp thông tin.", docsUrl: "https://parallel.ai" },
+  { id: "parallel-search", name: "Parallel Search", endpoint: "https://search-mcp.parallel.ai/mcp", transport: "streamable-http", authMode: "api-key", apiKeyHeader: "authorization", detail: "AI web search — quét nguồn trực tiếp trong chat. Tìm kiếm real-time, trả về nguồn trích dẫn. Lấy API key tại parallel.ai → Dashboard.", docsUrl: "https://parallel.ai" },
+  { id: "parallel-task", name: "Parallel Task", endpoint: "https://task-mcp.parallel.ai/mcp", transport: "streamable-http", authMode: "api-key", apiKeyHeader: "authorization", detail: "AI agent cho web research — tự động duyệt trang, tổng hợp thông tin. Lấy API key tại parallel.ai → Dashboard.", docsUrl: "https://parallel.ai" },
 
   // ─── Social Media & Posting ───
   { id: "zernio", name: "Zernio", endpoint: "https://mcp.zernio.com/mcp", transport: "streamable-http", authMode: "api-key", apiKeyHeader: "authorization", detail: "280+ tools, 15 social platforms (TikTok, Facebook, Instagram, X, LinkedIn...). Đăng bài, lên lịch, comment, DM, analytics. Bearer token = API key từ dashboard Zernio.", docsUrl: "https://zernio.com/agents" },
