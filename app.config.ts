@@ -1,7 +1,7 @@
 const config = {
   name: "MCP Hub",
   slug: "mcp-provider-configurator",
-  version: "1.0.32",
+  version: "1.0.33",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
   // v1.0.23: Changed scheme from `manus${timestamp}` (derived from bundleId
