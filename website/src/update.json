@@ -1,6 +1,6 @@
 {
   "version": "1.0.30",
   "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.30/MCP-Hub-v1.0.30.apk",
-  "notes": "Thêm Parallel Search MCP (search-mcp.parallel.ai) — AI quét web lấy nguồn trong chat, hoạt động với cả AI Cloud và Provider. Thêm Bot Runner (Telegram + Discord) — chạy bot nền, kết nối AI làm bộ não. Tối ưu banner Trung Thu thành pill compact 36px.",
-  "publishedAt": "2026-08-31T02:00:00Z"
+  "notes": "Cập nhật phiên bản 1.0.30 với cải tiến bảo mật và tính năng mới.",
+  "publishedAt": "2026-08-31T02:01:34Z"
 }
