@@ -1,6 +1,13 @@
 {
+<<<<<<< HEAD
   "version": "1.0.39",
   "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.39/MCP-Hub-v1.0.39.apk",
   "notes": "Fix config plugin: đúng service class name RNBackgroundActionsTask + foregroundServiceType=dataSync. Native module đã trong APK, chỉ thiếu manifest entry đúng.",
   "publishedAt": "2026-08-31T11:30:00Z"
+=======
+  "version": "1.0.38",
+  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.38/MCP-Hub-v1.0.38.apk",
+  "notes": "Cập nhật phiên bản 1.0.38.",
+  "publishedAt": "2026-08-31T14:23:43Z"
+>>>>>>> 1bc50e613b11afa31fc3d322298203e99688e7f2
 }
