@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
   toolNoticeInfo: { backgroundColor: "rgba(10,132,255,0.12)", borderWidth: 1, borderColor: "rgba(10,132,255,0.3)" },
   toolNoticeTitle: { fontSize: 11, fontWeight: "800" },
   toolNoticeDetail: { color: palette.textSecondary, fontSize: 10, lineHeight: 15, marginTop: 2 },
-  campaignWrap: { paddingHorizontal: 12, paddingTop: 8 },
+  campaignWrap: { paddingHorizontal: 0, paddingTop: 0 },
   chatList: { flex: 1 },
   chatContent: { padding: 16, gap: 11 },
   chatEmpty: { flexGrow: 1, justifyContent: "center", padding: 22 },

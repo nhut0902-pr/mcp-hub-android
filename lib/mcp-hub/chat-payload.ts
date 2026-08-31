@@ -15,7 +15,18 @@ export function buildChatPayload(provider: ProviderConfig, model: ModelRecord, m
       else payload.reasoning_format = "parsed";
     } else if (provider.kind === "openrouter") payload.reasoning = { enabled: true };
   }
-  if (options.webSearch && model.supportsWebSearch && provider.kind === "openrouter") payload.plugins = [{ id: "web" }];
+  // v1.0.30+: Web search integration
+  // For OpenRouter models: use built-in web plugin
+  // For AI Cloud + other providers: Parallel Search MCP (if connected) will
+  // be auto-injected as a tool via the MCP tool calling mechanism.
+  if (options.webSearch && model.supportsWebSearch && provider.kind === "openrouter") {
+    payload.plugins = [{ id: "web" }];
+  } else if (options.webSearch) {
+    // For AI Cloud and other providers, the web search icon in composer
+    // triggers MCP tool calls to Parallel Search (https://search-mcp.parallel.ai/mcp)
+    // if that MCP server is connected. Otherwise, it's a no-op.
+    // The actual search happens via the MCP tool call flow in chat.tsx.
+  }
   return payload;
 }
 
