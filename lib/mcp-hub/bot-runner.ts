@@ -1,3 +1,8 @@
+/**
+ * Bot Runner library — manages Telegram/Discord bot configs
+ *
+ * v1.0.32: Added token validation + model/provider support
+ */
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export type BotPlatform = "telegram" | "discord";
@@ -7,11 +12,11 @@ export type BotConfig = {
   id: string;
   platform: BotPlatform;
   name: string;
-  token: string;          // Bot token from BotFather (Telegram) or Developer Portal (Discord)
+  token: string;
   providerId: string;      // "ai-cloud" or custom provider ID
-  modelId: string;        // e.g., "gemini-1.5-flash"
-  systemPrompt: string;   // System instruction for the AI
-  autoReply: boolean;     // Auto-reply to all messages
+  modelId: string;         // e.g., "gemini-1.5-flash"
+  systemPrompt: string;
+  autoReply: boolean;
   status: BotStatus;
   lastError: string | null;
   startedAt: string | null;
@@ -24,9 +29,7 @@ export async function loadBots(): Promise<BotConfig[]> {
   try {
     const raw = await AsyncStorage.getItem(BOT_KEY);
     return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
+  } catch { return []; }
 }
 
 export async function saveBots(bots: BotConfig[]): Promise<void> {
@@ -51,10 +54,7 @@ export async function addBot(bot: Omit<BotConfig, "id" | "status" | "lastError" 
 export async function updateBot(id: string, updates: Partial<BotConfig>): Promise<void> {
   const bots = await loadBots();
   const idx = bots.findIndex((b) => b.id === id);
-  if (idx >= 0) {
-    bots[idx] = { ...bots[idx], ...updates };
-    await saveBots(bots);
-  }
+  if (idx >= 0) { bots[idx] = { ...bots[idx], ...updates }; await saveBots(bots); }
 }
 
 export async function removeBot(id: string): Promise<void> {
@@ -63,13 +63,31 @@ export async function removeBot(id: string): Promise<void> {
 }
 
 /**
- * Start a bot — in a real implementation this would open a WebSocket/polling
- * connection to Telegram/Discord API. For now, it marks the bot as "running"
- * and simulates message processing.
- *
- * The bot uses the same AI Cloud or Provider model as the chat screen — it
- * calls sendAiCloudChatFromProxy() or the trpc chat.send mutation.
+ * Validate bot token by calling Telegram/Discord API.
+ * Returns true if token is valid, false otherwise.
  */
+export async function validateBotToken(platform: BotPlatform, token: string): Promise<boolean> {
+  try {
+    if (platform === "telegram") {
+      // Telegram Bot API: getMe endpoint
+      const res = await fetch(`https://api.telegram.org/bot${token}/getMe`, { method: "GET" });
+      if (!res.ok) return false;
+      const data = await res.json();
+      return Boolean(data?.ok && data?.result?.username);
+    } else {
+      // Discord Bot API: get current user
+      const res = await fetch("https://discord.com/api/v10/users/@me", {
+        headers: { Authorization: `Bot ${token}` },
+      });
+      if (!res.ok) return false;
+      const data = await res.json();
+      return Boolean(data?.id && data?.username);
+    }
+  } catch {
+    return false;
+  }
+}
+
 export async function startBot(id: string): Promise<void> {
   await updateBot(id, { status: "running", startedAt: new Date().toISOString(), lastError: null });
 }

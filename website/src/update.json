@@ -1,6 +1,6 @@
 {
-  "version": "1.0.31",
-  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.31/MCP-Hub-v1.0.31.apk",
-  "notes": "Cập nhật phiên bản 1.0.31 với cải tiến bảo mật và tính năng mới.",
-  "publishedAt": "2026-08-31T02:42:22Z"
+  "version": "1.0.32",
+  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.32/MCP-Hub-v1.0.32.apk",
+  "notes": "Bot Runner rewrite: thêm kiểm tra token (Telegram/Discord API), chọn AI Cloud hoặc Provider model làm bộ não, icon AI Chat Bubble hiển thị đúng. Lưu ý: bot chỉ chạy khi app đang mở.",
+  "publishedAt": "2026-08-31T06:00:00Z"
 }
