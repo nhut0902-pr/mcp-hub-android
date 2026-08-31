@@ -1,7 +1,9 @@
+import foregroundServicePlugin from "./plugins/foreground-service-plugin";
+
 const config = {
   name: "MCP Hub",
   slug: "mcp-provider-configurator",
-  version: "1.0.37",
+  version: "1.0.38",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
   // v1.0.23: Changed scheme from `manus${timestamp}` (derived from bundleId
@@ -50,6 +52,7 @@ const config = {
     ["expo-video", { supportsBackgroundPlayback: true, supportsPictureInPicture: true }],
     ["expo-splash-screen", { image: "./assets/images/splash-icon.png", imageWidth: 200, resizeMode: "contain", backgroundColor: "#F7F8FC", dark: { backgroundColor: "#111827" } }],
     ["expo-build-properties", { android: { buildArchs: ["armeabi-v7a", "arm64-v8a"], minSdkVersion: 24, compileSdkVersion: 36, targetSdkVersion: 36, buildToolsVersion: "36.0.0" } }],
+    foregroundServicePlugin,
   ],
   experiments: { typedRoutes: true, reactCompiler: true },
   extra: {
