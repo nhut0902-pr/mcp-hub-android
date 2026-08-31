@@ -1,7 +1,7 @@
 const config = {
   name: "MCP Hub",
   slug: "mcp-provider-configurator",
-  version: "1.0.34",
+  version: "1.0.35",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
   // v1.0.23: Changed scheme from `manus${timestamp}` (derived from bundleId
@@ -34,7 +34,7 @@ const config = {
     edgeToEdgeEnabled: true,
     predictiveBackGestureEnabled: false,
     package: "com.nhutcoder.mcphub",
-    permissions: ["POST_NOTIFICATIONS", "FOREGROUND_SERVICE", "FOREGROUND_SERVICE_DATA_SYNC", "ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION", "CAMERA", "REQUEST_INSTALL_PACKAGES"],
+    permissions: ["POST_NOTIFICATIONS", "FOREGROUND_SERVICE", "FOREGROUND_SERVICE_DATA_SYNC", "FOREGROUND_SERVICE_SPECIAL_USE", "ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION", "CAMERA", "REQUEST_INSTALL_PACKAGES"],
     intentFilters: [{ action: "VIEW", autoVerify: true, data: [{ scheme: "mcphub", host: "mcp-oauth" }, { scheme: "mcphub", host: "auth" }], category: ["BROWSABLE", "DEFAULT"] }],
   },
   web: { bundler: "metro", output: "static", favicon: "./assets/images/favicon.png" },

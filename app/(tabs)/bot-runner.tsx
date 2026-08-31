@@ -102,23 +102,25 @@ export default function BotRunnerScreen() {
   const toggleRun = async (bot: BotConfig) => {
     if (bot.status === "running") {
       await stopBot(bot.id);
-      // Check if any other bot is still running
       const allBots = await loadBots();
       const stillRunning = allBots.some((b) => b.id !== bot.id && b.status === "running");
-      if (!stillRunning) {
-        await stopBackgroundBotService();
-      }
+      if (!stillRunning) { await stopBackgroundBotService(); }
+      await refresh();
     } else {
       await startBot(bot.id);
-      // Start background service (foreground notification + polling)
-      await startBackgroundBotService();
-      Alert.alert(
-        "Bot đã khởi động",
-        "Bot đang chạy nền với thông báo持久 (Android Foreground Service).\n\nKhi thoát app, bot VẪN hoạt động — bạn sẽ thấy thông báo 'MCP Hub Bot đang chạy'.\n\nĐể dừng: mở app → Bot Runner → Dừng.",
-        [{ text: "Đã hiểu" }]
-      );
+      const ok = await startBackgroundBotService();
+      if (ok) {
+        Alert.alert(
+          "🤖 Bot đang chạy nền",
+          "Đã khởi động Foreground Service.\n\nBạn sẽ thấy thông báo 'MCP Hub Bot đang chạy' trên thanh status bar.\n\nBot sẽ TIẾP TỤC hoạt động khi thoát app — Telegram polling mỗi 5 giây.\n\nNhắn tin cho bot trên Telegram để test!",
+          [{ text: "OK" }]
+        );
+      } else {
+        Alert.alert("Lỗi", "Không thể khởi động foreground service. Kiểm tra quyền notification.");
+        await stopBot(bot.id);
+      }
+      await refresh();
     }
-    await refresh();
   };
 
   const handleDelete = (bot: BotConfig) => {
@@ -192,7 +194,7 @@ export default function BotRunnerScreen() {
           <View style={{ flex: 1 }}>
             <Text style={styles.noticeTitle}>Lưu ý về chạy nền</Text>
             <Text style={styles.noticeText}>
-              Bot chạy nền qua Android Foreground Service — hoạt động khi app đóng.\n              Thông báo持久 sẽ hiển thị 'MCP Hub Bot đang chạy'. iOS chỉ chạy khi app mở.
+              Bot chạy nền qua Foreground Service — VẪN hoạt động khi thoát app.\n              Thông báo 'MCP Hub Bot đang chạy' sẽ hiện trên status bar.
             </Text>
           </View>
         </View>
