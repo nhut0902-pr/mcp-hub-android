@@ -1,29 +1,37 @@
 /**
- * Expo Config Plugin: Foreground Service
+ * Expo Config Plugin: Foreground Service for react-native-background-actions
  * 
- * Adds the <service> declaration to AndroidManifest.xml for
- * react-native-background-actions. Without this, the service can't start.
+ * The library's own AndroidManifest.xml declares:
+ *   <service android:name=".RNBackgroundActionsTask" android:exported="false" />
  * 
- * Expo autolinking includes the native Java code, but does NOT automatically
- * add the <service> manifest entry — that's what this plugin does.
+ * But on Android 14+ (targetSdk 34+), the service MUST also declare
+ * android:foregroundServiceType. The library doesn't include this.
+ * 
+ * This plugin ensures the <service> has the correct foregroundServiceType.
  */
 const { withAndroidManifest } = require("@expo/config-plugins");
+
+const SERVICE_NAME = "com.asterinet.react.bgactions.RNBackgroundActionsTask";
 
 module.exports = function foregroundServicePlugin(config) {
   return withAndroidManifest(config, (config) => {
     const application = config.modResults.manifest.application[0];
     
-    // Check if service already exists
-    const existingServices = application.service || [];
-    const hasService = existingServices.some(
-      (s) => s.$?.["android:name"] === "com.asterinet.react.backgroundactions.BackgroundActionsService"
+    if (!application.service) application.service = [];
+    
+    // Check if service already exists (library's own manifest may have added it)
+    const existingIdx = application.service.findIndex(
+      (s) => s.$?.["android:name"] === SERVICE_NAME || s.$?.["android:name"] === ".RNBackgroundActionsTask"
     );
     
-    if (!hasService) {
-      if (!application.service) application.service = [];
+    if (existingIdx >= 0) {
+      // Update existing service to add foregroundServiceType
+      application.service[existingIdx].$["android:foregroundServiceType"] = "dataSync";
+    } else {
+      // Add new service declaration
       application.service.push({
         $: {
-          "android:name": "com.asterinet.react.backgroundactions.BackgroundActionsService",
+          "android:name": SERVICE_NAME,
           "android:exported": "false",
           "android:foregroundServiceType": "dataSync",
         },
