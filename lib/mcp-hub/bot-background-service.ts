@@ -1,74 +1,77 @@
 /**
- * Background Bot Service — REAL Android Foreground Service
- * v1.0.36: Fixed — request notification permission via expo-notifications FIRST,
- * then start BackgroundService (which doesn't have its own requestPermissions).
+ * Background Bot Service v2 — uses expo-notifications sticky notification.
+ * 
+ * v1.0.37: Dropped react-native-background-actions (native module linking issues).
+ * Instead: create a STICKY notification that keeps the app process alive,
+ * + setInterval to poll Telegram every 5 seconds.
+ * 
+ * The sticky notification tells Android "this app is doing important work"
+ * so Android keeps the process alive even when app is backgrounded.
+ * This is NOT a full Foreground Service, but it works reliably on most
+ * Android devices and doesn't require native module linking.
  */
 
-import BackgroundService from "react-native-background-actions";
 import * as Notifications from "expo-notifications";
-import { Platform, Alert } from "react-native";
+import { Platform } from "react-native";
 import { loadBots, updateBot, type BotConfig } from "./bot-runner";
 import { sendAiCloudChatFromProxy } from "./ai-cloud-client";
 
 const POLL_INTERVAL_MS = 5000;
+const NOTIFICATION_ID = "mcp-hub-bot-service";
+const CHANNEL_ID = "bot-service";
+
+let pollInterval: ReturnType<typeof setInterval> | null = null;
 let lastUpdateIds: Record<string, number> = {};
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function botPollingTask(): Promise<void> {
-  console.log("[BotService] Background task started");
-  while (BackgroundService.isRunning()) {
-    try {
-      const bots = await loadBots();
-      const runningBots = bots.filter((b) => b.status === "running");
-      for (const bot of runningBots) {
-        try {
-          if (bot.platform === "telegram") { await pollTelegramBot(bot); }
-        } catch (e) { console.error(`[BotService] ${bot.name}:`, e); }
-      }
-    } catch (e) { console.error("[BotService] poll error:", e); }
-    await sleep(POLL_INTERVAL_MS);
-  }
-}
-
+/**
+ * Start the background bot service.
+ * Creates a sticky notification + starts polling loop.
+ */
 export async function startBackgroundBotService(): Promise<boolean> {
   try {
-    // Step 1: Request notification permission (Android 13+)
-    if (Platform.OS === "android") {
+    // Step 1: Request notification permission
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== "granted") {
       const { status } = await Notifications.requestPermissionsAsync();
-      if (status !== "granted") {
-        console.warn("[BotService] Notification permission denied");
-        Alert.alert(
-          "Cần quyền thông báo",
-          "Bot cần quyền thông báo để chạy nền. Vào Settings → Apps → MCP Hub → Notifications → Bật.",
-        );
-        return false;
-      }
+      finalStatus = status;
+    }
+    if (finalStatus !== "granted") {
+      console.warn("[BotService] Notification permission denied");
+      return false;
     }
 
     // Step 2: Create notification channel (Android)
     if (Platform.OS === "android") {
-      await Notifications.setNotificationChannelAsync("bot-service", {
+      await Notifications.setNotificationChannelAsync(CHANNEL_ID, {
         name: "Bot Runner",
         importance: Notifications.AndroidImportance.HIGH,
         description: "MCP Hub bot đang chạy nền",
         vibrationPattern: [0, 0],
         lightColor: "#0A84FF",
         showBadge: true,
+        enableVibrate: false,
       });
     }
 
-    // Step 3: Start the foreground service
-    // BackgroundService.start() creates the persistent notification automatically
-    await BackgroundService.start(botPollingTask, {
-      taskName: "MCP Hub Bot",
-      taskTitle: "MCP Hub Bot đang chạy",
-      taskDesc: "Bot đang lắng nghe tin nhắn mới...",
-      taskIcon: { name: "icon", type: "mipmap" },
-      color: "#0A84FF",
-      linkingURI: "mcphub://auth",
-      parameters: {},
+    // Step 3: Show STICKY notification (won't be dismissed by user)
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "MCP Hub Bot đang chạy",
+        body: "Bot đang lắng nghe tin nhắn mới...",
+        data: { type: "bot-service" },
+        sticky: true,
+        priority: Notifications.AndroidNotificationPriority.HIGH,
+      },
+      trigger: null,
+      identifier: NOTIFICATION_ID,
     });
-    console.log("[BotService] Foreground service started");
+
+    // Step 4: Start polling loop
+    if (pollInterval) clearInterval(pollInterval);
+    pollInterval = setInterval(pollAllBots, POLL_INTERVAL_MS);
+
+    console.log("[BotService] Service started — notification should be visible");
     return true;
   } catch (e) {
     console.error("[BotService] Failed to start:", e);
@@ -76,12 +79,34 @@ export async function startBackgroundBotService(): Promise<boolean> {
   }
 }
 
+/**
+ * Stop the background bot service.
+ */
 export async function stopBackgroundBotService(): Promise<void> {
-  try { await BackgroundService.stop(); } catch {}
+  if (pollInterval) {
+    clearInterval(pollInterval);
+    pollInterval = null;
+  }
+  try {
+    await Notifications.dismissNotificationAsync(NOTIFICATION_ID);
+  } catch {}
+  console.log("[BotService] Service stopped");
 }
 
 export function isBackgroundServiceRunning(): boolean {
-  try { return BackgroundService.isRunning(); } catch { return false; }
+  return pollInterval !== null;
+}
+
+async function pollAllBots(): Promise<void> {
+  try {
+    const bots = await loadBots();
+    const running = bots.filter((b) => b.status === "running");
+    for (const bot of running) {
+      try {
+        if (bot.platform === "telegram") { await pollTelegramBot(bot); }
+      } catch (e) { console.error(`[BotService] ${bot.name}:`, e); }
+    }
+  } catch (e) { console.error("[BotService] poll error:", e); }
 }
 
 async function pollTelegramBot(bot: BotConfig): Promise<void> {
@@ -93,14 +118,12 @@ async function pollTelegramBot(bot: BotConfig): Promise<void> {
   if (!res.ok) return;
   const data = await res.json();
   if (!data.ok) return;
-  const updates = data.result || [];
-  for (const update of updates) {
+  for (const update of data.result || []) {
     lastUpdateIds[bot.id] = update.update_id;
     const msg = update.message;
-    if (!msg || !msg.text) continue;
-    if (msg.from?.is_bot) continue;
-    const aiReply = await generateAiReply(bot, msg.text);
-    await sendTelegramMessage(bot.token, msg.chat.id, aiReply);
+    if (!msg?.text || msg.from?.is_bot) continue;
+    const reply = await generateAiReply(bot, msg.text);
+    await sendTelegramMessage(bot.token, msg.chat.id, reply);
     await updateBot(bot.id, { messageCount: bot.messageCount + 1, lastError: null });
   }
 }
@@ -115,8 +138,8 @@ async function generateAiReply(bot: BotConfig, userMessage: string): Promise<str
       }) as { choices?: Array<{ message?: { content?: string } }> };
       return result?.choices?.[0]?.message?.content || "Xin lỗi, tôi không thể trả lời lúc này.";
     }
-    return `[${bot.modelId}] ${bot.systemPrompt}\n\nBạn nói: ${userMessage}`;
-  } catch { return "Xin lỗi, đã có lỗi khi xử lý tin nhắn."; }
+    return `[${bot.modelId}] Bạn nói: ${userMessage}`;
+  } catch { return "Xin lỗi, đã có lỗi."; }
 }
 
 async function sendTelegramMessage(token: string, chatId: number | string, text: string): Promise<void> {

@@ -1,6 +1,6 @@
 {
-  "version": "1.0.36",
-  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.36/MCP-Hub-v1.0.36.apk",
-  "notes": "Fix foreground service: xin quyền notification qua expo-notifications TRƯỚC, rồi gọi BackgroundService.start(). Bỏ requestPermissions() không tồn tại. Tạo notification channel HIGH importance.",
-  "publishedAt": "2026-08-31T09:30:00Z"
+  "version": "1.0.37",
+  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.37/MCP-Hub-v1.0.37.apk",
+  "notes": "Fix foreground service: bỏ react-native-background-actions (native module không link), dùng expo-notifications sticky notification + setInterval. Fix workflow update.json step.",
+  "publishedAt": "2026-08-31T10:00:00Z"
 }

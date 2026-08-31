@@ -165,33 +165,28 @@ jobs:
           EOF
           cat website/src/update.json
 
-      - name: Commit update.json back to repo
+      - name: Commit update.json back to repo (non-critical)
         if: startsWith(github.ref, 'refs/tags/v')
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TAG="${{ github.ref_name }}"
           git config user.email "actions@github.com"
           git config user.name "GitHub Actions"
-          # Check if there's anything to commit
-          if git diff --quiet website/src/update.json; then
-            echo "Nothing to commit — update.json already up to date"
-            exit 0
-          fi
+          git stash || true
+          git fetch origin main
+          git checkout main || true
+          git pull origin main || true
+          cat > website/src/update.json <<EOF
+          {
+            "version": "${TAG#v}",
+            "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/$TAG/MCP-Hub-$TAG.apk",
+            "notes": "Cập nhật phiên bản ${TAG#v}.",
+            "publishedAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          }
+          EOF
           git add website/src/update.json
-          git commit -m "chore: bump website/src/update.json to ${TAG}"
-          # Push to main branch (we're in detached HEAD after a tag checkout).
-          # Use --force-with-lease to handle race conditions where another
-          # commit landed on main between this workflow start and the push.
-          # If --force-with-lease fails (i.e., remote moved), retry with
-          # rebase then push.
-          if ! git push origin HEAD:main --force-with-lease; then
-            echo "Push failed, attempting rebase + retry..."
-            git fetch origin main
-            git rebase origin/main
-            git push origin HEAD:main
-          fi
-          # Always exit 0 — update.json commit is non-critical.
-          # The APK has already been built + released in previous steps.
-          # If this step fails, it should NOT mark the workflow as failed.
+          git commit -m "chore: bump update.json to $TAG" || true
+          git push origin main || true
           exit 0
