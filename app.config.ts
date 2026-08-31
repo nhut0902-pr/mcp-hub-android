@@ -45,7 +45,7 @@ const config = {
     ["expo-secure-store", { configureAndroidBackup: true }],
     ["expo-location", { locationWhenInUsePermission: "Allow $(PRODUCT_NAME) to use your location for chat tools." }],
     ["expo-image-picker", { photosPermission: "Allow $(PRODUCT_NAME) to access photos for chat attachments.", cameraPermission: "Allow $(PRODUCT_NAME) to use your camera for chat attachments." }],
-    ["expo-audio", { microphonePermission: "Allow $(PRODUCT_NAME) to access your microphone." },
+    ["expo-audio", { microphonePermission: "Allow $(PRODUCT_NAME) to access your microphone." }],
     ["expo-notifications", { enableForegroundService: true, foregroundServiceNotification: { title: "MCP Hub Bot dang chay", body: "Bot dang lang nghe tin nhan moi...", priority: "low", vibrate: false } }],
     ["expo-video", { supportsBackgroundPlayback: true, supportsPictureInPicture: true }],
     ["expo-splash-screen", { image: "./assets/images/splash-icon.png", imageWidth: 200, resizeMode: "contain", backgroundColor: "#F7F8FC", dark: { backgroundColor: "#111827" } }],
