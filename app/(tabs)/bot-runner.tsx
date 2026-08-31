@@ -16,6 +16,7 @@ import { AppButton, Card, FormInput, StatusPill, palette } from "@/components/hu
 import { ScreenContainer } from "@/components/screen-container";
 import { VideoScreenHeader } from "@/components/video-screen-header";
 import { addBot, loadBots, removeBot, startBot, stopBot, updateBot, validateBotToken, type BotConfig, type BotPlatform } from "@/lib/mcp-hub/bot-runner";
+import { startBackgroundBotService, stopBackgroundBotService } from "@/lib/mcp-hub/bot-background-service";
 import { useHub } from "@/lib/mcp-hub/context";
 
 type ProviderOption = { id: string; name: string; modelId: string; kind: "ai-cloud" | "provider" };
@@ -101,11 +102,19 @@ export default function BotRunnerScreen() {
   const toggleRun = async (bot: BotConfig) => {
     if (bot.status === "running") {
       await stopBot(bot.id);
+      // Check if any other bot is still running
+      const allBots = await loadBots();
+      const stillRunning = allBots.some((b) => b.id !== bot.id && b.status === "running");
+      if (!stillRunning) {
+        await stopBackgroundBotService();
+      }
     } else {
       await startBot(bot.id);
+      // Start background service (foreground notification + polling)
+      await startBackgroundBotService();
       Alert.alert(
         "Bot đã khởi động",
-        "Bot sẽ hoạt động khi app đang mở. Khi thoát app, bot sẽ tạm dừng.\n\nĐể chạy 24/7, bạn cần deploy bot trên server (Vercel/Render).",
+        "Bot đang chạy nền với thông báo持久 (Android Foreground Service).\n\nKhi thoát app, bot VẪN hoạt động — bạn sẽ thấy thông báo 'MCP Hub Bot đang chạy'.\n\nĐể dừng: mở app → Bot Runner → Dừng.",
         [{ text: "Đã hiểu" }]
       );
     }
@@ -183,8 +192,7 @@ export default function BotRunnerScreen() {
           <View style={{ flex: 1 }}>
             <Text style={styles.noticeTitle}>Lưu ý về chạy nền</Text>
             <Text style={styles.noticeText}>
-              Bot chỉ hoạt động khi app đang mở. Khi thoát app, bot tạm dừng.
-              Để chạy 24/7, deploy bot trên server (Vercel/Render) — tính năng sẽ có sớm.
+              Bot chạy nền qua Android Foreground Service — hoạt động khi app đóng.\n              Thông báo持久 sẽ hiển thị 'MCP Hub Bot đang chạy'. iOS chỉ chạy khi app mở.
             </Text>
           </View>
         </View>

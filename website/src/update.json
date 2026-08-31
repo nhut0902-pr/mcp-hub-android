@@ -1,6 +1,6 @@
 {
-  "version": "1.0.33",
-  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.33/MCP-Hub-v1.0.33.apk",
-  "notes": "Cập nhật phiên bản 1.0.33 với cải tiến bảo mật và tính năng mới.",
-  "publishedAt": "2026-08-31T06:30:04Z"
+  "version": "1.0.34",
+  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.34/MCP-Hub-v1.0.34.apk",
+  "notes": "BOT CHẠY NỀN THẬT SỰ: Android Foreground Service + persistent notification + Telegram long polling (5s). Bot VẪN hoạt động khi thoát app. AI Cloud reply qua Nhutbot 1.0 Flash.",
+  "publishedAt": "2026-08-31T07:30:00Z"
 }
