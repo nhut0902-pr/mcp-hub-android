@@ -11,46 +11,46 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, TextInputPro
  */
 
 export const palette = {
-  // Primary accent — indigo
-  primary: "#6366F1",
-  primaryLight: "#818CF8",
-  primaryDark: "#4F46E5",
+  // Primary — iOS Blue (Chatbox style)
+  primary: "#0A84FF",
+  primaryLight: "#5AC8FA",
+  primaryDark: "#0040DD",
 
-  // Backgrounds (dark theme)
-  background: "#0F1117",
-  surface: "#1A1D27",
-  surfaceAlt: "#232734",
-  surfaceElevated: "#2A2E3C",
+  // Backgrounds (Chatbox dark theme)
+  background: "#1C1C1E",
+  surface: "#2C2C2E",
+  surfaceAlt: "#3A3A3C",
+  surfaceElevated: "#48484A",
 
   // Text
-  text: "#F1F5F9",
-  textSecondary: "#94A3B8",
-  textMuted: "#64748B",
+  text: "#FFFFFF",
+  textSecondary: "#8E8E93",
+  textMuted: "#636366",
 
   // Borders
-  border: "#2D3142",
-  borderLight: "#3D4255",
+  border: "#38383A",
+  borderLight: "#48484A",
 
-  // Status colors
-  success: "#10B981",
-  warning: "#F59E0B",
-  error: "#EF4444",
+  // Status colors (iOS system colors)
+  success: "#30D158",
+  warning: "#FFD60A",
+  error: "#FF453A",
 
   // Accents
-  accent: "#8B5CF6",      // violet
-  accentBlue: "#3B82F6",   // blue
-  accentCyan: "#06B6D4",   // cyan
+  accent: "#FF9F0A",       // orange (Chatbox AI brand)
+  accentBlue: "#0A84FF",
+  accentCyan: "#5AC8FA",
 
   // Gradients
-  gradientStart: "#6366F1",
-  gradientEnd: "#8B5CF6",
+  gradientStart: "#0A84FF",
+  gradientEnd: "#5AC8FA",
 
-  // Legacy aliases (for backward compat with screens that use old names)
-  navy: "#6366F1",
-  cyan: "#06B6D4",
-  muted: "#94A3B8",
-  softCyan: "#1E1B4B",
-  softNavy: "#312E81",
+  // Legacy aliases
+  navy: "#0A84FF",
+  cyan: "#5AC8FA",
+  muted: "#8E8E93",
+  softCyan: "#1C2C3E",
+  softNavy: "#0A2540",
 };
 
 // ─── Card ───
@@ -73,7 +73,7 @@ export function StatusPill({ label, tone = "neutral" }: { label: string; tone?: 
   const colors: Record<string, { fg: string; bg: string }> = {
     success: { fg: "#34D399", bg: "rgba(16,185,129,0.12)" },
     warning: { fg: "#FBBF24", bg: "rgba(245,158,11,0.12)" },
-    neutral: { fg: "#94A3B8", bg: "rgba(148,163,184,0.12)" },
+    neutral: { fg: "#8E8E93", bg: "rgba(148,163,184,0.12)" },
   };
   const c = colors[tone];
   return (
@@ -137,7 +137,7 @@ export function FormInput({
     <View style={styles.fieldWrap}>
       <Text style={styles.fieldLabel}>{label}</Text>
       <TextInput
-        placeholderTextColor="#64748B"
+        placeholderTextColor="#636366"
         multiline={multiline}
         style={[styles.input, multiline && styles.textarea]}
         {...props}
