@@ -17,13 +17,11 @@ import { ScreenContainer } from "@/components/screen-container";
 import { VideoScreenHeader } from "@/components/video-screen-header";
 import { addBot, loadBots, removeBot, startBot, stopBot, updateBot, validateBotToken, type BotConfig, type BotPlatform } from "@/lib/mcp-hub/bot-runner";
 import { startBackgroundBotService, stopBackgroundBotService } from "@/lib/mcp-hub/bot-background-service";
-import { useHub } from "@/lib/mcp-hub/context";
 
 type ProviderOption = { id: string; name: string; modelId: string; kind: "ai-cloud" | "provider" };
 
 export default function BotRunnerScreen() {
   const router = useRouter();
-  const { state } = useHub();
   const [bots, setBots] = useState<BotConfig[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [platform, setPlatform] = useState<BotPlatform>("telegram");
@@ -40,19 +38,9 @@ export default function BotRunnerScreen() {
 
   const refresh = async () => setBots(await loadBots());
 
-  // Build provider options from app state
+  // Static provider options (no useHub needed)
   const providerOptions: ProviderOption[] = [
     { id: "ai-cloud:gemini-1.5-flash", name: "AI Cloud (Nhutbot 1.0 Flash)", modelId: "gemini-1.5-flash", kind: "ai-cloud" },
-    ...state.providers
-      .filter((p) => p.enabled && !p.managedByApp)
-      .flatMap((p) =>
-        p.models.map((m) => ({
-          id: `${p.id}:${m.modelId}`,
-          name: `${p.name} · ${m.displayName || m.modelId}`,
-          modelId: m.modelId,
-          kind: "provider" as const,
-        }))
-      ),
   ];
 
   const handleValidateToken = async () => {

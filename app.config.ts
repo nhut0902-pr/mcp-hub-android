@@ -3,7 +3,7 @@ import foregroundServicePlugin from "./plugins/foreground-service-plugin";
 const config = {
   name: "MCP Hub",
   slug: "mcp-provider-configurator",
-  version: "1.0.41",
+  version: "1.0.42",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
   // v1.0.23: Changed scheme from `manus${timestamp}` (derived from bundleId
