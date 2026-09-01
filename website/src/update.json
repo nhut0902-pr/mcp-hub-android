@@ -1,1 +1,6 @@
-{"version":"1.0.43","apkUrl":"https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.43/MCP-Hub-v1.0.43.apk","notes":"Fix 'Không thể khởi động foreground service': thêm fallback mode — nếu Foreground Service fail, dùng sticky notification + setInterval. Bot LUÔN khởi động được.","publishedAt":"2026-09-01T03:00:00Z"}
+{
+  "version": "1.0.43",
+  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.43/MCP-Hub-v1.0.43.apk",
+  "notes": "Cập nhật phiên bản 1.0.43.",
+  "publishedAt": "2026-09-01T03:41:41Z"
+}
