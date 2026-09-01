@@ -1,6 +1,1 @@
-{
-  "version": "1.0.45",
-  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.45/MCP-Hub-v1.0.45.apk",
-  "notes": "Cập nhật phiên bản 1.0.45.",
-  "publishedAt": "2026-09-01T06:28:14Z"
-}
+{"version":"1.0.46","apkUrl":"https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.46/MCP-Hub-v1.0.46.apk","notes":"Thêm AI Tạo Ảnh (Pollinations.ai free). Thêm OrcaRouter + TokenRouter providers. Fix Parallel Search MCP endpoint. Fix Flashcard error message.","publishedAt":"2026-09-01T07:00:00Z"}
