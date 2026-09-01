@@ -1,6 +1,6 @@
 {
   "version": "1.0.40",
   "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.40/MCP-Hub-v1.0.40.apk",
-  "notes": "Fix crash: Bot Runner import react-native-background-actions ở top-level → crash khi mở screen. Đổi sang lazy import (chỉ load khi bấm Khởi động).",
-  "publishedAt": "2026-08-31T12:00:00Z"
+  "notes": "Cập nhật phiên bản 1.0.40.",
+  "publishedAt": "2026-09-01T00:02:19Z"
 }
