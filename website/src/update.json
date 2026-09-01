@@ -1,6 +1,6 @@
 {
   "version": "1.0.41",
   "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.41/MCP-Hub-v1.0.41.apk",
-  "notes": "FIX CRASH: Bot Runner screen không được đăng ký trong _layout.tsx → render ngoài HubProvider → useHub() throw → crash. Đã thêm <Tabs.Screen name='bot-runner' href={null} />.",
-  "publishedAt": "2026-08-31T13:00:00Z"
+  "notes": "Cập nhật phiên bản 1.0.41.",
+  "publishedAt": "2026-09-01T01:39:30Z"
 }
