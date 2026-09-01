@@ -1,4 +1,4 @@
-import foregroundServicePlugin from "./plugins/foreground-service-plugin";
+const foregroundServicePlugin = require("./plugins/foreground-service-plugin");
 
 const config = {
   name: "MCP Hub",
