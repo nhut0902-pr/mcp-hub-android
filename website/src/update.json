@@ -1,6 +1,1 @@
-{
-  "version": "1.0.44",
-  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.44/MCP-Hub-v1.0.44.apk",
-  "notes": "Fix chat code block rendering (dark blocks). Add MCP tool call permission prompt. Rewrite AI Tutor with Pollinations.ai image generation. Add tool-permission.ts + pollinations.ts libs.",
-  "publishedAt": "2026-09-01T04:00:00Z"
-}
+{"version":"1.0.45","apkUrl":"https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.45/MCP-Hub-v1.0.45.apk","notes":"Remove config plugin (causes build failure). Bot uses fallback mode (sticky notification + setInterval). Fix chat code blocks, add MCP permission, Pollinations.ai, AI Tutor rewrite.","publishedAt":"2026-09-01T04:30:00Z"}
