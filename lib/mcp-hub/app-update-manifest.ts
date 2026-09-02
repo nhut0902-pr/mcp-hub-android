@@ -13,7 +13,7 @@
  *   no way for runtime caching to serve a different value.
  * — Slightly more maintenance, but bulletproof.
  */
-export const APP_VERSION = "1.0.47";
+export const APP_VERSION = "1.0.48";
 export const UPDATE_MANIFEST_URL = "https://mcp-hub-android.vercel.app/update.json";
 
 export type AppUpdate = {

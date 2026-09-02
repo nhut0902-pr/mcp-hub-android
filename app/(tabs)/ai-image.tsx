@@ -71,8 +71,11 @@ export default function AiImageScreen() {
         {/* Result */}
         {loading ? (
           <Card style={styles.imageCard}>
-            <ActivityIndicator size="large" color={palette.primary} />
-            <Text style={styles.loadingText}>Đang tạo ảnh... có thể mất 10-30 giây</Text>
+            <View style={styles.loadingOverlay}>
+              <ActivityIndicator size="large" color={palette.primary} />
+              <Text style={styles.loadingText}>🎨 Đang tạo ảnh...</Text>
+              <Text style={styles.loadingSubtext}>Pollinations.ai đang vẽ — có thể mất 10-30 giây</Text>
+            </View>
           </Card>
         ) : null}
         {imageUrl ? (
@@ -97,6 +100,8 @@ const styles = StyleSheet.create({
   presetText: { color: palette.textSecondary, fontSize: 13 },
   imageCard: { gap: 12, alignItems: "center" },
   imageTitle: { color: palette.text, fontSize: 15, fontWeight: "700", alignSelf: "flex-start" },
-  loadingText: { color: palette.textSecondary, fontSize: 13, marginTop: 8 },
+  loadingText: { color: palette.text, fontSize: 15, fontWeight: '700', marginTop: 12 },
+  loadingSubtext: { color: palette.textSecondary, fontSize: 12, marginTop: 4 },
+  loadingOverlay: { alignItems: 'center', paddingVertical: 30, gap: 4 },
   resultImage: { width: "100%", height: 350, borderRadius: 12 },
 });

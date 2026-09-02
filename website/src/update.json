@@ -1,6 +1,1 @@
-{
-  "version": "1.0.47",
-  "apkUrl": "https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.47/MCP-Hub-v1.0.47.apk",
-  "notes": "Cập nhật phiên bản 1.0.47.",
-  "publishedAt": "2026-09-02T02:51:21Z"
-}
+{"version":"1.0.48","apkUrl":"https://github.com/nhut0902-pr/mcp-hub-android/releases/download/v1.0.48/MCP-Hub-v1.0.48.apk","notes":"Fix tạo ảnh trong chat: nút palette là TOGGLE (bật/tắt chế độ tạo ảnh). Khi bật: placeholder đổi thành 'Mô tả ảnh...', nút gửi đổi thành palette icon. User NHẬP prompt rồi bấm gửi. Fix loading overlay trong AI Tạo Ảnh screen.","publishedAt":"2026-09-01T09:00:00Z"}
