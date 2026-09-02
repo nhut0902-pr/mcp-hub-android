@@ -37,7 +37,7 @@ export default function NotFoundScreen() {
             <Text style={styles.secondaryBtnText}>Quay lại</Text>
           </Pressable>
         </View>
-        <Text style={styles.foot}>MCP Hub · v1.0.46+</Text>
+        <Text style={styles.foot}>MCP Hub · v1.0.47+</Text>
       </View>
     </ScreenContainer>
   );

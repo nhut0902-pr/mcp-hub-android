@@ -61,7 +61,7 @@ export const mcpCatalog: McpCatalogEntry[] = [
   { id: "ramp", name: "Ramp", endpoint: "https://ramp-mcp-remote.ramp.com/mcp", transport: "streamable-http", authMode: "oauth", detail: "Corporate cards, expenses, receipts qua OAuth.", docsUrl: "https://docs.ramp.com/mcp" },
 
   // ─── Design & Content ───
-  { id: "canva", name: "Canva", endpoint: "https://mcp.canva.com/mcp", transport: "streamable-http", authMode: "oauth", detail: "Tạo thiết kế, export, brand kit qua OAuth.", docsUrl: "https://www.canva.com/help/mcp-server/" },
+  { id: "canva", name: "Canva", endpoint: "https://mcp.canva.com/sse", transport: "sse", authMode: "oauth", detail: "Tạo thiết kế, export, brand kit. Canva dùng SSE transport (không phải streamable-http).", docsUrl: "https://www.canva.com/help/mcp-server/" },
   { id: "webflow", name: "Webflow", endpoint: "https://mcp.webflow.com/sse", transport: "sse", authMode: "oauth", detail: "CMS sites — collections, items, pages qua OAuth.", docsUrl: "https://developers.webflow.com/docs/mcp" },
   { id: "wix", name: "Wix", endpoint: "https://mcp.wix.com/sse", transport: "sse", authMode: "oauth", detail: "Website builder — pages, stores, bookings qua OAuth.", docsUrl: "https://dev.wix.com/docs/mcp" },
 

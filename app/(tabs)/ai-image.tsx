@@ -19,14 +19,7 @@ export default function AiImageScreen() {
     setLoading(true);
     setImageUrl(null);
     try {
-      const url = generateImageUrl(prompt.trim(), { width: 1024, height: 1024, model: "flux" });
-      // Preload image
-      await new Promise((resolve) => {
-        const img = new Image();
-        img.onload = resolve;
-        img.onerror = resolve;
-        img.source = { uri: url };
-      });
+      const url = generateImageUrl(prompt.trim(), { width: 768, height: 768, model: "flux" });
       setImageUrl(url);
     } catch (e) {
       console.error("Image gen error:", e);
