@@ -71,6 +71,7 @@ async function postRpc(server: McpServerConfig, credential: string | null, reque
       headers: {
         Accept: "application/json, text/event-stream",
         "Content-Type": "application/json",
+        "User-Agent": `MCP-Hub/${APP_VERSION}`,
         "MCP-Protocol-Version": MCP_PROTOCOL_VERSION,
         ...(sessionId ? { "Mcp-Session-Id": sessionId } : {}),
         ...buildMcpAuthHeaders(server.authMode, credential, server.apiKeyHeader),

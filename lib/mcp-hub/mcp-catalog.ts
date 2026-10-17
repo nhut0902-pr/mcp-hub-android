@@ -14,6 +14,7 @@ export type McpCatalogEntry = {
 
 export const mcpCatalog: McpCatalogEntry[] = [
   // ─── Web Search & Research ───
+  { id: "parallel-search-free", name: "Parallel Search (miễn phí)", endpoint: "https://search.parallel.ai/mcp", transport: "streamable-http", authMode: "none", detail: "Tìm kiếm web bằng Fast mode và đọc nội dung trang qua web_search/web_fetch. Không cần tài khoản hoặc API key; gói miễn phí có giới hạn sử dụng.", docsUrl: "https://docs.parallel.ai/integrations/mcp/search-mcp" },
   { id: "parallel-search", name: "Parallel Search", endpoint: "https://mcp.parallel.ai/search", transport: "streamable-http", authMode: "api-key", apiKeyHeader: "authorization", detail: "AI web search — quét nguồn trực tiếp trong chat. Tìm kiếm real-time, trả về nguồn trích dẫn. Lấy API key tại parallel.ai → Dashboard.", docsUrl: "https://parallel.ai" },
   { id: "parallel-task", name: "Parallel Task", endpoint: "https://mcp.parallel.ai/task", transport: "streamable-http", authMode: "api-key", apiKeyHeader: "authorization", detail: "AI agent cho web research — tự động duyệt trang, tổng hợp thông tin. Lấy API key tại parallel.ai → Dashboard.", docsUrl: "https://parallel.ai" },
 

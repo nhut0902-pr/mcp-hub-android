@@ -56,6 +56,7 @@ describe("MCP connection test", () => {
 
   it("has only valid HTTPS remote presets with an explicit auth selection", () => {
     expect(mcpCatalog.length).toBeGreaterThanOrEqual(8);
-    expect(mcpCatalog.every((entry) => entry.endpoint.startsWith("https://") && entry.authMode !== "none")).toBe(true);
+    expect(mcpCatalog.every((entry) => entry.endpoint.startsWith("https://") && ["none", "api-key", "oauth"].includes(entry.authMode))).toBe(true);
+    expect(new Set(mcpCatalog.map((entry) => entry.id)).size).toBe(mcpCatalog.length);
   });
 });
